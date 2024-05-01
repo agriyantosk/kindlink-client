@@ -22,7 +22,7 @@ const Navbar = () => {
                                     <p>Activity</p>
                                 </li>
                             </Link>
-                            <Link href={"/under-development"}>
+                            <Link href={"/vote"}>
                                 <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                     <p>Vote</p>
                                 </li>
