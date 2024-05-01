@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { FormEvent } from "react";
+import FoundationInfo from "../components/FoundationInfo";
 
 const Detail = () => {
     const router = useRouter();
@@ -28,7 +29,7 @@ const Detail = () => {
                     </div>
                     <div>
                         <h1>About the foundation:</h1>
-                        <p>
+                        <p className="text-justify">
                             Lorem ipsum dolor sit amet, consectetur adipiscing
                             elit. Suspendisse nunc dui, ullamcorper id est
                             tincidunt, porttitor venenatis nisl. Etiam aliquam
@@ -60,6 +61,9 @@ const Detail = () => {
                             />
                             <button type="submit">Submit</button>
                         </form>
+                    </div>
+                    <div>
+                        <FoundationInfo />
                     </div>
                 </div>
             </div>
