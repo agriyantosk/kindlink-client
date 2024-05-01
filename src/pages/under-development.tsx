@@ -1,10 +1,9 @@
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 
 const UnderDevelopment = () => {
     return (
         <>
             <div className="h-screen">
-                <Navbar />
                 <div className="flex justify-between w-[80%] mx-auto h-full items-center">
                     <div className="w-[50%] flex flex-col gap-3">
                         <h1 className="text-5xl font-bold text-blue-500">

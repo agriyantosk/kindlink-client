@@ -8,18 +8,18 @@ const Navbar = () => {
                 <div className="relative flex items-center gap-8">
                     <ul className="hidden items-center justify-center gap-6 md:flex">
                         <Link href={"/under-development"}>
-                            <li className="pt-1.5 font-dm text-sm font-medium text-gray-700 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out">
-                                <a href="#">About</a>
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out">
+                                <p>About</p>
                             </li>
                         </Link>
                         <Link href={"/under-development"}>
-                            <li className="pt-1.5 font-dm text-sm font-medium text-gray-700 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out">
-                                <a href="#">Donate</a>
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out">
+                                <p>Donate</p>
                             </li>
                         </Link>
                         <Link href={"/under-development"}>
-                            <li className="pt-1.5 font-dm text-sm font-medium text-gray-700 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out">
-                                <a href="#">Activity</a>
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out">
+                                <p>Activity</p>
                             </li>
                         </Link>
                     </ul>
