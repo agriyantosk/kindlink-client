@@ -10,7 +10,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
         <>
             <div className="h-screen">
                 <Navbar />
-                {children}
+                <div className="h-full px-10 pt-10">{children}</div>
             </div>
         </>
     );
