@@ -9,7 +9,6 @@ const FoundationSocials = ({
     instagramUrl,
     xUrl,
 }: SocialMediaUrls) => {
-    console.log(websiteUrl);
     return (
         <>
             <div className="rounded-xl p-3 flex gap-5 justify-end">

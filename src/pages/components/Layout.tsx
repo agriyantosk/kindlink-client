@@ -27,7 +27,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                             <CandidateDetailModal />
                         </div>
                     )}
-                    <div className="h-screen flex flex-col px-36">
+                    <div className="h-screen flex flex-col px-96">
                         <Navbar />
                         <div className="flex-grow">{children}</div>
                     </div>

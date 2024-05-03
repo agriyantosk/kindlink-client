@@ -6,6 +6,7 @@ import {
     doc,
     getDocs,
     getFirestore,
+    onSnapshot,
     query,
     serverTimestamp,
     where,
@@ -74,20 +75,32 @@ export const deleteData = async (id: string) => {
     }
 };
 
-export const queryEqualsTo = async (key: string, value: string) => {
+export const queryEqualsTo = async (
+    collectionName: string,
+    key: string,
+    value: string
+) => {
     try {
-        const ref = initialize();
+        console.log(collectionName, key, value);
+        const ref = initialize(collectionName);
         const q = query(ref, where(key, "==", value));
-        return q;
+        const querySnapshot = await getDocs(q);
+
+        const queryResult: any[] = [];
+        querySnapshot.forEach((doc) => {
+            queryResult.push({ ...doc.data(), id: doc.id });
+        });
+        console.log(queryResult);
+        return queryResult;
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
-export const fetchDataById = async (id: string) => {
+export const fetchDataById = async (collectionName: string, id: string) => {
     try {
         const db = getFirestore();
-        const docRef = doc(db, "foundations", id);
+        const docRef = doc(db, collectionName, id);
         return docRef;
     } catch (error) {
         console.log(error);

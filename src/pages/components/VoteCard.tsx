@@ -47,13 +47,13 @@ const VoteCard = ({ candidates }: any) => {
     }, [candidates]);
     return (
         <>
-            <div className="grid grid-cols-4">
+            <div className="grid grid-cols-3 gap-4">
                 {candidates
                     ? candidates.map((el: any, index: number) => {
                           return (
                               <>
                                   <div
-                                      className="w-96 bg-white h-full mt-10 border border-gray-700 rounded-lg"
+                                      className="w-full bg-white h-full mt-10 border border-gray-700 rounded-lg"
                                       key={index}
                                   >
                                       <img
