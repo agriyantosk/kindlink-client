@@ -20,7 +20,9 @@ const Fetch = () => {
                 <h1>Data: {JSON.stringify(data)}</h1>
             </div>
             <div className="flex gap-5">
-                <button onClick={() => addData("AdaKami", "salah")}>
+                <button
+                    onClick={() => addData("foundations", "AdaKami", "salah")}
+                >
                     Add Foundation
                 </button>
                 <button onClick={() => deleteData("dOQ8KGVO2k03szMav42n")}>

@@ -21,7 +21,7 @@ const CandidateDetailModal = () => {
                                 <img
                                     src={candidateDetail.imgUrl}
                                     alt="Candidate Logo"
-                                    className="object-cover"
+                                    className="object-cover border border-gray-700 rounded-lg"
                                 />
                                 <div>
                                     <FoundationSocials

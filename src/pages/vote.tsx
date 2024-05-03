@@ -17,7 +17,7 @@ const Vote = () => {
     }, []);
     return (
         <>
-            <div className="w-full h-full bg-red-400">
+            <div className="w-full h-full">
                 <VoteCard candidates={candidates} />
             </div>
         </>

@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Navbar from "./components/Navbar";
+import { useAccount } from "wagmi";
 
 export default function Home() {
+    const { isConnected, address } = useAccount();
     return (
         <>
             <div className="flex flex-col h-full justify-center items-center">
@@ -13,6 +15,8 @@ export default function Home() {
                     and track each and every one of your donations utizling
                     cutting edge blockchain technology
                 </p>
+                <p>Status: {JSON.stringify(isConnected)}</p>
+                <p>Address: {JSON.stringify(address)}</p>
             </div>
         </>
     );
