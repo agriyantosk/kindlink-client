@@ -24,7 +24,6 @@ const Detail = () => {
                     address as string
                 );
                 setDetail(data);
-                console.log(data);
             }
         } catch (error) {
             console.log(error);
@@ -34,9 +33,6 @@ const Detail = () => {
     useEffect(() => {
         fetchFoundationDetails();
     }, []);
-    useEffect(() => {
-        console.log(detail);
-    }, [detail]);
 
     return (
         <>
@@ -45,7 +41,7 @@ const Detail = () => {
                     <div className="w-full flex justify-start">
                         <img
                             src={detail[0]?.imgUrl}
-                            className="object-fill"
+                            className="object-contain"
                             alt="Foundation Logo"
                         />
                     </div>

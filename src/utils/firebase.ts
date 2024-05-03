@@ -42,9 +42,13 @@ export const fetchData = async (collectionName: string) => {
     }
 };
 
-export const addData = async (name: string, description: string) => {
+export const addData = async (
+    collectionName: string,
+    name: string,
+    description: string
+) => {
     try {
-        const ref = initialize();
+        const ref = initialize(collectionName);
         const add = await addDoc(ref, {
             name,
             description,
@@ -53,7 +57,6 @@ export const addData = async (name: string, description: string) => {
         console.log(
             `Successfully Addded New Foundations: ${JSON.stringify(add)}`
         );
-        await fetchData();
     } catch (error) {
         console.log(error);
     }
@@ -69,7 +72,6 @@ export const deleteData = async (id: string) => {
                 deleteFoundation
             )}`
         );
-        await fetchData();
     } catch (error) {
         console.log(error);
     }
