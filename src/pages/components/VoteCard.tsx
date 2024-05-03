@@ -1,13 +1,12 @@
-import { Timestamp } from "firebase/firestore";
 import { Progress } from "flowbite-react";
 import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import CandidateDetailModal from "./CandidateDetailModal";
-import { useModal } from "./Layout";
+import { useCandidateDetail, useModal } from "./Layout";
 
 const VoteCard = ({ candidates }: any) => {
     const [countdown, setCountdown] = useState([]);
     const { setShowModal } = useModal();
+    const { setCandidateDetail } = useCandidateDetail();
     const formatTime = (time: any) => {
         const days = Math.floor(time?.remainingTime / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
@@ -24,8 +23,9 @@ const VoteCard = ({ candidates }: any) => {
             .padStart(2, "0")}m: ${seconds.toString().padStart(2, "0")}s`;
     };
 
-    const handleShowModal = () => {
+    const handleShowModal = (candidateIndex: number) => {
         setShowModal(true);
+        setCandidateDetail(candidates[candidateIndex]);
     };
 
     useEffect(() => {
@@ -71,7 +71,7 @@ const VoteCard = ({ candidates }: any) => {
                                               </p>
                                               <button
                                                   onClick={() =>
-                                                      handleShowModal()
+                                                      handleShowModal(index)
                                                   }
                                                   className="text-blue-400 underline hover:text-blue-400 text-sm text-left"
                                               >
