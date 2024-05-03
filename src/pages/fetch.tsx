@@ -5,8 +5,8 @@ const Fetch = () => {
     const [data, setData] = useState<any>();
     const fetch = async () => {
         try {
-            const fetchedData = await fetchData();
-            setData(fetchedData);
+            // const fetchedData = await fetchData();
+            // setData(fetchedData);
         } catch (error) {
             console.log(error);
         }

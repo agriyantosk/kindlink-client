@@ -20,16 +20,16 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const initialize = () => {
+const initialize = (collectionName: string) => {
     initializeApp(firebaseConfig);
     const db = getFirestore();
-    const colRef = collection(db, "foundations");
+    const colRef = collection(db, collectionName);
     return colRef;
 };
 
-export const fetchData = async () => {
+export const fetchData = async (collectionName: string) => {
     try {
-        const ref = initialize();
+        const ref = initialize(collectionName);
         const snapshot = await getDocs(ref);
         let foundations: any = [];
         snapshot.forEach((doc) => {
