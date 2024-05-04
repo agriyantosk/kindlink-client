@@ -58,9 +58,20 @@ const DonationCard = ({ foundations }: any) => {
                                                 CONTRACT NYA
                                             </td>
                                             <td className="px-6 py-4">
-                                                {firebaseTimestampToDate(
-                                                    el.createdAt
-                                                )}
+                                                <h1>
+                                                    {
+                                                        firebaseTimestampToDate(
+                                                            el.createdAt
+                                                        ).formattedDate
+                                                    }
+                                                </h1>
+                                                <h1>
+                                                    {
+                                                        firebaseTimestampToDate(
+                                                            el.createdAt
+                                                        ).formattedTime
+                                                    }
+                                                </h1>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <Link

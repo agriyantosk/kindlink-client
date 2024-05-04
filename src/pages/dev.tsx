@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DevFilter from "./components/DevFilter";
-import DevTable from "./components/DevTable";
+import DevVoteTable from "./components/DevVoteTable";
 import { useFilterContext } from "./components/Layout";
 import { fetchData } from "@/utils/firebase";
 
@@ -23,10 +23,16 @@ const Dev = () => {
             <div className="w-full h-full flex justify-center items-start border bg-white border-gray-400 rounded-lg py-10">
                 <div className="flex flex-col justify-center items-center w-full gap-10">
                     <DevFilter filter={{ filterOption, setFilterOption }} />
-                    <DevTable
-                        filterOption={filterOption}
-                        candidates={candidates}
-                    />
+                    {filterOption === "progress" ? (
+                        <DevVoteTable
+                            filterOption={filterOption}
+                            candidates={candidates}
+                        />
+                    ) : filterOption === "add" ? (
+                        "add"
+                    ) : (
+                        "withdraw"
+                    )}
                 </div>
             </div>
         </>

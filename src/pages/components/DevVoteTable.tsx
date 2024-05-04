@@ -3,7 +3,7 @@ import {
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
 
-const DevTable = ({ filterOption, candidates }: any) => {
+const DevVoteTable = ({ filterOption, candidates }: any) => {
     return (
         <>
             <div className="relative overflow-y-auto w-full px-10">
@@ -34,7 +34,7 @@ const DevTable = ({ filterOption, candidates }: any) => {
                         candidates.map((el: any, index: number) => {
                             return (
                                 <>
-                                    <tbody>
+                                    <tbody key={index}>
                                         <tr className="border-b border-gray-400">
                                             <td
                                                 scope="row"
@@ -60,11 +60,41 @@ const DevTable = ({ filterOption, candidates }: any) => {
                                             <td className="px-6 py-4">
                                                 {el?.noVotes}
                                             </td>
-                                            <td className="px-6 py-4">{`${firebaseTimestampToDate(
-                                                el?.createdAt
-                                            )} - ${firebaseTimestampToDate(
-                                                el?.endVotingTime
-                                            )}`}</td>
+                                            <td className="px-6 py-4">
+                                                <div>
+                                                    <h1 className="text-xs font-bold">
+                                                        {
+                                                            firebaseTimestampToDate(
+                                                                el.createdAt
+                                                            ).formattedDate
+                                                        }
+                                                    </h1>
+                                                    <h1 className="text-xs">
+                                                        {
+                                                            firebaseTimestampToDate(
+                                                                el.createdAt
+                                                            ).formattedTime
+                                                        }
+                                                    </h1>
+                                                </div>
+                                                <h1 className="text-xs">-</h1>
+                                                <div>
+                                                    <h1 className="text-xs font-bold">
+                                                        {
+                                                            firebaseTimestampToDate(
+                                                                el.endVotingTime
+                                                            ).formattedDate
+                                                        }
+                                                    </h1>
+                                                    <h1 className="text-xs">
+                                                        {
+                                                            firebaseTimestampToDate(
+                                                                el.endVotingTime
+                                                            ).formattedTime
+                                                        }
+                                                    </h1>
+                                                </div>
+                                            </td>
                                             <td className="px-6 py-4">
                                                 {votingPeriodCompare(
                                                     el?.endVotingTime
@@ -75,7 +105,7 @@ const DevTable = ({ filterOption, candidates }: any) => {
                                             <td className="px-6 py-4 text-right">
                                                 <button
                                                     type="button"
-                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                                         !votingPeriodCompare(
                                                             el?.endVotingTime
                                                         )
@@ -88,7 +118,7 @@ const DevTable = ({ filterOption, candidates }: any) => {
                                                         )
                                                     }
                                                 >
-                                                    Approve Candidate
+                                                    Approve
                                                 </button>
                                             </td>
                                         </tr>
@@ -102,4 +132,4 @@ const DevTable = ({ filterOption, candidates }: any) => {
     );
 };
 
-export default DevTable;
+export default DevVoteTable;

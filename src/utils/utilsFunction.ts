@@ -23,10 +23,14 @@ export const firebaseTimestampToDate = (timestamp: any) => {
     const dayNumber = date.getDate();
     const month = months[date.getMonth()];
     const year = date.getFullYear();
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2);
+    const seconds = ("0" + date.getSeconds()).slice(-2);
 
     const formattedDate = `${day}, ${dayNumber} ${month} ${year}`;
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
 
-    return formattedDate;
+    return { formattedDate, formattedTime };
 };
 
 export const votingPeriodCompare = (timestamp: any) => {
