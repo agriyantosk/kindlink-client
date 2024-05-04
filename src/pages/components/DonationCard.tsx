@@ -20,7 +20,7 @@ const DonationCard = ({ foundations }: any) => {
                                 Participant
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Ended Vote Date
+                                End Voting Time
                             </th>
                             <th scope="col" className="px-6 py-3"></th>
                         </tr>
@@ -58,19 +58,21 @@ const DonationCard = ({ foundations }: any) => {
                                                 CONTRACT NYA
                                             </td>
                                             <td className="px-6 py-4">
-                                                <h1>
-                                                    {
+                                                <h1 className="font-bold">
+                                                    {`${
                                                         firebaseTimestampToDate(
                                                             el.createdAt
                                                         ).formattedDate
-                                                    }
-                                                </h1>
-                                                <h1>
-                                                    {
-                                                        firebaseTimestampToDate(
-                                                            el.createdAt
-                                                        ).formattedTime
-                                                    }
+                                                    } `}
+                                                    <span className="font-normal">
+                                                        (
+                                                        {
+                                                            firebaseTimestampToDate(
+                                                                el.createdAt
+                                                            ).formattedTime
+                                                        }
+                                                        )
+                                                    </span>
                                                 </h1>
                                             </td>
                                             <td className="px-6 py-4">

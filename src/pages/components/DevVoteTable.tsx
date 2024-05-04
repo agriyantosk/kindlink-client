@@ -20,7 +20,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                 No Votes
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Voting Period
+                                End Voting Time
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Status
@@ -38,7 +38,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                         <tr className="border-b border-gray-400">
                                             <td
                                                 scope="row"
-                                                className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                                                className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap"
                                             >
                                                 <img
                                                     className="w-10 h-10 rounded-full"
@@ -61,39 +61,22 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                 {el?.noVotes}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div>
-                                                    <h1 className="text-xs font-bold">
-                                                        {
-                                                            firebaseTimestampToDate(
-                                                                el.createdAt
-                                                            ).formattedDate
-                                                        }
-                                                    </h1>
-                                                    <h1 className="text-xs">
+                                                <h1 className="font-bold">
+                                                    {`${
+                                                        firebaseTimestampToDate(
+                                                            el.createdAt
+                                                        ).formattedDate
+                                                    } `}
+                                                    <span className="font-normal">
+                                                        (
                                                         {
                                                             firebaseTimestampToDate(
                                                                 el.createdAt
                                                             ).formattedTime
                                                         }
-                                                    </h1>
-                                                </div>
-                                                <h1 className="text-xs">-</h1>
-                                                <div>
-                                                    <h1 className="text-xs font-bold">
-                                                        {
-                                                            firebaseTimestampToDate(
-                                                                el.endVotingTime
-                                                            ).formattedDate
-                                                        }
-                                                    </h1>
-                                                    <h1 className="text-xs">
-                                                        {
-                                                            firebaseTimestampToDate(
-                                                                el.endVotingTime
-                                                            ).formattedTime
-                                                        }
-                                                    </h1>
-                                                </div>
+                                                        )
+                                                    </span>
+                                                </h1>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {votingPeriodCompare(
