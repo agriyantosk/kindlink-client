@@ -10,6 +10,7 @@ import {
     query,
     serverTimestamp,
     where,
+    Timestamp,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -20,6 +21,8 @@ const firebaseConfig = {
     messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
+import { FormData } from "@/interfaces/interface";
+import firebase from "firebase/app";
 
 const initialize = (collectionName: string) => {
     initializeApp(firebaseConfig);
@@ -42,18 +45,17 @@ export const fetchData = async (collectionName: string) => {
     }
 };
 
-export const addData = async (
-    collectionName: string,
-    name: string,
-    description: string
-) => {
+export const addData = async (collectionName: string, formData: FormData) => {
     try {
+        const sevenDaysFromNow = new Date();
+        sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+        const data = {
+            ...formData,
+            createdAt: Timestamp.now(),
+            endVotingTime: Timestamp.fromDate(sevenDaysFromNow),
+        };
         const ref = initialize(collectionName);
-        const add = await addDoc(ref, {
-            name,
-            description,
-            createdAt: serverTimestamp,
-        });
+        const add = await addDoc(ref, data);
         console.log(
             `Successfully Addded New Foundations: ${JSON.stringify(add)}`
         );

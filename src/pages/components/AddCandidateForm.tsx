@@ -1,24 +1,11 @@
+import { addData } from "@/utils/firebase";
 import {
     dateToFirebaseTimestamp,
     firebaseTimestampToDate,
 } from "@/utils/utilsFunction";
 import firebase from "firebase/firestore";
 import { ChangeEvent, useEffect, useState } from "react";
-
-interface FormData {
-    coWithdrawalAddress: string;
-    description: string;
-    endVotingTime: any;
-    imgUrl: string;
-    instagramUrl: string;
-    name: string;
-    websiteUrl: string;
-    withdrawalAddress: string;
-    xUrl: string;
-    yesVotes: number;
-    noVotes: number;
-    createdAt: any;
-}
+import { FormData } from "@/interfaces/interface";
 
 const endVotingDate = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
 
@@ -26,7 +13,7 @@ const AddCandidateForm = () => {
     const [formData, setFormData] = useState<FormData>({
         coWithdrawalAddress: "",
         description: "",
-        endVotingTime: dateToFirebaseTimestamp(endVotingDate),
+        // endVotingTime: dateToFirebaseTimestamp(endVotingDate),
         imgUrl: "",
         instagramUrl: "",
         name: "",
@@ -35,7 +22,6 @@ const AddCandidateForm = () => {
         xUrl: "",
         yesVotes: 0,
         noVotes: 0,
-        createdAt: dateToFirebaseTimestamp(new Date()),
     });
 
     useEffect(() => {
@@ -54,9 +40,13 @@ const AddCandidateForm = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log(formData);
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault();
+            await addData("candidates", formData);
+        } catch (error) {
+            console.log(error);
+        }
     };
     return (
         <>
