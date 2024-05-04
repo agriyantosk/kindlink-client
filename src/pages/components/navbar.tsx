@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 const Navbar = () => {
+    const { address, isConnected } = useAccount();
+    const addresses = JSON.parse(
+        process.env.NEXT_PUBLIC_DEVELOPER_ADDRESSES as string
+    );
+    const checkConnected = (walletAddress: string): boolean => {
+        return addresses.includes(walletAddress as string);
+    };
     return (
         <>
             <header className="sticky inset-0 z-50 bg-transparent backdrop-blur-lg">
@@ -28,6 +36,17 @@ const Navbar = () => {
                                     <p>Vote</p>
                                 </li>
                             </Link>
+                            {isConnected &&
+                            address &&
+                            checkConnected(address?.toString()) === true ? (
+                                <Link href={"/dev"}>
+                                    <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                        <p>Dev</p>
+                                    </li>
+                                </Link>
+                            ) : (
+                                <></>
+                            )}
                         </ul>
                     </div>
                     <div className="flex items-center justify-center">

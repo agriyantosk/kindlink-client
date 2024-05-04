@@ -29,7 +29,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                     )}
                     <div className="h-screen flex flex-col px-96">
                         <Navbar />
-                        <div className="flex-grow">{children}</div>
+                        <div className="flex-grow my-10">{children}</div>
                     </div>
                     {/* <Footer /> */}
                 </>
