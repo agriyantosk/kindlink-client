@@ -1,11 +1,11 @@
-import DevFilter from "./DevFilter";
+import {
+    firebaseTimestampToDate,
+    votingPeriodCompare,
+} from "@/utils/utilsFunction";
 
-const DevTable = ({ filterOption }: any) => {
+const DevTable = ({ filterOption, candidates }: any) => {
     return (
         <>
-            <div className="text-5xl font-bold">
-                <h1>FilterOption: {filterOption}</h1>
-            </div>
             <div className="relative overflow-y-auto w-full px-10">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase">
@@ -30,28 +30,72 @@ const DevTable = ({ filterOption }: any) => {
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr className="border-b border-gray-400">
-                            <th
-                                scope="row"
-                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            >
-                                Apple MacBook Pro 17"
-                            </th>
-                            <td className="px-6 py-4">Silver</td>
-                            <td className="px-6 py-4">Laptop</td>
-                            <td className="px-6 py-4">$2999</td>
-                            <td className="px-6 py-4">$2999</td>
-                            <td className="px-6 py-4 text-right">
-                                <button
-                                    type="button"
-                                    className="rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-                                >
-                                    Approve Candidate
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    {candidates &&
+                        candidates.map((el: any, index: number) => {
+                            return (
+                                <>
+                                    <tbody>
+                                        <tr className="border-b border-gray-400">
+                                            <td
+                                                scope="row"
+                                                className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+                                            >
+                                                <img
+                                                    className="w-10 h-10 rounded-full"
+                                                    src={el?.imgUrl}
+                                                    alt="Foundation Logo"
+                                                />
+                                                <div className="ps-3">
+                                                    <div className="text-base font-semibold">
+                                                        {el?.name}
+                                                    </div>
+                                                    <div className="font-normal text-gray-500">
+                                                        Category
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {el?.yesVotes}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {el?.noVotes}
+                                            </td>
+                                            <td className="px-6 py-4">{`${firebaseTimestampToDate(
+                                                el?.createdAt
+                                            )} - ${firebaseTimestampToDate(
+                                                el?.endVotingTime
+                                            )}`}</td>
+                                            <td className="px-6 py-4">
+                                                {votingPeriodCompare(
+                                                    el?.endVotingTime
+                                                )
+                                                    ? "Ongoing"
+                                                    : "Ended"}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button
+                                                    type="button"
+                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                                        !votingPeriodCompare(
+                                                            el?.endVotingTime
+                                                        )
+                                                            ? "cursor-not-allowed opacity-50"
+                                                            : ""
+                                                    }`}
+                                                    disabled={
+                                                        !votingPeriodCompare(
+                                                            el?.endVotingTime
+                                                        )
+                                                    }
+                                                >
+                                                    Approve Candidate
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </>
+                            );
+                        })}
                 </table>
             </div>
         </>

@@ -28,3 +28,15 @@ export const firebaseTimestampToDate = (timestamp: any) => {
 
     return formattedDate;
 };
+
+export const votingPeriodCompare = (timestamp: any) => {
+    const currentTime = Date.now();
+    const timestampMilliseconds =
+        timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
+
+    if (timestampMilliseconds > currentTime) {
+        return true;
+    } else {
+        return false;
+    }
+};
