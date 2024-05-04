@@ -4,11 +4,17 @@ import { useAccount } from "wagmi";
 
 const Navbar = () => {
     const { address, isConnected } = useAccount();
-    const addresses = JSON.parse(
+    const developerAddresses = JSON.parse(
         process.env.NEXT_PUBLIC_DEVELOPER_ADDRESSES as string
     );
-    const checkConnected = (walletAddress: string): boolean => {
-        return addresses.includes(walletAddress as string);
+    const foundationAddresses = JSON.parse(
+        process.env.NEXT_PUBLIC_FOUNDATION_ADDRESSES as string
+    );
+    const checkDeveloperAddress = (walletAddress: string): boolean => {
+        return developerAddresses.includes(walletAddress as string);
+    };
+    const checkFoundationAddress = (walletAddress: string) => {
+        return foundationAddresses.includes(walletAddress as string);
     };
     return (
         <>
@@ -38,10 +44,23 @@ const Navbar = () => {
                             </Link>
                             {isConnected &&
                             address &&
-                            checkConnected(address?.toString()) === true ? (
+                            checkDeveloperAddress(address?.toString()) ===
+                                true ? (
                                 <Link href={"/dev"}>
                                     <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                         <p>Dev</p>
+                                    </li>
+                                </Link>
+                            ) : (
+                                <></>
+                            )}
+                            {isConnected &&
+                            address &&
+                            checkFoundationAddress(address?.toString()) ===
+                                true ? (
+                                <Link href={"/foundations"}>
+                                    <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                        <p>Withdrawal</p>
                                     </li>
                                 </Link>
                             ) : (

@@ -13,7 +13,6 @@ const AddCandidateForm = () => {
     const [formData, setFormData] = useState<FormData>({
         coWithdrawalAddress: "",
         description: "",
-        // endVotingTime: dateToFirebaseTimestamp(endVotingDate),
         imgUrl: "",
         instagramUrl: "",
         name: "",
@@ -50,12 +49,12 @@ const AddCandidateForm = () => {
     };
     return (
         <>
-            <div className="flex w-full items-center gap-5 h-full p-10">
+            <div className="flex w-full items-center gap-5 h-full px-10">
                 <div className="w-[40%]">
                     <img
                         src="https://img.freepik.com/free-vector/employees-cv-candidates-resume-corporate-workers-students-id-isolate-flat-design-element-job-applications-avatars-personal-information-concept-illustration_335657-1661.jpg?t=st=1714790270~exp=1714793870~hmac=00238abcae935e65190f45eb50558934abd83dc6c218390dd4e50245d7c699c9&w=826"
                         alt="Registration Icon"
-                        className="object-contain w-full h-full"
+                        className="object-fill w-full h-full"
                     />
                 </div>
                 <div className="w-[60%]">

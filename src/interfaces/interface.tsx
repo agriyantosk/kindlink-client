@@ -1,7 +1,6 @@
 export interface FormData {
     coWithdrawalAddress: string;
     description: string;
-    // endVotingTime: any;
     imgUrl: string;
     instagramUrl: string;
     name: string;
