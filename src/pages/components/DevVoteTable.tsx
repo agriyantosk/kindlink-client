@@ -25,9 +25,6 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                             <th scope="col" className="px-6 py-3">
                                 Status
                             </th>
-                            <th scope="col" className="px-6 py-3">
-                                <span className="sr-only">Edit</span>
-                            </th>
                         </tr>
                     </thead>
                     {candidates &&

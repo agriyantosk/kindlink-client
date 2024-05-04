@@ -1,3 +1,8 @@
+interface FirebaseTimestamp {
+    seconds: number;
+    nanoseconds: number;
+}
+
 export const firebaseTimestampToDate = (timestamp: any) => {
     const date = new Date(
         timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
@@ -43,4 +48,10 @@ export const votingPeriodCompare = (timestamp: any) => {
     } else {
         return false;
     }
+};
+
+export const dateToFirebaseTimestamp = (date: any): FirebaseTimestamp => {
+    const seconds = Math.floor(date / 1000);
+    const nanoseconds = (date % 1000) * 1000000;
+    return { seconds, nanoseconds };
 };
