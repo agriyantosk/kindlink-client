@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-const DevFilter = () => {
-    const [filterOption, setFilterOption] = useState<string>("progress");
+const DevFilter = ({ filter }: any) => {
+    const { filterOption, setFilterOption } = filter;
     const handleFilterChange = (input: string) => {
         setFilterOption(input);
     };
     return (
         <>
-            <div className="inline-flex rounded-md shadow-sm" role="group">
+            <div className="inline-flex rounded-md" role="group">
                 <button
                     type="button"
                     onClick={() => handleFilterChange("progress")}
