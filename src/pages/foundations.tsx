@@ -1,11 +1,43 @@
+import { abi } from "@/utils/abi";
+import { publicClient } from "@/utils/client";
 import { fetchData } from "@/utils/firebase";
 import { useEffect, useState } from "react";
+import { getContract } from "viem";
 import { useAccount } from "wagmi";
 
 const Foundations = () => {
+    // const getState = async () => {
+    //     try {
+    //         const data = await publicClient.readContract({
+    //             address: "0x4E4be9B1d5A249E9b23e1d132808b6dE495367Da",
+    //             abi: abi,
+    //             functionName: "ownerAddress",
+    //         });
+    //         console.log(data);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+
     const [contractAddress, setContractAddress] = useState<any>();
-    const dummyAddress = "0xuserwalletaddress1";
     const { address } = useAccount();
+    const getState = async () => {
+        try {
+            const contract = getContract({
+                address: contractAddress,
+                abi: abi,
+                client: publicClient,
+            });
+            const data = {
+                ownerAddress: await contract.read.ownerAddress(),
+                withdrawalAddress: await contract.read.withdrawalAddress(),
+                coWithdrawalAddress: await contract.read.coWithdrawalAddress(),
+            };
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     function findContractAddressForUser(
         userWalletAddress: string,
         contractDetails: any
@@ -36,6 +68,7 @@ const Foundations = () => {
     };
     useEffect(() => {
         fetchContract();
+        getState();
     }, [address]);
     return (
         <>
