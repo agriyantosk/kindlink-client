@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { abi } from "@/utils/abi";
 import { publicClient } from "@/utils/client";
+import { addData } from "@/utils/firebase";
 
 const Withdrawal = ({
     contractAddress,
@@ -20,8 +21,10 @@ const Withdrawal = ({
     });
     const getAddressApprovalState = async () => {
         try {
-            const data = await contract.read.getHasApproved([address]);
-            setAddressApproval(data);
+            if (address) {
+                const data = await contract.read.getHasApproved([address]);
+                setAddressApproval(data);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -93,6 +96,9 @@ const Withdrawal = ({
                 <div>
                     {!contractState?.isRequestWithdrawal ? (
                         <button
+                            onClick={() => {
+                                addData("approval", { contractAddress });
+                            }}
                             className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                 address !== contractState?.ownerAddress
                                     ? "cursor-not-allowed"
