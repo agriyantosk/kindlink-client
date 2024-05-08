@@ -34,7 +34,16 @@ const Dev = () => {
                     ) : filterOption === "add" ? (
                         <AddCandidateForm />
                     ) : (
-                        "withdraw"
+                        <div>
+                            <h1>
+                                1. fetch dari firebase yang bagian "approval"
+                            </h1>
+                            <h1>
+                                2. bikin button function untuk approve each
+                                contractAddress
+                            </h1>
+                            <h1>3. hapus ketika approve berhasil</h1>
+                        </div>
                     )}
                 </div>
             </div>

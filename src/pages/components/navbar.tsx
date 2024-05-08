@@ -58,7 +58,7 @@ const Navbar = () => {
                             address &&
                             checkFoundationAddress(address?.toString()) ===
                                 true ? (
-                                <Link href={"/foundations"}>
+                                <Link href={"/withdrawal"}>
                                     <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                         <p>Withdrawal</p>
                                     </li>

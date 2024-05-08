@@ -1,11 +1,47 @@
 import { useAccount } from "wagmi";
+import Approval from "./Approval";
+import { useEffect, useState } from "react";
+import { getContract } from "viem";
+import { abi } from "@/utils/abi";
+import { publicClient } from "@/utils/client";
 
 const Withdrawal = ({
     contractAddress,
     contractState,
     contractBalance,
+    approvalState,
 }: any) => {
     const { address } = useAccount();
+    const [addressApproval, setAddressApproval] = useState<any>();
+    const contract = getContract({
+        address: contractAddress,
+        abi: abi,
+        client: publicClient,
+    });
+    const getAddressApprovalState = async () => {
+        try {
+            const data = await contract.read.getHasApproved([address]);
+            setAddressApproval(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const checkApproval = () => {
+        if (approvalState) {
+            if (
+                !approvalState.ownerAddress ||
+                !approvalState.withdrawalAddress ||
+                !approvalState.coWithdrawalAddress
+            ) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    };
+    useEffect(() => {
+        getAddressApprovalState();
+    }, []);
     return (
         <>
             <div className="flex flex-col h-full gap-10">
@@ -14,7 +50,8 @@ const Withdrawal = ({
                         <h1>Contract Address: {contractAddress}</h1>
                         <h1>
                             <a
-                                href={`https://https://sepolia.etherscan.io/address/${contractAddress}`}
+                                href={`https://sepolia.etherscan.io/address/${contractAddress}`}
+                                target="_blank"
                             >
                                 <svg
                                     viewBox="0 0 123 123"
@@ -42,6 +79,10 @@ const Withdrawal = ({
                                 : "No Ongoing Withdrawal"}
                         </h1>
                     </div>
+                    <Approval
+                        approvalState={approvalState}
+                        contractState={contractState}
+                    />
                 </div>
                 <div>
                     <h1 className="text-4xl font-bold">
@@ -50,17 +91,52 @@ const Withdrawal = ({
                     <h1>Total Funds Received</h1>
                 </div>
                 <div>
-                    <button
-                        className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                            address == contractState?.ownerAddress
-                                ? "cursor-not-allowed"
-                                : ""
-                        }`}
-                        disabled={address == contractState?.ownerAddress}
-                    >
-                        Withdraw Funds
-                    </button>
+                    {!contractState?.isRequestWithdrawal ? (
+                        <button
+                            className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                address !== contractState?.ownerAddress
+                                    ? "cursor-not-allowed"
+                                    : ""
+                            }`}
+                            disabled={address !== contractState?.ownerAddress}
+                        >
+                            Request Withdrawal
+                        </button>
+                    ) : (
+                        <div className="flex gap-5">
+                            <button
+                                className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                    addressApproval ? "cursor-not-allowed" : ""
+                                }`}
+                                disabled={addressApproval}
+                            >
+                                Approve
+                            </button>
+                            <button
+                                className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                    checkApproval() !== true ||
+                                    address !== contractState?.ownerAddress
+                                        ? "cursor-not-allowed"
+                                        : ""
+                                }`}
+                                disabled={
+                                    checkApproval() !== true ||
+                                    address !== contractState?.ownerAddress
+                                }
+                            >
+                                Withdraw
+                            </button>
+                        </div>
+                    )}
                 </div>
+            </div>
+            <div>
+                <h1>WITHDRAW</h1>
+                <h1>
+                    1. Tambahin function add ke firebase bagian "approval",
+                    ketika ada yang request approval harus nambahin ke firebase
+                    untuk dibagian dev nya
+                </h1>
             </div>
         </>
     );
