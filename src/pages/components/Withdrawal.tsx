@@ -27,7 +27,9 @@ const Withdrawal = ({
                 "contractAddress",
                 contractAddress
             );
-            setFoundationData(fetchFoundation);
+            if (fetchFoundation) {
+                setFoundationData(fetchFoundation[0]);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -150,14 +152,6 @@ const Withdrawal = ({
                         </div>
                     )}
                 </div>
-            </div>
-            <div>
-                <h1>WITHDRAW</h1>
-                <h1>
-                    1. Tambahin function add ke firebase bagian "approval",
-                    ketika ada yang request approval harus nambahin ke firebase
-                    untuk dibagian dev nya
-                </h1>
             </div>
         </>
     );

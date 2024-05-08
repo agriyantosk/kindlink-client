@@ -2,11 +2,11 @@ import { fetchData } from "@/utils/firebase";
 import { useEffect, useState } from "react";
 
 const DevWithdrawalApproval = () => {
-    const [contractAddresses, setContractAddresses] = useState<any>();
+    const [approvalRequest, setApprovalRequest] = useState<any>();
     const fetchWithdrawal = async () => {
         try {
             const withdrawalData = await fetchData("approval");
-            alert(JSON.stringify(withdrawalData));
+            setApprovalRequest(withdrawalData);
         } catch (error) {
             console.log(error);
         }
@@ -38,8 +38,9 @@ const DevWithdrawalApproval = () => {
                             </th>
                         </tr>
                     </thead>
-                    {/* {candidates &&
-                        candidates.map((el: any, index: number) => {
+                    {approvalRequest &&
+                        approvalRequest.map((el: any, index: number) => {
+                            console.log(approvalRequest);
                             return (
                                 <>
                                     <tbody key={index}>
@@ -70,7 +71,7 @@ const DevWithdrawalApproval = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <h1 className="font-bold">
-                                                    {`${
+                                                    {/* {`${
                                                         firebaseTimestampToDate(
                                                             el.createdAt
                                                         ).formattedDate
@@ -83,18 +84,18 @@ const DevWithdrawalApproval = () => {
                                                             ).formattedTime
                                                         }
                                                         )
-                                                    </span>
+                                                    </span> */}
                                                 </h1>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {votingPeriodCompare(
+                                                {/* {votingPeriodCompare(
                                                     el?.endVotingTime
                                                 )
                                                     ? "Ongoing"
-                                                    : "Ended"}
+                                                    : "Ended"} */}
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <button
+                                                {/* <button
                                                     type="button"
                                                     className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                                         !votingPeriodCompare(
@@ -110,13 +111,13 @@ const DevWithdrawalApproval = () => {
                                                     }
                                                 >
                                                     Approve
-                                                </button>
+                                                </button> */}
                                             </td>
                                         </tr>
                                     </tbody>
                                 </>
                             );
-                        })} */}
+                        })}
                 </table>
             </div>
         </>
