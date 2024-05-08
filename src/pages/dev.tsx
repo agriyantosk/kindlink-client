@@ -4,6 +4,7 @@ import DevVoteTable from "./components/DevVoteTable";
 import { useFilterContext } from "./components/Layout";
 import { fetchData } from "@/utils/firebase";
 import AddCandidateForm from "./components/AddCandidateForm";
+import DevWithdrawalApproval from "./components/DevWithdrawalApproval";
 
 const Dev = () => {
     const { filterOption, setFilterOption } = useFilterContext();
@@ -35,14 +36,7 @@ const Dev = () => {
                         <AddCandidateForm />
                     ) : (
                         <div>
-                            <h1>
-                                1. fetch dari firebase yang bagian "approval"
-                            </h1>
-                            <h1>
-                                2. bikin button function untuk approve each
-                                contractAddress
-                            </h1>
-                            <h1>3. hapus ketika approve berhasil</h1>
+                            <DevWithdrawalApproval />
                         </div>
                     )}
                 </div>

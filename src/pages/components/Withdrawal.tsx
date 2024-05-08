@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { abi } from "@/utils/abi";
 import { publicClient } from "@/utils/client";
-import { addData } from "@/utils/firebase";
+import { addData, queryEqualsTo } from "@/utils/firebase";
 
 const Withdrawal = ({
     contractAddress,
@@ -14,12 +14,25 @@ const Withdrawal = ({
 }: any) => {
     const { address } = useAccount();
     const [addressApproval, setAddressApproval] = useState<any>();
+    const [foundationData, setFoundationData] = useState<any>();
     const contract = getContract({
         address: contractAddress,
         abi: abi,
         client: publicClient,
     });
-    const getAddressApprovalState = async () => {
+    const getFoundationData = async () => {
+        try {
+            const fetchFoundation = await queryEqualsTo(
+                "foundations",
+                "contractAddress",
+                contractAddress
+            );
+            setFoundationData(fetchFoundation);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getWalletAddressApprovalState = async () => {
         try {
             if (address) {
                 const data = await contract.read.getHasApproved([address]);
@@ -43,8 +56,13 @@ const Withdrawal = ({
         }
     };
     useEffect(() => {
-        getAddressApprovalState();
+        getWalletAddressApprovalState();
     }, []);
+    useEffect(() => {
+        if (contractAddress) {
+            getFoundationData();
+        }
+    }, [contractAddress]);
     return (
         <>
             <div className="flex flex-col h-full gap-10">
@@ -82,10 +100,7 @@ const Withdrawal = ({
                                 : "No Ongoing Withdrawal"}
                         </h1>
                     </div>
-                    <Approval
-                        approvalState={approvalState}
-                        contractState={contractState}
-                    />
+                    <Approval approvalState={approvalState} />
                 </div>
                 <div>
                     <h1 className="text-4xl font-bold">
@@ -97,7 +112,7 @@ const Withdrawal = ({
                     {!contractState?.isRequestWithdrawal ? (
                         <button
                             onClick={() => {
-                                addData("approval", { contractAddress });
+                                addData("approval", foundationData);
                             }}
                             className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                 address !== contractState?.ownerAddress

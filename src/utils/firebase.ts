@@ -47,7 +47,10 @@ export const fetchData = async (collectionName: string) => {
 
 export const addData = async (collectionName: string, formData: any) => {
     try {
-        let data;
+        let data = {
+            ...formData,
+            createdAt: Timestamp.now(),
+        };
         if (
             collectionName === "foundations" ||
             collectionName === "candidates"
@@ -55,14 +58,10 @@ export const addData = async (collectionName: string, formData: any) => {
             const sevenDaysFromNow = new Date();
             sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
             data = {
-                ...formData,
-                createdAt: Timestamp.now(),
+                ...data,
                 endVotingTime: Timestamp.fromDate(sevenDaysFromNow),
             };
-        } else {
-            data = formData;
         }
-        alert(JSON.stringify(data));
         const ref = initialize(collectionName);
         const add = await addDoc(ref, data);
         alert(`Successfully Addded New Foundations: ${JSON.stringify(add)}`);
