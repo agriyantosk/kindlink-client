@@ -63,7 +63,6 @@ export const addCandidateData = async (
         const existingData = docSnapshot.data();
         const existingAddresses = existingData?.foundationOwnerAddress || [];
         const parsed = JSON.parse(existingAddresses);
-        console.log(parsed);
         parsed.push(formData);
         const addCandidate = await updateDoc(docRef, {
             foundationOwnerAddress: JSON.stringify(parsed),
@@ -102,6 +101,36 @@ export const deleteData = async (id: string) => {
                 deleteFoundation
             )}`
         );
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const deleteCandidate = async (
+    collectionName: string,
+    addressToDelete: string,
+    documentId: string
+) => {
+    try {
+        const db = getFirestore();
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+        if (!docSnapshot.exists) {
+            console.error(`Document ${documentId} does not exist.`);
+            return;
+        }
+        const existingData = docSnapshot.data();
+        const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const parsed = JSON.parse(existingAddresses);
+        const newArray = parsed.filter(
+            (el: any) => el !== "0x6F40F9290e36bCFc033675730cC4441A8C97f599"
+        );
+        const updateCandidate = await updateDoc(docRef, {
+            foundationOwnerAddress: JSON.stringify(newArray),
+        });
+        return `Successfully Added foundation candidate: ${JSON.stringify(
+            updateCandidate
+        )}`;
     } catch (error) {
         console.log(error);
     }

@@ -1,9 +1,21 @@
+import { deleteCandidate } from "@/utils/firebase";
 import {
     firebaseTimestampToDate,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
 
 const DevVoteTable = ({ filterOption, candidates }: any) => {
+    const handleDeleteCandidate = async () => {
+        try {
+            const del = await deleteCandidate(
+                "candidateAddresses",
+                "0xd970296155f94540f622dc727932684Fd418de2D",
+                "kjqc51iTPhLPAtFqdRoZ"
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
             <div className="relative overflow-y-auto w-full px-10">
@@ -96,6 +108,9 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                         !votingPeriodCompare(
                                                             el?.endVotingTime
                                                         )
+                                                    }
+                                                    onClick={() =>
+                                                        handleDeleteCandidate()
                                                     }
                                                 >
                                                     Approve
