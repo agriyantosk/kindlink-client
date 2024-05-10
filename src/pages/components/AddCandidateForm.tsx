@@ -6,7 +6,7 @@ import {
 import firebase from "firebase/firestore";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
-import { addCandidate } from "@/utils/smartContractInteraction";
+import { addCandidate, donate } from "@/utils/smartContractInteraction";
 
 const endVotingDate = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
 
@@ -40,10 +40,10 @@ const AddCandidateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
-            // const contractAdd = await addCandidate(
-            //     formData.withdrawalAddress,
-            //     formData.coWithdrawalAddress
-            // );
+            const contractAdd = await addCandidate(
+                formData.foundationOwnerAddress,
+                formData.foundationCoOwnerAddress
+            );
             const firebaseCandidateAdd = await addCandidateData(
                 "candidateAddresses",
                 formData.foundationOwnerAddress,
@@ -60,6 +60,7 @@ const AddCandidateForm = () => {
                     xUrl: formData.xUrl,
                 }
             );
+            console.log(contractAdd);
             console.log(firebaseCandidateAdd);
             console.log(firebaseInformationAdd);
         } catch (error) {
@@ -234,6 +235,13 @@ const AddCandidateForm = () => {
                     </form>
                 </div>
             </div>
+            <button
+                onClick={() =>
+                    donate("0xd970296155f94540f622dc727932684Fd418de2D", 1)
+                }
+            >
+                COBA DONATE
+            </button>
         </>
     );
 };
