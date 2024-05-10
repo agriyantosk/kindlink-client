@@ -5,6 +5,7 @@ import { useFilterContext } from "./components/Layout";
 import { fetchData } from "@/utils/firebase";
 import AddCandidateForm from "./components/AddCandidateForm";
 import DevWithdrawalApproval from "./components/DevWithdrawalApproval";
+import { addCandidate } from "@/utils/smartContractInteraction";
 
 const Dev = () => {
     const { filterOption, setFilterOption } = useFilterContext();

@@ -1,12 +1,10 @@
 export interface FormData {
-    coWithdrawalAddress: string;
+    foundationCoOwnerAddress: string;
     description: string;
     imgUrl: string;
     instagramUrl: string;
     name: string;
     websiteUrl: string;
-    withdrawalAddress: string;
+    foundationOwnerAddress: string;
     xUrl: string;
-    yesVotes: number;
-    noVotes: number;
 }

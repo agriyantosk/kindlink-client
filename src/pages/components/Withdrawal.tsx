@@ -2,7 +2,7 @@ import { useAccount } from "wagmi";
 import Approval from "./Approval";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
-import { abi } from "@/utils/abi";
+import { kindlinkAbi } from "@/utils/kindlinkAbi";
 import { publicClient } from "@/utils/client";
 import { addData, queryEqualsTo } from "@/utils/firebase";
 
@@ -17,7 +17,7 @@ const Withdrawal = ({
     const [foundationData, setFoundationData] = useState<any>();
     const contract = getContract({
         address: contractAddress,
-        abi: abi,
+        abi: kindlinkAbi,
         client: publicClient,
     });
     const getFoundationData = async () => {

@@ -1,4 +1,4 @@
-import { addData } from "@/utils/firebase";
+import { addCandidateData, addInformationData } from "@/utils/firebase";
 import {
     dateToFirebaseTimestamp,
     firebaseTimestampToDate,
@@ -6,28 +6,26 @@ import {
 import firebase from "firebase/firestore";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
+import { addCandidate } from "@/utils/smartContractInteraction";
 
 const endVotingDate = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
 
 const AddCandidateForm = () => {
     const [formData, setFormData] = useState<FormData>({
-        coWithdrawalAddress: "",
+        foundationCoOwnerAddress: "",
         description: "",
         imgUrl: "",
         instagramUrl: "",
         name: "",
         websiteUrl: "",
-        withdrawalAddress: "",
+        foundationOwnerAddress: "",
         xUrl: "",
-        yesVotes: 0,
-        noVotes: 0,
     });
 
     useEffect(() => {
         if (firebase) {
             setFormData((prevData) => ({
                 ...prevData,
-                createdAt: firebase.Timestamp.now(),
             }));
         }
     }, [firebase]);
@@ -42,7 +40,28 @@ const AddCandidateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
-            await addData("candidates", formData);
+            // const contractAdd = await addCandidate(
+            //     formData.withdrawalAddress,
+            //     formData.coWithdrawalAddress
+            // );
+            const firebaseCandidateAdd = await addCandidateData(
+                "candidateAddresses",
+                formData.foundationOwnerAddress,
+                "kjqc51iTPhLPAtFqdRoZ"
+            );
+            const firebaseInformationAdd = await addInformationData(
+                "information",
+                {
+                    description: formData.description,
+                    imgUrl: formData.imgUrl,
+                    instagramUrl: formData.instagramUrl,
+                    name: formData.name,
+                    websiteUrl: formData.websiteUrl,
+                    xUrl: formData.xUrl,
+                }
+            );
+            console.log(firebaseCandidateAdd);
+            console.log(firebaseInformationAdd);
         } catch (error) {
             console.log(error);
         }
@@ -116,9 +135,9 @@ const AddCandidateForm = () => {
                             <div className="relative z-0 w-full mb-5 group">
                                 <input
                                     type="text"
-                                    name="withdrawalAddress"
-                                    id="withdrawalAddress"
-                                    value={formData.withdrawalAddress}
+                                    name="foundationOwnerAddress"
+                                    id="foundationOwnerAddress"
+                                    value={formData.foundationOwnerAddress}
                                     onChange={handleChange}
                                     className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" "
@@ -134,9 +153,9 @@ const AddCandidateForm = () => {
                             <div className="relative z-0 w-full mb-5 group">
                                 <input
                                     type="text"
-                                    name="coWithdrawalAddress"
-                                    id="coWithdrawalAddress"
-                                    value={formData.coWithdrawalAddress}
+                                    name="foundationCoOwnerAddress"
+                                    id="foundationCoOwnerAddress"
+                                    value={formData.foundationCoOwnerAddress}
                                     onChange={handleChange}
                                     className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                     placeholder=" "

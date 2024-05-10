@@ -11,6 +11,8 @@ import {
     serverTimestamp,
     where,
     Timestamp,
+    updateDoc,
+    getDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -45,26 +47,46 @@ export const fetchData = async (collectionName: string) => {
     }
 };
 
-export const addData = async (collectionName: string, formData: any) => {
+export const addCandidateData = async (
+    collectionName: string,
+    formData: any,
+    documentId: string
+) => {
     try {
-        let data = {
-            ...formData,
-            createdAt: Timestamp.now(),
-        };
-        if (
-            collectionName === "foundations" ||
-            collectionName === "candidates"
-        ) {
-            const sevenDaysFromNow = new Date();
-            sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-            data = {
-                ...data,
-                endVotingTime: Timestamp.fromDate(sevenDaysFromNow),
-            };
+        const db = getFirestore();
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+        if (!docSnapshot.exists) {
+            console.error(`Document ${documentId} does not exist.`);
+            return;
         }
-        const ref = initialize(collectionName);
-        const add = await addDoc(ref, data);
-        alert(`Successfully Addded New Foundations: ${JSON.stringify(add)}`);
+        const existingData = docSnapshot.data();
+        const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const parsed = JSON.parse(existingAddresses);
+        console.log(parsed);
+        parsed.push(formData);
+        const addCandidate = await updateDoc(docRef, {
+            foundationOwnerAddress: JSON.stringify(parsed),
+        });
+        return `Successfully Added foundation candidate: ${JSON.stringify(
+            addCandidate
+        )}`;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const addInformationData = async (
+    collectionName: string,
+    formData: any
+) => {
+    try {
+        const db = getFirestore();
+        const colRef = collection(db, collectionName);
+        const addInformation = await addDoc(colRef, formData);
+        return `Successfully Added foundation information: ${JSON.stringify(
+            addInformation
+        )}`;
     } catch (error) {
         console.log(error);
     }

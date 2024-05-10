@@ -1,4 +1,4 @@
-import { abi } from "@/utils/abi";
+import { kindlinkAbi } from "@/utils/kindlinkAbi";
 import { publicClient } from "@/utils/client";
 import { fetchData } from "@/utils/firebase";
 import { useEffect, useState } from "react";
@@ -14,7 +14,7 @@ const Foundations = () => {
     const { address } = useAccount();
     const contract = getContract({
         address: contractAddress,
-        abi: abi,
+        abi: kindlinkAbi,
         client: publicClient,
     });
 
