@@ -33,15 +33,40 @@ const initialize = (collectionName: string) => {
     return colRef;
 };
 
-export const fetchData = async (collectionName: string) => {
+export const fetchFirebaseWallet = async (collectionName: string) => {
     try {
         const ref = initialize(collectionName);
         const snapshot = await getDocs(ref);
-        let foundations: any = [];
+        // let candidates: any = [];
+        let data: any;
         snapshot.forEach((doc) => {
-            foundations.push({ ...doc.data(), id: doc.id });
+            const parsedOwnerAddress = JSON.parse(
+                doc.data().foundationOwnerAddress
+            );
+            // candidates.push(parsedOwnerAddress);
+            data = parsedOwnerAddress;
         });
-        return foundations;
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const queryIn = async (values: string) => {
+    try {
+        // const ref = initialize(collectionName);
+        const db = getFirestore();
+        const colRef = collection(db, "information");
+        const q = query(colRef, where("foundationOwnerAddress", "in", values));
+        const querySnapshot = await getDocs(q);
+
+        const queryResult: any = [];
+        querySnapshot.forEach((doc) => {
+            queryResult.push({ ...doc.data(), id: doc.id });
+        });
+
+        return queryResult;
     } catch (error) {
         console.log(error);
     }

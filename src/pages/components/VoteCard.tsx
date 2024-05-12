@@ -2,26 +2,15 @@ import { Progress } from "flowbite-react";
 import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useCandidateDetail, useModal } from "./Layout";
+import {
+    convertTimestampToDateString,
+    formatTime,
+} from "@/utils/utilsFunction";
 
 const VoteCard = ({ candidates }: any) => {
     const [countdown, setCountdown] = useState([]);
     const { setShowModal } = useModal();
     const { setCandidateDetail } = useCandidateDetail();
-    const formatTime = (time: any) => {
-        const days = Math.floor(time?.remainingTime / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-            (time?.remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor(
-            (time?.remainingTime % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((time?.remainingTime % (1000 * 60)) / 1000);
-        return `${days.toString().padStart(2, "0")}d: ${hours
-            .toString()
-            .padStart(2, "0")}h: ${minutes
-            .toString()
-            .padStart(2, "0")}m: ${seconds.toString().padStart(2, "0")}s`;
-    };
 
     const handleShowModal = (candidateIndex: number) => {
         setShowModal(true);
@@ -31,10 +20,10 @@ const VoteCard = ({ candidates }: any) => {
     useEffect(() => {
         const interval = setInterval(() => {
             const updatedCountdown = candidates.map((candidate: any) => {
-                const endTime =
-                    candidate.endVotingTime.seconds * 1000 +
-                    candidate.endVotingTime.nanoseconds / 1000000;
-                const remainingTime = endTime - Date.now();
+                const endTime = new Date(
+                    Number(candidate.endVotingTime)
+                ).getTime();
+                const remainingTime = endTime * 1000 - Date.now();
                 return {
                     id: candidate.id,
                     remainingTime: remainingTime > 0 ? remainingTime : 0,
@@ -45,6 +34,7 @@ const VoteCard = ({ candidates }: any) => {
 
         return () => clearInterval(interval);
     }, [candidates]);
+
     return (
         <>
             <div className="grid grid-cols-3 gap-4">
@@ -80,14 +70,10 @@ const VoteCard = ({ candidates }: any) => {
                                           </div>
                                           <div className="w-full border flex border-gray-700 rounded-xl p-5">
                                               <div className="w-full">
-                                                  <div>
-                                                      {el.endVotingTime
-                                                          .seconds *
-                                                          1000 +
+                                                  <div className="text-sm">
+                                                      {convertTimestampToDateString(
                                                           el.endVotingTime
-                                                              .nanoseconds /
-                                                              1000000 >
-                                                      Date.now() ? (
+                                                      ) > Date.now() ? (
                                                           <>
                                                               <div className="flex gap-2 items-center">
                                                                   <div className="rounded-full bg-green-400 border-2 border-gray-100 h-3 w-3"></div>
@@ -119,19 +105,20 @@ const VoteCard = ({ candidates }: any) => {
                                                       )}
                                                   </div>
                                               </div>
-                                              <div className="w-full text-right">
+                                              <div className="w-full text-right text-sm">
                                                   <h1>Voted Participants</h1>
                                                   <h1 className="italic font-bold">
-                                                      {el.yesVotes + el.noVotes}
+                                                      {Number(el.yesVotes) +
+                                                          Number(el.noVotes)}
                                                   </h1>
                                               </div>
                                           </div>
                                           <Progress
                                               className="bg-red-500"
                                               progress={Math.floor(
-                                                  (el.yesVotes /
-                                                      (el.yesVotes +
-                                                          el.noVotes)) *
+                                                  (Number(el.yesVotes) /
+                                                      (Number(el.yesVotes) +
+                                                          Number(el.noVotes))) *
                                                       100 +
                                                       0.5
                                               )}

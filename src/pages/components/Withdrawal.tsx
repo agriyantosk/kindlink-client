@@ -75,6 +75,7 @@ const Withdrawal = ({
                             <a
                                 href={`https://sepolia.etherscan.io/address/${contractAddress}`}
                                 target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <svg
                                     viewBox="0 0 123 123"

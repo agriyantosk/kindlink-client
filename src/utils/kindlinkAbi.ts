@@ -1,6 +1,27 @@
 export const kindlinkAbi = [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "listedFoundationContractAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "listedFoundationOwnerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "candidateFoundationOwnerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "candidateFoundationCoOwnerAddress",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -322,16 +343,9 @@ export const kindlinkAbi = [
         "type": "address"
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "contractAddress",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Kindlink.ContractAddress[]",
+        "internalType": "address[]",
         "name": "contractAddresses",
-        "type": "tuple[]"
+        "type": "address[]"
       }
     ],
     "name": "getAllCandidatesWithVotes",

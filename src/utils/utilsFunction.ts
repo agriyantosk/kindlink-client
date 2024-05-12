@@ -55,3 +55,30 @@ export const dateToFirebaseTimestamp = (date: any): FirebaseTimestamp => {
     const nanoseconds = (date % 1000) * 1000000;
     return { seconds, nanoseconds };
 };
+
+export const convertTimestampToDateString = (timestamp: any) => {
+    const milliseconds = Number(timestamp) * 1000;
+    const date = new Date(milliseconds);
+    console.log(Date.now());
+    return milliseconds;
+};
+
+export const convertVotesToNumber = (votes: any) => {
+    return Number(votes);
+};
+
+export const formatTime = (time: any) => {
+    const days = Math.floor(time?.remainingTime / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+        (time?.remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor(
+        (time?.remainingTime % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds = Math.floor((time?.remainingTime % (1000 * 60)) / 1000);
+    return `${days.toString().padStart(2, "0")}d: ${hours
+        .toString()
+        .padStart(2, "0")}h: ${minutes.toString().padStart(2, "0")}m: ${seconds
+        .toString()
+        .padStart(2, "0")}s`;
+};

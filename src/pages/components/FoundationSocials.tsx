@@ -14,7 +14,7 @@ const FoundationSocials = ({
     return (
         <>
             <div className="rounded-xl p-3 flex gap-5 justify-end">
-                <a href={websiteUrl} target="_blank">
+                <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
                     <svg
                         fill="#000000"
                         // height="800px"
@@ -47,7 +47,7 @@ const FoundationSocials = ({
                         </g>
                     </svg>
                 </a>
-                <a href={instagramUrl} target="_blank">
+                <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
                     <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -72,7 +72,7 @@ const FoundationSocials = ({
                         />
                     </svg>
                 </a>
-                <a href={xUrl} target="_blank">
+                <a href={xUrl} target="_blank" rel="noopener noreferrer">
                     <svg
                         version="1.1"
                         id="Layer_1"
@@ -91,7 +91,7 @@ const FoundationSocials = ({
                         />
                     </svg>
                 </a>
-                <a href={contractAddress} target="_blank">
+                {/* <a href={`https://sepolia.etherscan.io/address/${contractAddress}`} target="_blank" rel="noopener noreferrer">
                     <svg
                         viewBox="0 0 122 122"
                         fill="none"
@@ -107,7 +107,7 @@ const FoundationSocials = ({
                             fill="#8B8B8B"
                         />
                     </svg>
-                </a>
+                </a> */}
             </div>
         </>
     );

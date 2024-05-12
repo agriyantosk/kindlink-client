@@ -4,7 +4,6 @@ import { useCandidateDetail, useModal } from "./Layout";
 const CandidateDetailModal = () => {
     const { setShowModal } = useModal();
     const { candidateDetail } = useCandidateDetail();
-    console.log(candidateDetail);
 
     return (
         <>

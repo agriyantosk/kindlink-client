@@ -1,10 +1,10 @@
 import { kindlinkAbi } from "./kindlinkAbi";
 import { publicClient } from "./client";
 // import { walletClient } from "./wallet";
-import { createWalletClient, custom, getContract } from "viem";
+import { createWalletClient, custom, getContract, isAddress } from "viem";
 import { sepolia } from "viem/chains";
 
-const contractAddress = "0xb239fBf9AF787C7e8783c76A73cAd2fc42b5118f";
+const contractAddress = "0xB7Cf6ccE6E0E3a6806972b82aD9Cb2f59A6ca580";
 
 export const addCandidate = async (
     foundationOwnerAddress: string,
@@ -102,20 +102,32 @@ export const donate = async (
     }
 };
 
+const validAddressRegex = /^0x[a-fA-F0-9]{40}$/;
+
+function isValidAddress(address: any) {
+    return validAddressRegex.test(address);
+}
+
 export const getAllCandidates = async (
-    userAddress: string,
-    foundationOwnerAddresses: string[]
+    userAddress: string | `0x${string}` | undefined,
+    foundationOwnerAddresses: [`0x${string}`]
 ) => {
     try {
-        const contract = getContract({
-            address: contractAddress,
-            abi: kindlinkAbi,
-            client: publicClient,
-        });
-        return await contract.read.getAllCandidates([
-            userAddress,
-            foundationOwnerAddresses,
-        ]);
+        if (
+            userAddress !== undefined &&
+            foundationOwnerAddresses !== undefined
+        ) {
+            const contract = getContract({
+                address: contractAddress,
+                abi: kindlinkAbi,
+                client: publicClient,
+            });
+            const candidates = await contract.read.getAllCandidatesWithVotes([
+                userAddress,
+                foundationOwnerAddresses,
+            ]);
+            return candidates;
+        }
     } catch (error) {
         console.log(error);
     }
