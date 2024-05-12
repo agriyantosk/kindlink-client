@@ -4,6 +4,7 @@ import Link from "next/link";
 interface DonationData {}
 
 const DonationCard = ({ foundations }: any) => {
+    console.log(foundations);
     return (
         <>
             <div className="relative overflow-x-auto mt-10">

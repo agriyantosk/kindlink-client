@@ -10,8 +10,6 @@ export const addCandidate = async (
     foundationOwnerAddress: string,
     foundationCoOwnerAddress: string
 ) => {
-    console.log(foundationOwnerAddress, "withdrawalAddress");
-    console.log(foundationCoOwnerAddress, "coWithdrawalAddress");
     try {
         const walletClient = createWalletClient({
             chain: sepolia,
@@ -71,6 +69,7 @@ export const approveCandidate = async (foundationOwnerAddress: string) => {
             args: [foundationOwnerAddress],
         });
         console.log(request);
+        return true;
     } catch (error) {
         console.log(error);
     }
@@ -101,12 +100,6 @@ export const donate = async (
         console.log(error);
     }
 };
-
-const validAddressRegex = /^0x[a-fA-F0-9]{40}$/;
-
-function isValidAddress(address: any) {
-    return validAddressRegex.test(address);
-}
 
 export const getAllCandidates = async (
     userAddress: string | `0x${string}` | undefined,

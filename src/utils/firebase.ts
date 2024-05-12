@@ -37,17 +37,32 @@ export const fetchFirebaseWallet = async (collectionName: string) => {
     try {
         const ref = initialize(collectionName);
         const snapshot = await getDocs(ref);
-        // let candidates: any = [];
         let data: any;
         snapshot.forEach((doc) => {
             const parsedOwnerAddress = JSON.parse(
                 doc.data().foundationOwnerAddress
             );
-            // candidates.push(parsedOwnerAddress);
             data = parsedOwnerAddress;
         });
-        console.log(data);
         return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const fetchFirebaseDate = async (
+    collectionName: string,
+    documentId: string
+) => {
+    try {
+        initializeApp(firebaseConfig);
+        const db = getFirestore();
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+        const existingData = docSnapshot.data();
+        const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const parsed = JSON.parse(existingAddresses);
+        return parsed;
     } catch (error) {
         console.log(error);
     }
@@ -55,7 +70,6 @@ export const fetchFirebaseWallet = async (collectionName: string) => {
 
 export const queryIn = async (values: string) => {
     try {
-        // const ref = initialize(collectionName);
         const db = getFirestore();
         const colRef = collection(db, "information");
         const q = query(colRef, where("foundationOwnerAddress", "in", values));
@@ -87,6 +101,34 @@ export const addCandidateData = async (
         }
         const existingData = docSnapshot.data();
         const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const parsed = JSON.parse(existingAddresses);
+        parsed.push(formData);
+        const addCandidate = await updateDoc(docRef, {
+            foundationOwnerAddress: JSON.stringify(parsed),
+        });
+        return `Successfully Added foundation candidate: ${JSON.stringify(
+            addCandidate
+        )}`;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const addFoundationData = async (
+    collectionName: string,
+    formData: any,
+    documentId: string
+) => {
+    try {
+        const db = getFirestore();
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+        if (!docSnapshot.exists) {
+            console.error(`Document ${documentId} does not exist.`);
+            return;
+        }
+        const existingData = docSnapshot.data();
+        const existingAddresses = existingData?.contractAddress || [];
         const parsed = JSON.parse(existingAddresses);
         parsed.push(formData);
         const addCandidate = await updateDoc(docRef, {
@@ -147,9 +189,7 @@ export const deleteCandidate = async (
         const existingData = docSnapshot.data();
         const existingAddresses = existingData?.foundationOwnerAddress || [];
         const parsed = JSON.parse(existingAddresses);
-        const newArray = parsed.filter(
-            (el: any) => el !== "0x6F40F9290e36bCFc033675730cC4441A8C97f599"
-        );
+        const newArray = parsed.filter((el: any) => el !== addressToDelete);
         const updateCandidate = await updateDoc(docRef, {
             foundationOwnerAddress: JSON.stringify(newArray),
         });
@@ -167,7 +207,6 @@ export const queryEqualsTo = async (
     value: string
 ) => {
     try {
-        console.log(collectionName, key, value);
         const ref = initialize(collectionName);
         const q = query(ref, where(key, "==", value));
         const querySnapshot = await getDocs(q);
@@ -176,7 +215,6 @@ export const queryEqualsTo = async (
         querySnapshot.forEach((doc) => {
             queryResult.push({ ...doc.data(), id: doc.id });
         });
-        console.log(queryResult);
         return queryResult;
     } catch (error) {
         console.error(error);

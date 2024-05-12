@@ -1,17 +1,32 @@
-import { deleteCandidate } from "@/utils/firebase";
+import { addFoundationData, deleteCandidate } from "@/utils/firebase";
+import { approveCandidate } from "@/utils/smartContractInteraction";
 import {
     firebaseTimestampToDate,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
+import { isAddress } from "viem";
 
 const DevVoteTable = ({ filterOption, candidates }: any) => {
-    const handleDeleteCandidate = async () => {
+    const handleApprove = async (foundationOwnerAddress: string) => {
         try {
-            const del = await deleteCandidate(
-                "candidateAddresses",
-                "0xd970296155f94540f622dc727932684Fd418de2D",
-                "kjqc51iTPhLPAtFqdRoZ"
+            const approveSmartContract = await approveCandidate(
+                foundationOwnerAddress
             );
+            if (approveSmartContract) {
+                const del = await deleteCandidate(
+                    "candidateAddresses",
+                    foundationOwnerAddress,
+                    "kjqc51iTPhLPAtFqdRoZ"
+                );
+                const addFoundation = await addFoundationData(
+                    "foundationAddresses",
+                    {
+                        conrtactAddress:
+                            "0x3D91a008036d093081732F50b847483CAD6FEaF4",
+                    },
+                    "2vvLJqomt3wPX4fssSyT"
+                );
+            }
         } catch (error) {
             console.log(error);
         }
@@ -110,7 +125,9 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                         )
                                                     }
                                                     onClick={() =>
-                                                        handleDeleteCandidate()
+                                                        handleApprove(
+                                                            el.foundationOwnerAddress
+                                                        )
                                                     }
                                                 >
                                                     Approve
