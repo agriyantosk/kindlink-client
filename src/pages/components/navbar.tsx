@@ -22,58 +22,58 @@ const Navbar = () => {
                 <nav className="mx-auto flex justify-between max-w-6xl transition-all duration-200 ease-in-out py-4 border-b border-slate-400 items-center">
                     <div className="relative flex items-center w-64">
                         <ul className="hidden items-center justify-center md:flex">
-                            <Link href={"/under-development"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>About</p>
-                                </li>
-                            </Link>
-                            <Link href={"/donate"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>Donate</p>
-                                </li>
-                            </Link>
-                            <Link href={"/under-development"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>Activity</p>
-                                </li>
-                            </Link>
-                            <Link href={"/vote"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>Vote</p>
-                                </li>
-                            </Link>
+                            {/* <Link href={"/under-development"}> */}
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <p>About</p>
+                            </li>
+                            {/* </Link>
+                            <Link href={"/donate"}> */}
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <p>Donate</p>
+                            </li>
+                            {/* </Link>
+                            <Link href={"/under-development"}> */}
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <p>Activity</p>
+                            </li>
+                            {/* </Link>
+                            <Link href={"/vote"}> */}
+                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <p>Vote</p>
+                            </li>
+                            {/* </Link> */}
                             {isConnected &&
                             address &&
                             checkDeveloperAddress(address?.toString()) ===
                                 true ? (
-                                <Link href={"/dev"}>
-                                    <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                        <p>Dev</p>
-                                    </li>
-                                </Link>
+                                // <Link href={"/dev"}>
+                                <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                    <p>Dev</p>
+                                </li>
                             ) : (
+                                // </Link>
                                 <></>
                             )}
                             {isConnected &&
                             address &&
                             checkFoundationAddress(address?.toString()) ===
                                 true ? (
-                                <Link href={"/withdrawal"}>
-                                    <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                        <p>Withdrawal</p>
-                                    </li>
-                                </Link>
+                                // <Link href={"/withdrawal"}>
+                                <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                    <p>Withdrawal</p>
+                                </li>
                             ) : (
+                                // </Link>
                                 <></>
                             )}
                         </ul>
                     </div>
                     <div className="flex items-center justify-center">
-                        <Link href={"/"}>
-                            <h1 className="font-bold text-4xl text-blue-500">
-                                KINDLINK
-                            </h1>
-                        </Link>
+                        {/* <Link href={"/"}> */}
+                        <h1 className="font-bold text-4xl text-blue-500">
+                            KINDLINK
+                        </h1>
+                        {/* </Link> */}
                     </div>
                     <div className="items-center justify-end gap-6">
                         {/* <Link href={"/under-development"}>

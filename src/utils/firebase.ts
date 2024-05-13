@@ -50,9 +50,10 @@ export const fetchFirebaseWallet = async (collectionName: string) => {
     }
 };
 
-export const fetchFirebaseDate = async (
+export const fetchFirebaseData = async (
     collectionName: string,
-    documentId: string
+    documentId: string,
+    keyName: string
 ) => {
     try {
         initializeApp(firebaseConfig);
@@ -60,7 +61,7 @@ export const fetchFirebaseDate = async (
         const docRef = doc(db, collectionName, documentId);
         const docSnapshot = await getDoc(docRef);
         const existingData = docSnapshot.data();
-        const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const existingAddresses = (existingData && existingData[keyName]) || [];
         const parsed = JSON.parse(existingAddresses);
         return parsed;
     } catch (error) {
@@ -68,18 +69,18 @@ export const fetchFirebaseDate = async (
     }
 };
 
-export const queryIn = async (values: string) => {
+export const queryIn = async (key: string, values: string[]) => {
     try {
+        initializeApp(firebaseConfig);
         const db = getFirestore();
         const colRef = collection(db, "information");
-        const q = query(colRef, where("foundationOwnerAddress", "in", values));
+        const q = query(colRef, where(key, "in", values));
         const querySnapshot = await getDocs(q);
 
         const queryResult: any = [];
         querySnapshot.forEach((doc) => {
             queryResult.push({ ...doc.data(), id: doc.id });
         });
-
         return queryResult;
     } catch (error) {
         console.log(error);
@@ -101,6 +102,34 @@ export const addCandidateData = async (
         }
         const existingData = docSnapshot.data();
         const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const parsed = JSON.parse(existingAddresses);
+        parsed.push(formData);
+        const addCandidate = await updateDoc(docRef, {
+            foundationOwnerAddress: JSON.stringify(parsed),
+        });
+        return `Successfully Added foundation candidate: ${JSON.stringify(
+            addCandidate
+        )}`;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const addApprovalData = async (
+    collectionName: string,
+    formData: any,
+    documentId: string
+) => {
+    try {
+        const db = getFirestore();
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+        if (!docSnapshot.exists) {
+            console.error(`Document ${documentId} does not exist.`);
+            return;
+        }
+        const existingData = docSnapshot.data();
+        const existingAddresses = existingData?.contractAddress || [];
         const parsed = JSON.parse(existingAddresses);
         parsed.push(formData);
         const addCandidate = await updateDoc(docRef, {

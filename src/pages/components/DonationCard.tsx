@@ -1,14 +1,48 @@
-import { firebaseTimestampToDate } from "@/utils/utilsFunction";
+import { publicClient } from "@/utils/client";
+import { convertTimestamp } from "@/utils/utilsFunction";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getBalance } from "viem/actions";
 
 interface DonationData {}
 
 const DonationCard = ({ foundations }: any) => {
-    console.log(foundations);
+    const [balances, setBalances] = useState<number[]>([]);
+
+    useEffect(() => {
+        const fetchBalances = async () => {
+            try {
+                if (foundations) {
+                    const promises = foundations.map((el: any) =>
+                        getContractBalance(el.contractAddress)
+                    );
+                    const balances = await Promise.all(promises);
+                    setBalances(balances);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchBalances();
+    }, [foundations]);
+
+    const getContractBalance = async (contractAddress: `0x${string}`) => {
+        try {
+            const balance = await publicClient.getBalance({
+                address: contractAddress,
+            });
+            return `${Number(balance) / 1e18} ETH`;
+        } catch (error) {
+            console.log(error);
+            return "Error getting raised funds"; // Return 0 in case of error
+        }
+    };
+
     return (
         <>
             <div className="relative overflow-x-auto mt-10">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <table className="w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-transparent border-b border-gray-700">
                         <tr>
                             <th scope="col" className="px-6 py-3">
@@ -18,7 +52,7 @@ const DonationCard = ({ foundations }: any) => {
                                 Fund Raised
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Participant
+                                Involved Participants
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 End Voting Time
@@ -30,7 +64,7 @@ const DonationCard = ({ foundations }: any) => {
                         foundations.map((el: any, index: number) => {
                             return (
                                 <>
-                                    <tbody key={index}>
+                                    <tbody key={index} className="text-center">
                                         <tr className="border-b border-gray-700 bg-transparent">
                                             <td
                                                 scope="row"
@@ -51,21 +85,21 @@ const DonationCard = ({ foundations }: any) => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                HARUS NGAMBIL DARI SMART
-                                                CONTRACT NYA
+                                                {balances[index]}
                                             </td>
                                             <td className="px-6 py-4">
-                                                HARUS NGAMBIL DARI SMART
-                                                CONTRACT NYA
+                                                <h1>
+                                                    {Number(
+                                                        el.involvedParticipants
+                                                    )}
+                                                </h1>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <h1 className="font-bold">
-                                                    {`${
-                                                        firebaseTimestampToDate(
-                                                            el.createdAt
-                                                        ).formattedDate
-                                                    } `}
-                                                    <span className="font-normal">
+                                                    {`${convertTimestamp(
+                                                        Number(el.endVotingTime)
+                                                    )} `}
+                                                    {/* <span className="font-normal">
                                                         (
                                                         {
                                                             firebaseTimestampToDate(
@@ -73,7 +107,7 @@ const DonationCard = ({ foundations }: any) => {
                                                             ).formattedTime
                                                         }
                                                         )
-                                                    </span>
+                                                    </span> */}
                                                 </h1>
                                             </td>
                                             <td className="px-6 py-4">

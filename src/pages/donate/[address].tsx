@@ -2,11 +2,22 @@ import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { queryEqualsTo } from "@/utils/firebase";
 import FoundationSocials from "../components/FoundationSocials";
+import { getAllListedFoundation } from "@/utils/smartContractInteraction";
+import { convertTimestamp } from "@/utils/utilsFunction";
+
+interface FoundationContractDetailPayload {
+    contractAddress: string;
+    foundationOwnerAddress: string;
+    foundationCoOwnerAddress: string;
+    totalInvolvedParticipants: number;
+    endVotingTime: number;
+}
 
 const Detail = () => {
     const router = useRouter();
     const { address } = router.query;
     const [detail, setDetail] = useState<any>();
+    const [contractDetail, setContractDetail] = useState<any>();
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -17,22 +28,34 @@ const Detail = () => {
 
     const fetchFoundationDetails = async () => {
         try {
-            if (address) {
-                const data = await queryEqualsTo(
-                    "foundations",
-                    "contractAddress",
-                    address as string
-                );
-                setDetail(data);
-            }
+            const data = await queryEqualsTo(
+                "information",
+                "contractAddress",
+                address as string
+            );
+            setDetail(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchContractDetail = async () => {
+        try {
+            const data = await getAllListedFoundation([
+                address as `0x${string}`,
+            ]);
+            setContractDetail(data);
         } catch (error) {
             console.log(error);
         }
     };
 
     useEffect(() => {
-        fetchFoundationDetails();
-    }, []);
+        if (address) {
+            fetchFoundationDetails();
+            fetchContractDetail();
+        }
+    }, [address]);
 
     return (
         <>
@@ -74,10 +97,44 @@ const Detail = () => {
                             </form>
                         </div>
                         <div>
+                            <h1>
+                                contractAddress:{" "}
+                                {contractDetail &&
+                                    contractDetail[0]?.contractAddress}
+                            </h1>
+                            <h1>
+                                foundationOwnerAddress:{" "}
+                                {contractDetail &&
+                                    contractDetail[0]?.foundationOwnerAddress}
+                            </h1>
+                            <h1>
+                                foundationCoOwnerAddress:{" "}
+                                {contractDetail &&
+                                    contractDetail[0]?.foundationCoOwnerAddress}
+                            </h1>
+                            <h1>
+                                totalInvolvedParticipants:{" "}
+                                {Number(
+                                    contractDetail &&
+                                        contractDetail[0]
+                                            ?.totalInvolvedParticipants
+                                )}
+                            </h1>
+                            <h1>
+                                endVotingTime:{" "}
+                                {contractDetail &&
+                                    convertTimestamp(
+                                        Number(contractDetail[0]?.endVotingTime)
+                                    )}
+                            </h1>
+                        </div>
+                        <div>
                             <FoundationSocials
+                                page={"donate"}
                                 websiteUrl={detail[0]?.websiteUrl}
                                 instagramUrl={detail[0]?.instagraUrl}
                                 xUrl={detail[0]?.xUrl}
+                                contractAddress={detail[0]?.contractAddress}
                             />
                         </div>
                     </div>

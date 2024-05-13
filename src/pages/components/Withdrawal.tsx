@@ -2,78 +2,63 @@ import { useAccount } from "wagmi";
 import Approval from "./Approval";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
-import { kindlinkAbi } from "@/utils/kindlinkAbi";
+import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
-import { addData, queryEqualsTo } from "@/utils/firebase";
+import { addApprovalData, queryEqualsTo } from "@/utils/firebase";
 
-const Withdrawal = ({
-    contractAddress,
-    contractState,
-    contractBalance,
-    approvalState,
-}: any) => {
+const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
-    const [addressApproval, setAddressApproval] = useState<any>();
-    const [foundationData, setFoundationData] = useState<any>();
-    const contract = getContract({
-        address: contractAddress,
-        abi: kindlinkAbi,
-        client: publicClient,
-    });
-    const getFoundationData = async () => {
+    const [allowWithdrawalRequest, setAllowWithdrawalRequest] = useState<any>();
+
+    const checkAllowRequest = async () => {
         try {
-            const fetchFoundation = await queryEqualsTo(
-                "foundations",
-                "contractAddress",
-                contractAddress
-            );
-            if (fetchFoundation) {
-                setFoundationData(fetchFoundation[0]);
+            if (contractState) {
+                const contract = getContract({
+                    address: contractState?.contractAddress,
+                    abi: foundationABI,
+                    client: publicClient,
+                });
+                const foundationOwnerAddress =
+                    await contract.read.foundationOwnerAddress();
+                if (!contractState.isRequestWithdrawal) {
+                    setAllowWithdrawalRequest(false);
+                    return;
+                } else if (
+                    !contractState.kindlinkApproval ||
+                    !contractState.foundationOwnerApproval ||
+                    !contractState.foundationCoOwnerApproval
+                ) {
+                    setAllowWithdrawalRequest(false);
+                    return;
+                } else if (address !== foundationOwnerAddress) {
+                    setAllowWithdrawalRequest(false);
+                    return;
+                } else {
+                    setAllowWithdrawalRequest(true);
+                    return;
+                }
             }
         } catch (error) {
             console.log(error);
         }
     };
-    const getWalletAddressApprovalState = async () => {
-        try {
-            if (address) {
-                const data = await contract.read.getHasApproved([address]);
-                setAddressApproval(data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const checkApproval = () => {
-        if (approvalState) {
-            if (
-                !approvalState.ownerAddress ||
-                !approvalState.withdrawalAddress ||
-                !approvalState.coWithdrawalAddress
-            ) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    };
+
     useEffect(() => {
-        getWalletAddressApprovalState();
-    }, []);
-    useEffect(() => {
-        if (contractAddress) {
-            getFoundationData();
+        if (contractState) {
+            checkAllowRequest();
         }
-    }, [contractAddress]);
+    }, [contractState]);
     return (
         <>
             <div className="flex flex-col h-full gap-10">
                 <div>
                     <div className="flex gap-3">
-                        <h1>Contract Address: {contractAddress}</h1>
+                        <h1>
+                            Contract Address: {contractState?.contractAddress}
+                        </h1>
                         <h1>
                             <a
-                                href={`https://sepolia.etherscan.io/address/${contractAddress}`}
+                                href={`https://sepolia.etherscan.io/address/${contractState?.contractAddress}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -103,11 +88,19 @@ const Withdrawal = ({
                                 : "No Ongoing Withdrawal"}
                         </h1>
                     </div>
-                    <Approval approvalState={approvalState} />
+                    <Approval
+                        approvalState={{
+                            kindlinkApproval: contractState?.kindlinkApproval,
+                            foundationOwnerApproval:
+                                contractState?.foundationOwnerApproval,
+                            foundationCoOwnerApproval:
+                                contractState?.foundationCoOwnerApproval,
+                        }}
+                    />
                 </div>
                 <div>
                     <h1 className="text-4xl font-bold">
-                        {contractBalance} ETH
+                        {contractState?.balance}
                     </h1>
                     <h1>Total Funds Received</h1>
                 </div>
@@ -115,7 +108,11 @@ const Withdrawal = ({
                     {!contractState?.isRequestWithdrawal ? (
                         <button
                             onClick={() => {
-                                addData("approval", foundationData);
+                                addApprovalData(
+                                    "approvalAddresses",
+                                    contractState?.contractAddress,
+                                    "1Tud4ZRa96AJodX9EvGL"
+                                );
                             }}
                             className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                 address !== contractState?.ownerAddress
@@ -130,23 +127,25 @@ const Withdrawal = ({
                         <div className="flex gap-5">
                             <button
                                 className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                    addressApproval ? "cursor-not-allowed" : ""
+                                    contractState &&
+                                    contractState.foundationOwnerAddress
+                                        ? "cursor-not-allowed"
+                                        : ""
                                 }`}
-                                disabled={addressApproval}
+                                disabled={
+                                    contractState &&
+                                    contractState.foundationOwnerAddress
+                                }
                             >
                                 Approve
                             </button>
                             <button
                                 className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                    checkApproval() !== true ||
-                                    address !== contractState?.ownerAddress
-                                        ? "cursor-not-allowed"
-                                        : ""
+                                    allowWithdrawalRequest
+                                        ? ""
+                                        : "cursor-not-allowed"
                                 }`}
-                                disabled={
-                                    checkApproval() !== true ||
-                                    address !== contractState?.ownerAddress
-                                }
+                                disabled={allowWithdrawalRequest}
                             >
                                 Withdraw
                             </button>

@@ -7,7 +7,6 @@ import { useAccount } from "wagmi";
 const Vote = () => {
     const { address } = useAccount();
     const [candidateWallets, setCandidateWallets] = useState<any>();
-    const [candidateInformations, setCandidateInformations] = useState<any>();
     const [candidates, setCandidates] = useState<any>(false);
     const fetchCandidateWallets = async () => {
         try {
@@ -21,9 +20,11 @@ const Vote = () => {
     const fetchCandidatesInformation = async () => {
         try {
             if (candidateWallets) {
-                const informations = await queryIn(candidateWallets);
+                const informations = await queryIn(
+                    "foundationOwnerAddress",
+                    candidateWallets
+                );
                 return informations;
-                // setCandidateInformations(informations);
             }
         } catch (error) {
             console.log(error);

@@ -25,6 +25,7 @@ const CandidateDetailModal = () => {
                                 />
                                 <div>
                                     <FoundationSocials
+                                        page={"candidateModal"}
                                         websiteUrl={candidateDetail.websiteUrl}
                                         instagramUrl={
                                             candidateDetail.instagramUrl

@@ -1,6 +1,7 @@
 import { addFoundationData, deleteCandidate } from "@/utils/firebase";
 import { approveCandidate } from "@/utils/smartContractInteraction";
 import {
+    convertTimestamp,
     firebaseTimestampToDate,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
@@ -23,6 +24,8 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     {
                         conrtactAddress:
                             "0x3D91a008036d093081732F50b847483CAD6FEaF4",
+                        foundationCoOwnerAddress:
+                            candidates.foundationCoOwnerAddress,
                     },
                     "2vvLJqomt3wPX4fssSyT"
                 );
@@ -79,19 +82,17 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {el?.yesVotes}
+                                                {Number(el?.yesVotes)}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {el?.noVotes}
+                                                {Number(el?.noVotes)}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <h1 className="font-bold">
-                                                    {`${
-                                                        firebaseTimestampToDate(
-                                                            el.createdAt
-                                                        ).formattedDate
-                                                    } `}
-                                                    <span className="font-normal">
+                                                    {`${convertTimestamp(
+                                                        Number(el.endVotingTime)
+                                                    )} `}
+                                                    {/* <span className="font-normal">
                                                         (
                                                         {
                                                             firebaseTimestampToDate(
@@ -99,12 +100,12 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                             ).formattedTime
                                                         }
                                                         )
-                                                    </span>
+                                                    </span> */}
                                                 </h1>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {votingPeriodCompare(
-                                                    el?.endVotingTime
+                                                    Number(el?.endVotingTime)
                                                 )
                                                     ? "Ongoing"
                                                     : "Ended"}
@@ -113,17 +114,19 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                 <button
                                                     type="button"
                                                     className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                                        !votingPeriodCompare(
-                                                            el?.endVotingTime
+                                                        votingPeriodCompare(
+                                                            Number(
+                                                                el?.endVotingTime
+                                                            )
                                                         )
                                                             ? "cursor-not-allowed opacity-50"
                                                             : ""
                                                     }`}
-                                                    disabled={
-                                                        !votingPeriodCompare(
+                                                    disabled={votingPeriodCompare(
+                                                        Number(
                                                             el?.endVotingTime
                                                         )
-                                                    }
+                                                    )}
                                                     onClick={() =>
                                                         handleApprove(
                                                             el.foundationOwnerAddress

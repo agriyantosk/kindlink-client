@@ -1,97 +1,76 @@
-import { kindlinkAbi } from "@/utils/kindlinkAbi";
+import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
-import { fetchData } from "@/utils/firebase";
+import { queryIn } from "@/utils/firebase";
 import { useEffect, useState } from "react";
-import { getContract, parseEther } from "viem";
+import { getContract } from "viem";
 import { useAccount } from "wagmi";
 import Withdrawal from "./components/Withdrawal";
 
 const Foundations = () => {
     const [contractAddress, setContractAddress] = useState<any>();
     const [contractState, setContractState] = useState<any>();
-    const [approvalState, setApprovalState] = useState<any>();
-    const [contractBalance, setContractBalance] = useState<any>();
     const { address } = useAccount();
-    const contract = getContract({
-        address: contractAddress,
-        abi: kindlinkAbi,
-        client: publicClient,
-    });
 
     const getContractState = async () => {
         try {
             if (contractAddress) {
-                const balance = await publicClient.getBalance({
+                const contract = getContract({
                     address: contractAddress,
-                    blockTag: "latest",
+                    abi: foundationABI,
+                    client: publicClient,
                 });
-                setContractBalance(Number(balance) / 1e18);
+                const approvalState = await contract.read.getApprovalState();
+                if (approvalState) {
+                    const state = {
+                        ...approvalState,
+                        balance: await getContractBalance(contractAddress),
+                    };
+                    setContractState(state);
+                }
             }
-            const state = {
-                isRequestWithdrawal: await contract.read.isRequestWithdrawal(),
-                ownerAddress: await contract.read.ownerAddress(),
-                withdrawalAddress: await contract.read.withdrawalAddress(),
-                coWithdrawalAddress: await contract.read.coWithdrawalAddress(),
-            };
-            setContractState(state);
         } catch (error) {
             console.log(error);
         }
     };
-    const getApprovalState = async () => {
+
+    const getContractBalance = async (contractAddress: string) => {
         try {
-            if (contractState) {
-                setApprovalState({
-                    ownerAddressHasApproved: await contract.read.getHasApproved(
-                        [contractState.ownerAddress]
-                    ),
-                    withdrawalAddress: await contract.read.getHasApproved([
-                        contractState.withdrawalAddress,
-                    ]),
-                    coWithdrawalAddress: await contract.read.getHasApproved([
-                        contractState.coWithdrawalAddress,
-                    ]),
-                });
-            }
+            const balance = await publicClient.getBalance({
+                address: contractAddress as `0x${string}`,
+            });
+            return `${Number(balance) / 1e18} ETH`;
         } catch (error) {
             console.log(error);
         }
     };
-    const findContractAddressForUser = (
-        userWalletAddress: string,
-        contractDetails: any
-    ) => {
-        for (const contractAddress in contractDetails) {
-            const details = contractDetails[contractAddress];
-            if (
-                details.withdrawalAddress === userWalletAddress ||
-                details.coWithdrawalAddress === userWalletAddress
-            ) {
-                return contractAddress;
-            }
-        }
-        return null;
-    };
+
     const fetchContractAddress = async () => {
         try {
-            const data = await fetchData("deployedFoundations");
-            const parsed = JSON.parse(data[0].contracts);
-            const foundationContract = findContractAddressForUser(
-                address as string,
-                parsed
-            );
-            setContractAddress(foundationContract);
+            let data;
+            data = await queryIn("foundationOwnerAddress", [address as string]);
+            if (data.length === 0) {
+                data = await queryIn("foundationCoOwnerAddress", [
+                    address as string,
+                ]);
+            }
+            if (data) {
+                setContractAddress(data[0].contractAddress);
+            }
         } catch (error) {
             console.log(error);
         }
     };
     useEffect(() => {
-        fetchContractAddress();
-        getContractState();
-    }, [contractAddress]);
+        if (address) {
+            fetchContractAddress();
+        }
+    }, [address]);
+
     useEffect(() => {
-        getApprovalState();
-    }, [contractState]);
+        if (contractAddress) {
+            getContractState();
+        }
+    }, [contractAddress]);
     return (
         <>
             <div className="w-full h-full flex border bg-white border-gray-400 rounded-lg p-10 gap-10">
@@ -103,12 +82,7 @@ const Foundations = () => {
                     />
                 </div>
                 <div className="w-[50%] flex flex-col gap-10">
-                    <Withdrawal
-                        contractAddress={contractAddress}
-                        contractState={contractState}
-                        contractBalance={contractBalance}
-                        approvalState={approvalState}
-                    />
+                    <Withdrawal contractState={contractState} />
                 </div>
             </div>
         </>

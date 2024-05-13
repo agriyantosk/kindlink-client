@@ -37,13 +37,11 @@ export const firebaseTimestampToDate = (timestamp: any) => {
 
     return { formattedDate, formattedTime };
 };
+export const votingPeriodCompare = (timestampSeconds: number) => {
+    const currentTimeMilliseconds = Date.now();
+    const timestampMilliseconds = timestampSeconds * 1000; // Convert seconds to milliseconds
 
-export const votingPeriodCompare = (timestamp: any) => {
-    const currentTime = Date.now();
-    const timestampMilliseconds =
-        timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000;
-
-    if (timestampMilliseconds > currentTime) {
+    if (timestampMilliseconds > currentTimeMilliseconds) {
         return true;
     } else {
         return false;
@@ -67,7 +65,8 @@ export const convertVotesToNumber = (votes: any) => {
     return Number(votes);
 };
 
-export const formatTime = (time: any) => {
+export const formatRemainingTime = (time: any) => {
+    console.log(time);
     const days = Math.floor(time?.remainingTime / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
         (time?.remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -81,4 +80,18 @@ export const formatTime = (time: any) => {
         .padStart(2, "0")}h: ${minutes.toString().padStart(2, "0")}m: ${seconds
         .toString()
         .padStart(2, "0")}s`;
+};
+
+export const convertTimestamp = (timestamp: any) => {
+    // Convert timestamp to Date object
+    const date = new Date(timestamp * 1000);
+
+    // Extract day, month, date, and year
+    const day = date.toLocaleDateString("en-US", { weekday: "long" }); // Full weekday name
+    const month = date.toLocaleDateString("en-US", { month: "long" }); // Full month name
+    const year = date.getFullYear();
+    const dateNum = date.getDate();
+
+    // Format the output string
+    return `${day}, ${month} ${dateNum} ${year}`;
 };

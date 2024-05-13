@@ -1,20 +1,99 @@
-import { fetchData } from "@/utils/firebase";
+import { publicClient } from "@/utils/client";
+import { fetchFirebaseData, queryIn } from "@/utils/firebase";
+import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { useEffect, useState } from "react";
+import { getContract } from "viem";
+import { getBalance } from "viem/actions";
 
 const DevWithdrawalApproval = () => {
-    const [approvalRequest, setApprovalRequest] = useState<any>();
-    const fetchWithdrawal = async () => {
+    const [approvalWallets, setApprovalWallets] = useState<any>();
+    const [approvalInformations, setApprovalInformations] = useState<any>();
+    const [approvals, setApprovals] = useState<any>();
+    const fetchApprovalWallets = async () => {
         try {
-            const withdrawalData = await fetchData("approval");
-            setApprovalRequest(withdrawalData);
+            const withdrawalData = await fetchFirebaseData(
+                "approvalAddresses",
+                "1Tud4ZRa96AJodX9EvGL",
+                "foundationOwnerAddresses"
+            );
+            setApprovalWallets(withdrawalData);
         } catch (error) {
             console.log(error);
         }
     };
 
+    const fetchApprovalInformation = async () => {
+        try {
+            const info = await queryIn(
+                "foundationOwnerAddress",
+                approvalWallets
+            );
+            setApprovalInformations(info);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getContractBalance = async (contractAddress: string) => {
+        try {
+            const balance = await publicClient.getBalance({
+                address: contractAddress as `0x${string}`,
+            });
+            return `${Number(balance) / 1e18} ETH`;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchContractState = async () => {
+        try {
+            let compiledData = [];
+            if (approvalInformations) {
+                for (let i = 0; i < approvalInformations.length; i++) {
+                    const approval = approvalInformations[i];
+                    const contract = getContract({
+                        address: approval.contractAddress,
+                        abi: foundationABI,
+                        client: publicClient,
+                    });
+
+                    const approvalState: any =
+                        await contract.read.getApprovalState();
+                    const state = {
+                        ...approvalInformations[i],
+                        balance: await getContractBalance(approval.contractAddress),
+                        isRequestWithdrawal: approvalState.isRequestWithdrawal,
+                        kindlinkApproval: approvalState.kindlinkApproval,
+                        foundationOwnerApproval:
+                            approvalState.foundationOwnerApproval,
+                        foundationCoOwnerApproval:
+                            approvalState.foundationCoOwnerApproval,
+                    };
+                    compiledData.push(state);
+                }
+                setApprovals(compiledData);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // KALO INI NANTI NGAMBIL DARI APPROVAL DAN NGAMBIL INFORMATION DARI FIREBASE AJA
+    // UNTUNG NGAMBIL STATE NYA MAU GA MAU HARUS DI LOOP KE SMART CONTRACT BUAT NGAMBIL STATE REQUEST WITHDRAWAL DAN HAS APPROVE NYA
+
     useEffect(() => {
-        fetchWithdrawal();
+        fetchApprovalWallets();
     }, []);
+    useEffect(() => {
+        if (approvalWallets) {
+            fetchApprovalInformation();
+        }
+    }, [approvalWallets]);
+    useEffect(() => {
+        if (approvalInformations) {
+            fetchContractState();
+        }
+    }, [approvalInformations]);
     return (
         <>
             <div className="relative overflow-y-auto w-full px-10">
@@ -25,22 +104,28 @@ const DevWithdrawalApproval = () => {
                                 Project Name
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Yes Votes
+                                Contract Address
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                No Votes
+                                Withdrawal Funds
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                End Voting Time
+                                Kindlink Approval
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Foundation Owner Approval
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Foundation Co Owner Appro
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Status
                             </th>
                         </tr>
                     </thead>
-                    {approvalRequest &&
-                        approvalRequest.map((el: any, index: number) => {
-                            console.log(approvalRequest);
+                    {approvals &&
+                        approvals.map((el: any, index: number) => {
+                            console.log(approvals);
                             return (
                                 <>
                                     <tbody key={index}>
@@ -64,54 +149,155 @@ const DevWithdrawalApproval = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {el?.yesVotes}
+                                                {el?.contractAddress}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {el?.noVotes}
+                                                {el?.balance}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <h1 className="font-bold">
-                                                    {/* {`${
-                                                        firebaseTimestampToDate(
-                                                            el.createdAt
-                                                        ).formattedDate
-                                                    } `}
-                                                    <span className="font-normal">
-                                                        (
-                                                        {
-                                                            firebaseTimestampToDate(
-                                                                el.createdAt
-                                                            ).formattedTime
-                                                        }
-                                                        )
-                                                    </span> */}
-                                                </h1>
+                                                {el?.kindlinkApproval ? (
+                                                    <svg
+                                                        viewBox="0 0 32 32"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        height="30px"
+                                                        width="30px"
+                                                    >
+                                                        <defs></defs>
+                                                        <title />
+                                                        <g
+                                                            data-name="Layer 28"
+                                                            id="Layer_28"
+                                                        >
+                                                            <path
+                                                                className="cls-1"
+                                                                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+                                                            />
+                                                            <path
+                                                                className="cls-1"
+                                                                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+                                                            />
+                                                        </g>
+                                                    </svg>
+                                                ) : (
+                                                    <svg
+                                                        viewBox="0 0 512 512"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        height="30px"
+                                                        width="30px"
+                                                    >
+                                                        <title />
+                                                        <g
+                                                            data-name="1"
+                                                            id="_1"
+                                                            className="text-red-300"
+                                                        >
+                                                            <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
+                                                            <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
+                                                            <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
+                                                        </g>
+                                                    </svg>
+                                                )}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {/* {votingPeriodCompare(
-                                                    el?.endVotingTime
-                                                )
-                                                    ? "Ongoing"
-                                                    : "Ended"} */}
+                                                {el?.foundationOwnerApproval ? (
+                                                    <svg
+                                                        viewBox="0 0 32 32"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        height="30px"
+                                                        width="30px"
+                                                    >
+                                                        <defs></defs>
+                                                        <title />
+                                                        <g
+                                                            data-name="Layer 28"
+                                                            id="Layer_28"
+                                                        >
+                                                            <path
+                                                                className="cls-1"
+                                                                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+                                                            />
+                                                            <path
+                                                                className="cls-1"
+                                                                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+                                                            />
+                                                        </g>
+                                                    </svg>
+                                                ) : (
+                                                    <svg
+                                                        viewBox="0 0 512 512"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        height="30px"
+                                                        width="30px"
+                                                    >
+                                                        <title />
+                                                        <g
+                                                            data-name="1"
+                                                            id="_1"
+                                                            className="text-red-300"
+                                                        >
+                                                            <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
+                                                            <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
+                                                            <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
+                                                        </g>
+                                                    </svg>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {el?.foundationCoOwnerApproval ? (
+                                                    <svg
+                                                        viewBox="0 0 32 32"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        height="30px"
+                                                        width="30px"
+                                                    >
+                                                        <defs></defs>
+                                                        <title />
+                                                        <g
+                                                            data-name="Layer 28"
+                                                            id="Layer_28"
+                                                        >
+                                                            <path
+                                                                className="cls-1"
+                                                                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+                                                            />
+                                                            <path
+                                                                className="cls-1"
+                                                                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+                                                            />
+                                                        </g>
+                                                    </svg>
+                                                ) : (
+                                                    <svg
+                                                        viewBox="0 0 512 512"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        height="30px"
+                                                        width="30px"
+                                                    >
+                                                        <title />
+                                                        <g
+                                                            data-name="1"
+                                                            id="_1"
+                                                            className="text-red-300"
+                                                        >
+                                                            <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
+                                                            <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
+                                                            <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
+                                                        </g>
+                                                    </svg>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {el?.isRequestWithdrawal
+                                                    ? "Ongoing Request"
+                                                    : "No Ongoing Request"}
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                {/* <button
+                                                <button
                                                     type="button"
-                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                                        !votingPeriodCompare(
-                                                            el?.endVotingTime
-                                                        )
-                                                            ? "cursor-not-allowed opacity-50"
-                                                            : ""
-                                                    }`}
-                                                    disabled={
-                                                        !votingPeriodCompare(
-                                                            el?.endVotingTime
-                                                        )
-                                                    }
+                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
                                                 >
                                                     Approve
-                                                </button> */}
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>

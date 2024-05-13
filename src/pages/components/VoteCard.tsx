@@ -4,7 +4,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useCandidateDetail, useModal } from "./Layout";
 import {
     convertTimestampToDateString,
-    formatTime,
+    formatRemainingTime,
 } from "@/utils/utilsFunction";
 
 const VoteCard = ({ candidates }: any) => {
@@ -85,7 +85,7 @@ const VoteCard = ({ candidates }: any) => {
                                                                   {countdown[
                                                                       index
                                                                   ] ? (
-                                                                      formatTime(
+                                                                      formatRemainingTime(
                                                                           countdown[
                                                                               index
                                                                           ]

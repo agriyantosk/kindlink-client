@@ -1,10 +1,10 @@
-import { kindlinkAbi } from "./kindlinkAbi";
+import { kindlinkAbi } from "./ABI";
 import { publicClient } from "./client";
 // import { walletClient } from "./wallet";
 import { createWalletClient, custom, getContract, isAddress } from "viem";
 import { sepolia } from "viem/chains";
 
-const contractAddress = "0xB7Cf6ccE6E0E3a6806972b82aD9Cb2f59A6ca580";
+const contractAddress = "0x4e4e482b15F3b4aB5349104aBea0b07227a64A99";
 
 export const addCandidate = async (
     foundationOwnerAddress: string,
@@ -121,6 +121,24 @@ export const getAllCandidates = async (
             ]);
             return candidates;
         }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getAllListedFoundation = async (
+    foundationContractAddress: [`0x${string}`]
+) => {
+    try {
+        const contract = getContract({
+            address: contractAddress,
+            abi: kindlinkAbi,
+            client: publicClient,
+        });
+        const foundations = await contract.read.getAllFoundationEndVoteTime([
+            foundationContractAddress,
+        ]);
+        return foundations;
     } catch (error) {
         console.log(error);
     }

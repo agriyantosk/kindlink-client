@@ -1,11 +1,16 @@
 const Approval = ({ approvalState }: any) => {
+    const {
+        kindlinkApproval,
+        foundationOwnerApproval,
+        foundationCoOwnerApproval,
+    } = approvalState;
     return (
         <>
             <div className="flex gap-10 mt-5 w-full justify-center">
                 <div className="w-full border border-gray-400 rounded-lg p-5 gap-5 flex items-start justify-center">
                     <div className="flex items-center">
                         <h1 className="w-max">Platform Approval</h1>
-                        {approvalState && approvalState.ownerAddress ? (
+                        {kindlinkApproval ? (
                             <>
                                 <svg
                                     viewBox="0 0 32 32"
@@ -49,7 +54,7 @@ const Approval = ({ approvalState }: any) => {
                     </div>
                     <div className="flex items-center">
                         <h1 className="w-max">Main Address Approval</h1>
-                        {approvalState && approvalState.withdrawalAddress ? (
+                        {foundationOwnerApproval ? (
                             <>
                                 <svg
                                     viewBox="0 0 32 32"
@@ -89,7 +94,7 @@ const Approval = ({ approvalState }: any) => {
                     </div>
                     <div className="flex items-center">
                         <h1 className="w-max">Secondary Address Approval</h1>
-                        {approvalState && approvalState.coWithdrawalAddress ? (
+                        {foundationCoOwnerApproval ? (
                             <>
                                 <svg
                                     viewBox="0 0 32 32"
