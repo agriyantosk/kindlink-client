@@ -18,7 +18,6 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
     const [filterOption, setFilterOption] = useState<string>("progress");
 
     return (
-        // Step 2: Provide the context value
         <CandidateDataContext.Provider
             value={{ candidateDetail, setCandidateDetail }}
         >
@@ -31,7 +30,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                             </div>
                         )}
                         <div className="h-screen flex flex-col px-48">
-                            {/* <Navbar /> */}
+                            <Navbar />
                             <div className="flex-grow my-10">{children}</div>
                         </div>
                         {/* <Footer /> */}

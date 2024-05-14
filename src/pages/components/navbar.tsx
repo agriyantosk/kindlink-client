@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { fetchFirebaseData } from "@/utils/firebase";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
     const { address, isConnected } = useAccount();
+    const [isOwner, setIsOwner] = useState();
+    const [isDev, setIsDev] = useState();
     const developerAddresses = JSON.parse(
         process.env.NEXT_PUBLIC_DEVELOPER_ADDRESSES as string
     );
@@ -16,6 +20,46 @@ const Navbar = () => {
     const checkFoundationAddress = (walletAddress: string) => {
         return foundationAddresses.includes(walletAddress as string);
     };
+
+    const checkOwnerAddress = async (userAddress: string) => {
+        try {
+            const ownerAddress = await fetchFirebaseData(
+                "ownerAddresses",
+                "I02LGg5smLtAZF6a09ON",
+                "address"
+            );
+            const check =
+                ownerAddress &&
+                ownerAddress.find((el: any) => el === userAddress);
+            setIsOwner(check);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const checkDevAddress = async (userAddress: string) => {
+        try {
+            const ownerAddress = await fetchFirebaseData(
+                "devAddress",
+                "M3QpmvtyUP3ORB2dGYs2",
+                "address"
+            );
+            const check =
+                ownerAddress &&
+                ownerAddress.find((el: any) => el === userAddress);
+            setIsDev(check);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        if (address) {
+            checkOwnerAddress("0xd970296155f94540f622dc727932684Fd418de2D");
+            checkDevAddress("0xd970296155f94540f622dc727932684Fd418de2D");
+        }
+    }, [address]);
+
     return (
         <>
             <header className="sticky inset-0 z-50 bg-transparent backdrop-blur-lg">
@@ -42,10 +86,7 @@ const Navbar = () => {
                                 <p>Vote</p>
                             </li>
                             {/* </Link> */}
-                            {isConnected &&
-                            address &&
-                            checkDeveloperAddress(address?.toString()) ===
-                                true ? (
+                            {isConnected && address && isDev ? (
                                 // <Link href={"/dev"}>
                                 <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                     <p>Dev</p>
@@ -54,10 +95,7 @@ const Navbar = () => {
                                 // </Link>
                                 <></>
                             )}
-                            {isConnected &&
-                            address &&
-                            checkFoundationAddress(address?.toString()) ===
-                                true ? (
+                            {isConnected && address && isOwner ? (
                                 // <Link href={"/withdrawal"}>
                                 <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                     <p>Withdrawal</p>
