@@ -1,22 +1,25 @@
-import { addFoundationData, deleteCandidate } from "@/utils/firebase";
+import {
+    addFoundationData,
+    addOwnerAddress,
+    deleteCandidate,
+} from "@/utils/firebase";
 import { approveCandidate } from "@/utils/smartContractInteraction";
 import {
     convertTimestamp,
     firebaseTimestampToDate,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
-import { isAddress } from "viem";
 
 const DevVoteTable = ({ filterOption, candidates }: any) => {
-    const handleApprove = async (foundationOwnerAddress: string) => {
+    const handleApprove = async (candidateData: any) => {
         try {
             const approveSmartContract = await approveCandidate(
-                foundationOwnerAddress
+                candidateData.foundationOwnerAddress
             );
             if (approveSmartContract) {
                 const del = await deleteCandidate(
                     "candidateAddresses",
-                    foundationOwnerAddress,
+                    candidateData.foundationOwnerAddress,
                     "kjqc51iTPhLPAtFqdRoZ"
                 );
                 const addFoundation = await addFoundationData(
@@ -25,9 +28,18 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                         conrtactAddress:
                             "0x3D91a008036d093081732F50b847483CAD6FEaF4",
                         foundationCoOwnerAddress:
-                            candidates.foundationCoOwnerAddress,
+                            candidateData.foundationCoOwnerAddress,
                     },
                     "2vvLJqomt3wPX4fssSyT"
+                );
+                const ownerAddresses = [
+                    candidateData.foundationCoOwnerAddress,
+                    candidateData.foundationCoOwnerAddress,
+                ];
+                const addAddress = await addOwnerAddress(
+                    "ownerAddresses",
+                    ownerAddresses,
+                    "I02LGg5smLtAZF6a09ON"
                 );
             }
         } catch (error) {
@@ -113,24 +125,14 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                             <td className="px-6 py-4 text-right">
                                                 <button
                                                     type="button"
-                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                                        votingPeriodCompare(
-                                                            Number(
-                                                                el?.endVotingTime
-                                                            )
-                                                        )
-                                                            ? "cursor-not-allowed opacity-50"
-                                                            : ""
-                                                    }`}
-                                                    disabled={votingPeriodCompare(
-                                                        Number(
-                                                            el?.endVotingTime
-                                                        )
-                                                    )}
+                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
+                                                    // disabled={votingPeriodCompare(
+                                                    //     Number(
+                                                    //         el?.endVotingTime
+                                                    //     )
+                                                    // )}
                                                     onClick={() =>
-                                                        handleApprove(
-                                                            el.foundationOwnerAddress
-                                                        )
+                                                        handleApprove(el)
                                                     }
                                                 >
                                                     Approve

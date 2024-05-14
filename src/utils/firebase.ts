@@ -187,6 +187,35 @@ export const addInformationData = async (
     }
 };
 
+export const addOwnerAddress = async (
+    collectionName: string,
+    formData: any,
+    documentId: string
+) => {
+    try {
+        const db = getFirestore();
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+        if (!docSnapshot.exists) {
+            console.error(`Document ${documentId} does not exist.`);
+            return;
+        }
+        const existingData = docSnapshot.data();
+        const existingAddresses = existingData?.address || [];
+        const parsed = JSON.parse(existingAddresses);
+        parsed.push(formData[0]);
+        parsed.push(formData[1]);
+        const addCandidate = await updateDoc(docRef, {
+            foundationOwnerAddress: JSON.stringify(parsed),
+        });
+        return `Successfully Added foundation candidate: ${JSON.stringify(
+            addCandidate
+        )}`;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const deleteData = async (id: string) => {
     try {
         const db = getFirestore();
