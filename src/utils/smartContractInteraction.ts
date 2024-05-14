@@ -36,7 +36,6 @@ export const voteCandidate = async (
     foundationOwnerAddress: string
 ) => {
     try {
-        console.log(voteInput, foundationOwnerAddress);
         const walletClient = createWalletClient({
             chain: sepolia,
             transport: custom(window.ethereum),

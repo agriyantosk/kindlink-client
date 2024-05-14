@@ -50,7 +50,7 @@ const Navbar = () => {
 
     return (
         <>
-            <header className="sticky inset-0 z-50 bg-transparent backdrop-blur-lg">
+            <header className="top-0 z-50 bg-transparent backdrop-blur-lg w-full">
                 <nav className="mx-auto flex justify-between max-w-6xl transition-all duration-200 ease-in-out py-4 border-b border-slate-400 items-center">
                     <div className="relative flex items-center w-64">
                         <ul className="hidden items-center justify-center md:flex">

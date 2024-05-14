@@ -40,7 +40,6 @@ const Donate = () => {
             const smartContractFoundations = await getAllListedFoundation(
                 foundationWallets
             );
-            console.log(smartContractFoundations);
             return smartContractFoundations;
         } catch (error) {
             console.log(error);
