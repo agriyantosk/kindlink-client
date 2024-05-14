@@ -97,7 +97,7 @@ const Vote = () => {
     return (
         <>
             <div className="w-full h-full">
-                <VoteCard candidates={candidates} />
+                <VoteCard candidates={candidates} refetch={compileCandidates} />
             </div>
         </>
     );

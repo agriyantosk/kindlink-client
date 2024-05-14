@@ -36,6 +36,7 @@ export const voteCandidate = async (
     foundationOwnerAddress: string
 ) => {
     try {
+        console.log(voteInput, foundationOwnerAddress);
         const walletClient = createWalletClient({
             chain: sepolia,
             transport: custom(window.ethereum),
@@ -49,8 +50,10 @@ export const voteCandidate = async (
             args: [voteInput, foundationOwnerAddress],
         });
         console.log(request);
+        const vote = await walletClient.writeContract(request);
+        return vote;
     } catch (error) {
-        console.log(error);
+        return error;
     }
 };
 

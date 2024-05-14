@@ -8,18 +8,6 @@ const Navbar = () => {
     const { address, isConnected } = useAccount();
     const [isOwner, setIsOwner] = useState();
     const [isDev, setIsDev] = useState();
-    const developerAddresses = JSON.parse(
-        process.env.NEXT_PUBLIC_DEVELOPER_ADDRESSES as string
-    );
-    const foundationAddresses = JSON.parse(
-        process.env.NEXT_PUBLIC_FOUNDATION_ADDRESSES as string
-    );
-    const checkDeveloperAddress = (walletAddress: string): boolean => {
-        return developerAddresses.includes(walletAddress as string);
-    };
-    const checkFoundationAddress = (walletAddress: string) => {
-        return foundationAddresses.includes(walletAddress as string);
-    };
 
     const checkOwnerAddress = async (userAddress: string) => {
         try {
@@ -66,42 +54,42 @@ const Navbar = () => {
                 <nav className="mx-auto flex justify-between max-w-6xl transition-all duration-200 ease-in-out py-4 border-b border-slate-400 items-center">
                     <div className="relative flex items-center w-64">
                         <ul className="hidden items-center justify-center md:flex">
-                            {/* <Link href={"/under-development"}> */}
-                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                <p>About</p>
-                            </li>
-                            {/* </Link>
-                            <Link href={"/donate"}> */}
-                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                <p>Donate</p>
-                            </li>
-                            {/* </Link>
-                            <Link href={"/under-development"}> */}
-                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                <p>Activity</p>
-                            </li>
-                            {/* </Link>
-                            <Link href={"/vote"}> */}
-                            <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                <p>Vote</p>
-                            </li>
-                            {/* </Link> */}
-                            {isConnected && address && isDev ? (
-                                // <Link href={"/dev"}>
-                                <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>Dev</p>
+                            <Link href={"/under-development"}>
+                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                    <p>About</p>
                                 </li>
+                            </Link>
+                            <Link href={"/donate"}>
+                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                    <p>Donate</p>
+                                </li>
+                            </Link>
+                            <Link href={"/under-development"}>
+                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                    <p>Activity</p>
+                                </li>
+                            </Link>
+                            <Link href={"/vote"}>
+                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                    <p>Vote</p>
+                                </li>
+                            </Link>
+                            {isConnected && address && isDev ? (
+                                <Link href={"/dev"}>
+                                    <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                        <p>Dev</p>
+                                    </li>
+                                </Link>
                             ) : (
-                                // </Link>
                                 <></>
                             )}
                             {isConnected && address && isOwner ? (
-                                // <Link href={"/withdrawal"}>
-                                <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>Withdrawal</p>
-                                </li>
+                                <Link href={"/withdrawal"}>
+                                    <li className="font-dm text-sm font-medium text-red-500 hover:bg-red-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                        <p>Withdrawal</p>
+                                    </li>
+                                </Link>
                             ) : (
-                                // </Link>
                                 <></>
                             )}
                         </ul>
