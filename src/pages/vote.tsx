@@ -7,10 +7,12 @@ import { useAccount } from "wagmi";
 const Vote = () => {
     const { address } = useAccount();
     const [candidateWallets, setCandidateWallets] = useState<any>();
-    const [candidates, setCandidates] = useState<any>(false);
+    const [candidates, setCandidates] = useState<any>();
     const fetchCandidateWallets = async () => {
         try {
+            console.log("fetchCandidateWallets KEpanggil");
             const wallets = await fetchFirebaseWallet("candidateAddresses");
+            console.log(wallets, "dari function fetchCAndidateWallets");
             setCandidateWallets(wallets);
         } catch (error) {
             console.log(error);
@@ -77,6 +79,7 @@ const Vote = () => {
                         matchedData.push(combinedData);
                     }
                 });
+                console.log(matchedData);
                 setCandidates(matchedData);
             }
         } catch (error) {
@@ -85,6 +88,7 @@ const Vote = () => {
     };
 
     useEffect(() => {
+        console.log("pertama kali di panggil");
         fetchCandidateWallets();
     }, []);
 
@@ -97,7 +101,12 @@ const Vote = () => {
     return (
         <>
             <div className="w-full h-full">
-                <VoteCard candidates={candidates} refetch={compileCandidates} />
+                {candidates && (
+                    <VoteCard
+                        candidates={candidates}
+                        refetch={compileCandidates}
+                    />
+                )}
             </div>
         </>
     );

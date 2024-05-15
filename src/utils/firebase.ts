@@ -44,6 +44,7 @@ export const fetchFirebaseWallet = async (collectionName: string) => {
             );
             data = parsedOwnerAddress;
         });
+        console.log(data, "dari firebase");
         return data;
     } catch (error) {
         console.log(error);

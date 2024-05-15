@@ -42,10 +42,15 @@ const VoteCard = ({ candidates, refetch }: any) => {
     ) => {
         try {
             const vote = await voteCandidate(voteInput, foundationOwnerAddress);
-            console.log(vote);
+            if (vote === "success") {
+                alert("Success");
+            } else {
+                alert("Failed");
+            }
             await refetch();
         } catch (error) {
             console.log(error);
+            alert("An error occurred during voting. Please try again.");
         }
     };
 
@@ -146,13 +151,18 @@ const VoteCard = ({ candidates, refetch }: any) => {
                                           />
                                           <div className="flex gap-5">
                                               <button
+                                                  disabled={el.hasVoted}
                                                   onClick={() =>
                                                       handleVote(
                                                           true,
                                                           el.foundationOwnerAddress
                                                       )
                                                   }
-                                                  className="rounded-xl w-full flex items-center justify-center bg-gradient-to-br from-green-400 to-green-500 px-3 py-1.5 text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
+                                                  className={`rounded-xl w-full flex items-center justify-center bg-gradient-to-br from-green-400 to-green-500 px-3 py-1.5 text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                                      el.hasVoted
+                                                          ? "cursor-not-allowed opacity-50"
+                                                          : ""
+                                                  }`}
                                               >
                                                   <svg
                                                       height="20px"
@@ -192,13 +202,18 @@ const VoteCard = ({ candidates, refetch }: any) => {
                                                   </svg>
                                               </button>
                                               <button
+                                                  disabled={el.hasVoted}
                                                   onClick={() =>
                                                       handleVote(
                                                           false,
                                                           el.foundationOwnerAddress
                                                       )
                                                   }
-                                                  className="rounded-xl w-full flex items-center justify-center bg-gradient-to-br from-red-400 to-red-500 px-3 py-1.5 text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
+                                                  className={`rounded-xl w-full flex items-center justify-center bg-gradient-to-br from-red-400 to-red-500 px-3 py-1.5 text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                                      el.hasVoted
+                                                          ? "cursor-not-allowed opacity-50"
+                                                          : ""
+                                                  }`}
                                               >
                                                   <svg
                                                       height="20px"
@@ -206,8 +221,6 @@ const VoteCard = ({ candidates, refetch }: any) => {
                                                       viewBox="0 0 22 20"
                                                       width="22px"
                                                       xmlns="http://www.w3.org/2000/svg"
-                                                      //   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-                                                      //   xmlns:xlink="http://www.w3.org/1999/xlink"
                                                   >
                                                       <title />
                                                       <desc />
@@ -222,14 +235,14 @@ const VoteCard = ({ candidates, refetch }: any) => {
                                                           <g
                                                               fill="#FFFFFF"
                                                               id="Core"
-                                                              transform="translate(-295.000000, -464.000000)"
+                                                              transform="translate(-253.000000, -464.000000)"
                                                           >
                                                               <g
-                                                                  id="thumb-up"
-                                                                  transform="translate(295.000000, 464.000000)"
+                                                                  id="thumb-down"
+                                                                  transform="translate(253.000000, 464.000000)"
                                                               >
                                                                   <path
-                                                                      d="M0,20 L4,20 L4,8 L0,8 L0,20 L0,20 Z M22,9 C22,7.9 21.1,7 20,7 L13.7,7 L14.7,2.4 L14.7,2.1 C14.7,1.7 14.5,1.3 14.3,1 L13.2,0 L6.6,6.6 C6.2,6.9 6,7.4 6,8 L6,18 C6,19.1 6.9,20 8,20 L17,20 C17.8,20 18.5,19.5 18.8,18.8 L21.8,11.7 C21.9,11.5 21.9,11.2 21.9,11 L21.9,9 L22,9 C22,9.1 22,9 22,9 L22,9 Z"
+                                                                      d="M14,0 L5,0 C4.2,0 3.5,0.5 3.2,1.2 L0.2,8.3 C0.1,8.5 0,8.7 0,9 L0,10.9 L0,11 C0,12.1 0.9,13 2,13 L8.3,13 L7.3,17.6 L7.3,17.9 C7.3,18.3 7.5,18.7 7.7,19 L8.8,20 L15.4,13.4 C15.8,13 16,12.5 16,12 L16,2 C16,0.9 15.1,0 14,0 L14,0 Z M18,0 L18,12 L22,12 L22,0 L18,0 L18,0 Z"
                                                                       id="Shape"
                                                                   />
                                                               </g>

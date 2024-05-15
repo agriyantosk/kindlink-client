@@ -43,43 +43,16 @@ const Detail = () => {
                 foundationContractAddress,
                 convertToNumber
             );
-            if (executeDonation) {
-                const transaction =
-                    await publicClient.waitForTransactionReceipt({
-                        hash: executeDonation,
-                    });
-                if (transaction && transaction.status === "success") {
-                    console.log(transaction);
-                    alert(
-                        `Donation Successful! Transaction Hash: ${transaction.transactionHash}`
-                    );
-                } else {
-                    alert("Transaction Failed");
-                }
+            if (executeDonation === "success") {
+                alert("Success");
             } else {
-                console.error("Donation failed (no transaction hash returned)");
-                alert("An error occurred. Please try again.");
+                alert("Failed");
             }
         } catch (error) {
             console.log(error);
+            alert("An error occurred during voting. Please try again.");
         }
     };
-
-    // const handleSubmit = async (
-    //     event: FormEvent<HTMLFormElement>,
-    //     value: number,
-    //     foundationContractAddress: string
-    // ) => {
-    //     try {
-    //         event.preventDefault();
-    //         console.log(value, foundationContractAddress);
-    //         // const formData = new FormData(event.currentTarget);
-    //         // const donationAmount = formData.get("donationAmount");
-    //         // const executeDonation = await donate();
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
 
     const fetchFoundationDetails = async () => {
         try {
@@ -258,74 +231,3 @@ const Detail = () => {
 };
 
 export default Detail;
-
-{
-    /* <div className="relative shadow-md sm:rounded-lg">
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3">
-                                            Foundation Owner Address
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Foundation Co Owner Address
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Total Participants
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Ended Voting Time
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <td className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                                        >
-                                            {contractDetail &&
-                                                contractDetail[0]
-                                                    ?.foundationOwnerAddress}
-                                        </th>
-                                    </td>
-                                    <td className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                                        >
-                                            {contractDetail &&
-                                                contractDetail[0]
-                                                    ?.foundationCoOwnerAddress}
-                                        </th>
-                                    </td>
-                                    <td className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                                        >
-                                            {Number(
-                                                contractDetail &&
-                                                    contractDetail[0]
-                                                        ?.totalInvolvedParticipants
-                                            )}
-                                        </th>
-                                    </td>
-                                    <td className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                        <th
-                                            scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                                        >
-                                            {contractDetail &&
-                                                convertTimestamp(
-                                                    Number(
-                                                        contractDetail[0]
-                                                            ?.endVotingTime
-                                                    )
-                                                )}
-                                        </th>
-                                    </td>
-                                </tbody>
-                            </table>
-                        </div> */
-}

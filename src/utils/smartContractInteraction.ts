@@ -4,7 +4,7 @@ import { publicClient } from "./client";
 import { createWalletClient, custom, getContract, isAddress } from "viem";
 import { sepolia } from "viem/chains";
 
-const contractAddress = "0x33Be2e3b3DB31056d6FBD752ef7b062Bc74911B0";
+const contractAddress = "0xC4CDaC2f39823CDCAc91009412b6bfe6C395472A";
 
 export const addCandidate = async (
     foundationOwnerAddress: string,
@@ -49,10 +49,18 @@ export const voteCandidate = async (
             args: [voteInput, foundationOwnerAddress],
         });
         console.log(request);
-        const vote = await walletClient.writeContract(request);
-        return vote;
+        console.log("berhasil simulate");
+        const executeVote = await walletClient.writeContract(request);
+        console.log("berhasil writecontract");
+        if (executeVote) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeVote,
+            });
+            console.log("berhasil dapetin receipt");
+            return transaction.status;
+        }
     } catch (error) {
-        return error;
+        throw error;
     }
 };
 
@@ -97,14 +105,17 @@ export const donate = async (
             args: [foundationAddress],
             value: bigintWei,
         });
+        console.log(request);
+        console.log("berhasil simulate");
         const executeDonation = await walletClient.writeContract(request);
-        return executeDonation;
-        // const transaction = await publicClient.waitForTransactionReceipt({
-        //     hash: executeDonation,
-        // });
-        // console.log(transaction);
-        // return transaction.status;
-        // 0xada0401c840269867d175841ac1f5d71b23a5142e0ca3c598717d7d85ffc9f5c
+        console.log("berhasil writecontract");
+        if (executeDonation) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeDonation,
+            });
+            console.log("berhasil dapetin receipt");
+            return transaction.status;
+        }
     } catch (error) {
         console.log(error);
     }
