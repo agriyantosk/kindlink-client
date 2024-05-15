@@ -2,9 +2,13 @@ import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { queryEqualsTo } from "@/utils/firebase";
 import FoundationSocials from "../components/FoundationSocials";
-import { getAllListedFoundation } from "@/utils/smartContractInteraction";
+import {
+    donate,
+    getAllListedFoundation,
+} from "@/utils/smartContractInteraction";
 import { convertTimestamp } from "@/utils/utilsFunction";
 import { Button, Tooltip } from "flowbite-react";
+import { publicClient } from "@/utils/client";
 
 interface FoundationContractDetailPayload {
     contractAddress: string;
@@ -19,13 +23,63 @@ const Detail = () => {
     const { address } = router.query;
     const [detail, setDetail] = useState<any>();
     const [contractDetail, setContractDetail] = useState<any>();
+    const [value, setValue] = useState<number | undefined>();
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const donationAmount = formData.get("donationAmount");
-        console.log("Donation amount:", donationAmount);
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(Number(event.target.value));
     };
+
+    const handleSubmit = async (
+        event: FormEvent<HTMLFormElement>,
+        value: string | undefined | number,
+        foundationContractAddress: string
+    ) => {
+        try {
+            event.preventDefault();
+            const convertToNumber = Number(value);
+            if (!value || !foundationContractAddress)
+                return new Error("Invalid Input");
+            const executeDonation = await donate(
+                foundationContractAddress,
+                convertToNumber
+            );
+            if (executeDonation) {
+                const transaction =
+                    await publicClient.waitForTransactionReceipt({
+                        hash: executeDonation,
+                    });
+                if (transaction && transaction.status === "success") {
+                    console.log(transaction);
+                    alert(
+                        `Donation Successful! Transaction Hash: ${transaction.transactionHash}`
+                    );
+                } else {
+                    alert("Transaction Failed");
+                }
+            } else {
+                console.error("Donation failed (no transaction hash returned)");
+                alert("An error occurred. Please try again.");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // const handleSubmit = async (
+    //     event: FormEvent<HTMLFormElement>,
+    //     value: number,
+    //     foundationContractAddress: string
+    // ) => {
+    //     try {
+    //         event.preventDefault();
+    //         console.log(value, foundationContractAddress);
+    //         // const formData = new FormData(event.currentTarget);
+    //         // const donationAmount = formData.get("donationAmount");
+    //         // const executeDonation = await donate();
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
 
     const fetchFoundationDetails = async () => {
         try {
@@ -166,19 +220,33 @@ const Detail = () => {
                             </p>
                         </div>
                         <div className="flex justify-start">
-                            <form onSubmit={handleSubmit}>
+                            <form
+                                onSubmit={(event) =>
+                                    handleSubmit(
+                                        event,
+                                        value,
+                                        contractDetail[0]?.contractAddress
+                                    )
+                                }
+                            >
                                 <label htmlFor="donationAmount">
                                     Enter Donation:
                                 </label>
                                 <div className="flex gap-5">
                                     <input
+                                        onChange={handleInputChange}
                                         type="text"
                                         id="donationAmount"
                                         name="donationAmount"
                                         placeholder="1 ETH"
                                         className="rounded-xl"
                                     />
-                                    <button type="submit">Submit</button>
+                                    <button
+                                        className="rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
+                                        type="submit"
+                                    >
+                                        Submit
+                                    </button>
                                 </div>
                             </form>
                         </div>

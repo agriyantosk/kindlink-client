@@ -4,7 +4,7 @@ import { publicClient } from "./client";
 import { createWalletClient, custom, getContract, isAddress } from "viem";
 import { sepolia } from "viem/chains";
 
-const contractAddress = "0x4e4e482b15F3b4aB5349104aBea0b07227a64A99";
+const contractAddress = "0x33Be2e3b3DB31056d6FBD752ef7b062Bc74911B0";
 
 export const addCandidate = async (
     foundationOwnerAddress: string,
@@ -82,12 +82,12 @@ export const donate = async (
     donationValue: number
 ) => {
     try {
+        console.log(foundationAddress);
         const walletClient = createWalletClient({
             chain: sepolia,
             transport: custom(window.ethereum),
         });
         const bigintWei = BigInt(donationValue * 1e18);
-        console.log(bigintWei);
         const [account] = await walletClient.getAddresses();
         const { request } = await publicClient.simulateContract({
             account,
@@ -97,7 +97,14 @@ export const donate = async (
             args: [foundationAddress],
             value: bigintWei,
         });
-        console.log(request);
+        const executeDonation = await walletClient.writeContract(request);
+        return executeDonation;
+        // const transaction = await publicClient.waitForTransactionReceipt({
+        //     hash: executeDonation,
+        // });
+        // console.log(transaction);
+        // return transaction.status;
+        // 0xada0401c840269867d175841ac1f5d71b23a5142e0ca3c598717d7d85ffc9f5c
     } catch (error) {
         console.log(error);
     }
