@@ -121,6 +121,34 @@ export const donate = async (
     }
 };
 
+export const withdrawal = async (foundationAddress: string) => {
+    try {
+        const walletClient = createWalletClient({
+            chain: sepolia,
+            transport: custom(window.ethereum),
+        });
+        const [account] = await walletClient.getAddresses();
+        const { request } = await publicClient.simulateContract({
+            account,
+            address: contractAddress,
+            abi: kindlinkAbi,
+            functionName: "delegateWithdrawal",
+            args: [foundationAddress],
+        });
+        const executeWithdrawal = await walletClient.writeContract(request);
+        if (executeWithdrawal) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeWithdrawal,
+            });
+            console.log("berhasil dapetin receipt");
+            return transaction.status;
+        }
+        return true;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const getAllCandidates = async (
     userAddress: string | `0x${string}` | undefined,
     foundationOwnerAddresses: [`0x${string}`]

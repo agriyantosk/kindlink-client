@@ -1,21 +1,23 @@
 import { publicClient } from "@/utils/client";
-import { fetchFirebaseData, queryIn } from "@/utils/firebase";
+import { deleteCandidate, fetchFirebaseData, queryIn } from "@/utils/firebase";
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
-import { getBalance } from "viem/actions";
+import { withdrawal } from "@/utils/smartContractInteraction";
 
 const DevWithdrawalApproval = () => {
-    const [approvalWallets, setApprovalWallets] = useState<any>();
-    const [approvalInformations, setApprovalInformations] = useState<any>();
-    const [approvals, setApprovals] = useState<any>();
+    const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
+    const [approvalInformations, setApprovalInformations] = useState<any[]>([]);
+    const [approvals, setApprovals] = useState<any[]>([]);
+    
     const fetchApprovalWallets = async () => {
         try {
             const withdrawalData = await fetchFirebaseData(
                 "approvalAddresses",
                 "1Tud4ZRa96AJodX9EvGL",
-                "foundationOwnerAddresses"
+                "contractAddresses"
             );
+            console.log(withdrawalData.length);
             setApprovalWallets(withdrawalData);
         } catch (error) {
             console.log(error);
@@ -24,10 +26,9 @@ const DevWithdrawalApproval = () => {
 
     const fetchApprovalInformation = async () => {
         try {
-            const info = await queryIn(
-                "foundationOwnerAddress",
-                approvalWallets
-            );
+            console.log(approvalWallets);
+            const info = await queryIn("contractAddress", approvalWallets);
+            console.log(info);
             setApprovalInformations(info);
         } catch (error) {
             console.log(error);
@@ -45,12 +46,31 @@ const DevWithdrawalApproval = () => {
         }
     };
 
+    const handleWithdrawalApprove = async (foundationAddress: string) => {
+        try {
+            const withdraw = await withdrawal(foundationAddress);
+            if (withdraw === "success") {
+                const deleteFirebaseRequest = await deleteCandidate(
+                    "approvalAddresses",
+                    foundationAddress,
+                    "1Tud4ZRa96AJodX9EvGL",
+                    "contractAddresses"
+                );
+            } else {
+                alert("FAiled");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const fetchContractState = async () => {
         try {
             let compiledData = [];
             if (approvalInformations) {
                 for (let i = 0; i < approvalInformations.length; i++) {
                     const approval = approvalInformations[i];
+                    console.log(approval);
                     const contract = getContract({
                         address: approval.contractAddress,
                         abi: foundationABI,
@@ -61,7 +81,9 @@ const DevWithdrawalApproval = () => {
                         await contract.read.getApprovalState();
                     const state = {
                         ...approvalInformations[i],
-                        balance: await getContractBalance(approval.contractAddress),
+                        balance: await getContractBalance(
+                            approval.contractAddress
+                        ),
                         isRequestWithdrawal: approvalState.isRequestWithdrawal,
                         kindlinkApproval: approvalState.kindlinkApproval,
                         foundationOwnerApproval:
@@ -78,61 +100,60 @@ const DevWithdrawalApproval = () => {
         }
     };
 
-    // KALO INI NANTI NGAMBIL DARI APPROVAL DAN NGAMBIL INFORMATION DARI FIREBASE AJA
-    // UNTUNG NGAMBIL STATE NYA MAU GA MAU HARUS DI LOOP KE SMART CONTRACT BUAT NGAMBIL STATE REQUEST WITHDRAWAL DAN HAS APPROVE NYA
-
     useEffect(() => {
         fetchApprovalWallets();
     }, []);
+
     useEffect(() => {
-        if (approvalWallets) {
+        if (approvalWallets && approvalWallets.length > 0) {
             fetchApprovalInformation();
         }
     }, [approvalWallets]);
+
     useEffect(() => {
-        if (approvalInformations) {
+        if (approvalInformations && approvalInformations.length > 0) {
             fetchContractState();
         }
     }, [approvalInformations]);
+
     return (
         <>
             <div className="relative overflow-y-auto w-full px-10">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase">
                         <tr>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="px-3 py-1.5">
                                 Project Name
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="px-3 py-1.5">
                                 Contract Address
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="px-3 py-1.5">
                                 Withdrawal Funds
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="px-3 py-1.5">
                                 Kindlink Approval
                             </th>
-                            <th scope="col" className="px-6 py-3">
-                                Foundation Owner Approval
+                            <th scope="col" className="px-3 py-1.5">
+                                Owner Approval
                             </th>
-                            <th scope="col" className="px-6 py-3">
-                                Foundation Co Owner Appro
+                            <th scope="col" className="px-3 py-1.5">
+                                Co Owner Appro
                             </th>
-                            <th scope="col" className="px-6 py-3">
+                            <th scope="col" className="px-3 py-1.5">
                                 Status
                             </th>
                         </tr>
                     </thead>
                     {approvals &&
                         approvals.map((el: any, index: number) => {
-                            console.log(approvals);
                             return (
                                 <>
                                     <tbody key={index}>
                                         <tr className="border-b border-gray-400">
                                             <td
                                                 scope="row"
-                                                className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap"
+                                                className="flex items-center px-3 py-2 text-gray-900 whitespace-nowrap"
                                             >
                                                 <img
                                                     className="w-10 h-10 rounded-full"
@@ -148,13 +169,13 @@ const DevWithdrawalApproval = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 {el?.contractAddress}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 {el?.balance}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 {el?.kindlinkApproval ? (
                                                     <svg
                                                         viewBox="0 0 32 32"
@@ -198,7 +219,7 @@ const DevWithdrawalApproval = () => {
                                                     </svg>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 {el?.foundationOwnerApproval ? (
                                                     <svg
                                                         viewBox="0 0 32 32"
@@ -242,7 +263,7 @@ const DevWithdrawalApproval = () => {
                                                     </svg>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 {el?.foundationCoOwnerApproval ? (
                                                     <svg
                                                         viewBox="0 0 32 32"
@@ -286,14 +307,19 @@ const DevWithdrawalApproval = () => {
                                                     </svg>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 {el?.isRequestWithdrawal
                                                     ? "Ongoing Request"
                                                     : "No Ongoing Request"}
                                             </td>
-                                            <td className="px-6 py-4 text-right">
+                                            <td className="px-3 py-2 text-right">
                                                 <button
                                                     type="button"
+                                                    onClick={() =>
+                                                        handleWithdrawalApprove(
+                                                            el?.contractAddress
+                                                        )
+                                                    }
                                                     className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
                                                 >
                                                     Approve

@@ -235,13 +235,6 @@ const AddCandidateForm = () => {
                     </form>
                 </div>
             </div>
-            <button
-                onClick={() =>
-                    donate("0xd970296155f94540f622dc727932684Fd418de2D", 1)
-                }
-            >
-                COBA DONATE
-            </button>
         </>
     );
 };

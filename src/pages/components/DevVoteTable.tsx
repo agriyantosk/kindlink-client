@@ -20,7 +20,8 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                 const del = await deleteCandidate(
                     "candidateAddresses",
                     candidateData.foundationOwnerAddress,
-                    "kjqc51iTPhLPAtFqdRoZ"
+                    "kjqc51iTPhLPAtFqdRoZ",
+                    "foundationOwnerAddress"
                 );
                 const addFoundation = await addFoundationData(
                     "foundationAddresses",

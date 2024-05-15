@@ -77,11 +77,11 @@ export const queryIn = async (key: string, values: string[]) => {
         const colRef = collection(db, "information");
         const q = query(colRef, where(key, "in", values));
         const querySnapshot = await getDocs(q);
-
         const queryResult: any = [];
         querySnapshot.forEach((doc) => {
             queryResult.push({ ...doc.data(), id: doc.id });
         });
+        console.log(queryResult);
         return queryResult;
     } catch (error) {
         console.log(error);
@@ -235,7 +235,8 @@ export const deleteData = async (id: string) => {
 export const deleteCandidate = async (
     collectionName: string,
     addressToDelete: string,
-    documentId: string
+    documentId: string,
+    keyName: string
 ) => {
     try {
         const db = getFirestore();
@@ -246,11 +247,11 @@ export const deleteCandidate = async (
             return;
         }
         const existingData = docSnapshot.data();
-        const existingAddresses = existingData?.foundationOwnerAddress || [];
+        const existingAddresses = existingData && existingData[keyName];
         const parsed = JSON.parse(existingAddresses);
         const newArray = parsed.filter((el: any) => el !== addressToDelete);
         const updateCandidate = await updateDoc(docRef, {
-            foundationOwnerAddress: JSON.stringify(newArray),
+            [keyName]: JSON.stringify(newArray),
         });
         return `Successfully Added foundation candidate: ${JSON.stringify(
             updateCandidate
