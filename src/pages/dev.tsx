@@ -2,13 +2,10 @@ import { useEffect, useState } from "react";
 import DevFilter from "./components/DevFilter";
 import DevVoteTable from "./components/DevVoteTable";
 import { useFilterContext } from "./components/Layout";
-import { fetchFirebaseWallet, queryIn } from "@/utils/firebase";
+import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import AddCandidateForm from "./components/AddCandidateForm";
 import DevWithdrawalApproval from "./components/DevWithdrawalApproval";
-import {
-    addCandidate,
-    getAllCandidates,
-} from "@/utils/smartContractInteraction";
+import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
 
 const Dev = () => {
@@ -18,7 +15,11 @@ const Dev = () => {
     const [candidates, setCandidates] = useState<any>(false);
     const fetchCandidateWallets = async () => {
         try {
-            const wallets = await fetchFirebaseWallet("candidateAddresses");
+            const wallets = await fetchFirebaseWallets(
+                "candidateAddresses",
+                "kjqc51iTPhLPAtFqdRoZ",
+                "foundationOwnerAddress"
+            );
             setCandidateWallets(wallets);
         } catch (error) {
             console.log(error);

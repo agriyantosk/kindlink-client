@@ -2,7 +2,6 @@ import { publicClient } from "@/utils/client";
 import { convertTimestamp } from "@/utils/utilsFunction";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getBalance } from "viem/actions";
 
 interface DonationData {}
 

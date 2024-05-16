@@ -8,7 +8,6 @@ import {
 } from "@/utils/smartContractInteraction";
 import { convertTimestamp } from "@/utils/utilsFunction";
 import { Button, Tooltip } from "flowbite-react";
-import { publicClient } from "@/utils/client";
 
 interface FoundationContractDetailPayload {
     contractAddress: string;

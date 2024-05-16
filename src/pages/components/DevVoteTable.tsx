@@ -1,7 +1,8 @@
 import {
-    addFoundationData,
     addOwnerAddress,
-    deleteCandidate,
+    deleteFirebaseWallet,
+    updateCandidateLosingVote,
+    updateCandidateWinningVote,
 } from "@/utils/firebase";
 import { approveCandidate } from "@/utils/smartContractInteraction";
 import {
@@ -13,35 +14,49 @@ import {
 const DevVoteTable = ({ filterOption, candidates }: any) => {
     const handleApprove = async (candidateData: any) => {
         try {
-            const approveSmartContract = await approveCandidate(
-                candidateData.foundationOwnerAddress
-            );
-            if (approveSmartContract) {
-                const del = await deleteCandidate(
-                    "candidateAddresses",
-                    candidateData.foundationOwnerAddress,
-                    "kjqc51iTPhLPAtFqdRoZ",
-                    "foundationOwnerAddress"
+            if (votingPeriodCompare(Number(candidateData.endVotingTime))) {
+                const approveSmartContract = await approveCandidate(
+                    candidateData.foundationOwnerAddress
                 );
-                const addFoundation = await addFoundationData(
-                    "foundationAddresses",
-                    {
-                        conrtactAddress:
-                            "0x3D91a008036d093081732F50b847483CAD6FEaF4",
-                        foundationCoOwnerAddress:
+                if (approveSmartContract) {
+                    if (
+                        Number(candidateData.yesVotes) >
+                        Number(candidateData.noVotes)
+                    ) {
+                        const updateCandidate =
+                            await updateCandidateWinningVote(
+                                "information",
+                                {
+                                    conrtactAddress:
+                                        "0x3D91a008036d093081732F50b847483CAD6FEaF4",
+                                    foundationCoOwnerAddress:
+                                        candidateData.foundationCoOwnerAddress,
+                                },
+                                "2vvLJqomt3wPX4fssSyT"
+                            );
+                        const ownerAddresses = [
                             candidateData.foundationCoOwnerAddress,
-                    },
-                    "2vvLJqomt3wPX4fssSyT"
-                );
-                const ownerAddresses = [
-                    candidateData.foundationCoOwnerAddress,
-                    candidateData.foundationCoOwnerAddress,
-                ];
-                const addAddress = await addOwnerAddress(
-                    "ownerAddresses",
-                    ownerAddresses,
-                    "I02LGg5smLtAZF6a09ON"
-                );
+                            candidateData.foundationCoOwnerAddress,
+                        ];
+                        const addAddress = await addOwnerAddress(
+                            "ownerAddresses",
+                            ownerAddresses,
+                            "I02LGg5smLtAZF6a09ON"
+                        );
+                    } else {
+                        const updateCandidate = await updateCandidateLosingVote(
+                            "information",
+                            candidateData.id
+                        );
+                        console.log("losing");
+                    }
+                    const del = await deleteFirebaseWallet(
+                        "candidateAddresses",
+                        candidateData.foundationOwnerAddress,
+                        "kjqc51iTPhLPAtFqdRoZ",
+                        "foundationOwnerAddress"
+                    );
+                }
             }
         } catch (error) {
             console.log(error);
@@ -72,6 +87,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     </thead>
                     {candidates &&
                         candidates.map((el: any, index: number) => {
+                            console.log(candidates);
                             return (
                                 <>
                                     <tbody key={index}>
@@ -105,15 +121,6 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                                                     {`${convertTimestamp(
                                                         Number(el.endVotingTime)
                                                     )} `}
-                                                    {/* <span className="font-normal">
-                                                        (
-                                                        {
-                                                            firebaseTimestampToDate(
-                                                                el.createdAt
-                                                            ).formattedTime
-                                                        }
-                                                        )
-                                                    </span> */}
                                                 </h1>
                                             </td>
                                             <td className="px-6 py-4">

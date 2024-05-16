@@ -1,5 +1,9 @@
 import { publicClient } from "@/utils/client";
-import { deleteCandidate, fetchFirebaseData, queryIn } from "@/utils/firebase";
+import {
+    deleteFirebaseWallet,
+    fetchFirebaseWallets,
+    queryIn,
+} from "@/utils/firebase";
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
@@ -9,15 +13,14 @@ const DevWithdrawalApproval = () => {
     const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
     const [approvalInformations, setApprovalInformations] = useState<any[]>([]);
     const [approvals, setApprovals] = useState<any[]>([]);
-    
+
     const fetchApprovalWallets = async () => {
         try {
-            const withdrawalData = await fetchFirebaseData(
+            const withdrawalData = await fetchFirebaseWallets(
                 "approvalAddresses",
                 "1Tud4ZRa96AJodX9EvGL",
                 "contractAddresses"
             );
-            console.log(withdrawalData.length);
             setApprovalWallets(withdrawalData);
         } catch (error) {
             console.log(error);
@@ -50,12 +53,13 @@ const DevWithdrawalApproval = () => {
         try {
             const withdraw = await withdrawal(foundationAddress);
             if (withdraw === "success") {
-                const deleteFirebaseRequest = await deleteCandidate(
-                    "approvalAddresses",
-                    foundationAddress,
-                    "1Tud4ZRa96AJodX9EvGL",
-                    "contractAddresses"
-                );
+                const deleteFirebaseWithdrawalRequest =
+                    await deleteFirebaseWallet(
+                        "approvalAddresses",
+                        foundationAddress,
+                        "1Tud4ZRa96AJodX9EvGL",
+                        "contractAddresses"
+                    );
             } else {
                 alert("FAiled");
             }
