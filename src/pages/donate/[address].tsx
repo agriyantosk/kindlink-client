@@ -35,9 +35,10 @@ const Detail = () => {
     ) => {
         try {
             event.preventDefault();
-            const convertToNumber = Number(value);
-            if (!value || !foundationContractAddress)
+            if (!value || !foundationContractAddress) {
                 return new Error("Invalid Input");
+            }
+            const convertToNumber = Number(value);
             const executeDonation = await donate(
                 foundationContractAddress,
                 convertToNumber

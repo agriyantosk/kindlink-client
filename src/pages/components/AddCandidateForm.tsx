@@ -39,31 +39,27 @@ const AddCandidateForm = () => {
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
             );
-            // const firebaseCandidateAdd = await addCandidateData(
-            //     "candidateAddresses",
-            //     formData.foundationOwnerAddress,
-            //     "kjqc51iTPhLPAtFqdRoZ"
-            // );
-            const firebaseCandidateAdd = await addFirebaseWallets(
-                CandidateEnum.CollectionName,
-                formData.foundationOwnerAddress,
-                CandidateEnum.DocumentId,
-                CandidateEnum.KeyName
-            );
-            const firebaseInformationAdd = await addInformationData(
-                "information",
-                {
-                    description: formData.description,
-                    imgUrl: formData.imgUrl,
-                    instagramUrl: formData.instagramUrl,
-                    name: formData.name,
-                    websiteUrl: formData.websiteUrl,
-                    xUrl: formData.xUrl,
-                }
-            );
-            console.log(contractAdd);
-            console.log(firebaseCandidateAdd);
-            console.log(firebaseInformationAdd);
+            if (contractAdd === "success") {
+                const firebaseCandidateAdd = await addFirebaseWallets(
+                    CandidateEnum.CollectionName,
+                    formData.foundationOwnerAddress,
+                    CandidateEnum.DocumentId,
+                    CandidateEnum.KeyName
+                );
+                const firebaseInformationAdd = await addInformationData(
+                    "information",
+                    {
+                        description: formData.description,
+                        imgUrl: formData.imgUrl,
+                        instagramUrl: formData.instagramUrl,
+                        name: formData.name,
+                        websiteUrl: formData.websiteUrl,
+                        xUrl: formData.xUrl,
+                    }
+                );
+            } else {
+                alert("Failed");
+            }
         } catch (error) {
             console.log(error);
         }

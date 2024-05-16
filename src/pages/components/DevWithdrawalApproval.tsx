@@ -7,7 +7,9 @@ import {
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
-import { withdrawal } from "@/utils/smartContractInteraction";
+import {
+    foundationWithdrawalApprove,
+} from "@/utils/smartContractInteraction";
 import { ApprovalEnum } from "@/enum/enum";
 
 const DevWithdrawalApproval = () => {
@@ -52,8 +54,10 @@ const DevWithdrawalApproval = () => {
 
     const handleWithdrawalApprove = async (foundationAddress: string) => {
         try {
-            const withdraw = await withdrawal(foundationAddress);
-            if (withdraw === "success") {
+            const approveWithdraw = await foundationWithdrawalApprove(
+                foundationAddress
+            );
+            if (approveWithdraw === "success") {
                 const deleteFirebaseWithdrawalRequest =
                     await deleteFirebaseWallet(
                         ApprovalEnum.CollectionName,
@@ -62,7 +66,7 @@ const DevWithdrawalApproval = () => {
                         ApprovalEnum.KeyName
                     );
             } else {
-                alert("FAiled");
+                alert("Failed");
             }
         } catch (error) {
             console.log(error);

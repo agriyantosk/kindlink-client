@@ -6,6 +6,7 @@ import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
 import { addFirebaseWallets } from "@/utils/firebase";
 import { ApprovalEnum } from "@/enum/enum";
+import { foundationWithdrawalRequest } from "@/utils/smartContractInteraction";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
@@ -46,17 +47,19 @@ const Withdrawal = ({ contractState }: any) => {
 
     const handleRequestWithdrawal = async (contractAddress: string) => {
         try {
-            // const requestWithdrawal = await
-            // ini ceritanya ke smart contract dulu
-
-            /* KALO BERHASIL */
-
-            const addFirebaseWithdrawalRequest = await addFirebaseWallets(
-                ApprovalEnum.CollectionName,
-                contractAddress,
-                ApprovalEnum.DocumentId,
-                ApprovalEnum.KeyName
+            const requestWithdrawal = await foundationWithdrawalRequest(
+                contractAddress
             );
+            if (requestWithdrawal === "success") {
+                const addFirebaseWithdrawalRequest = await addFirebaseWallets(
+                    ApprovalEnum.CollectionName,
+                    contractAddress,
+                    ApprovalEnum.DocumentId,
+                    ApprovalEnum.KeyName
+                );
+            } else {
+                alert("Failed");
+            }
         } catch (error) {
             console.log(error);
         }

@@ -25,6 +25,7 @@ const firebaseConfig = {
 };
 import { FormData } from "@/interfaces/interface";
 import firebase from "firebase/app";
+import { OwnerEnum } from "@/enum/enum";
 
 const initialize = (collectionName: string) => {
     initializeApp(firebaseConfig);
@@ -32,36 +33,6 @@ const initialize = (collectionName: string) => {
     const colRef = collection(db, collectionName);
     return colRef;
 };
-
-// export const fetchFirebaseWallet = async (
-//     collectionName: string,
-//     keyName: string
-// ) => {
-//     try {
-//         const ref = initialize(collectionName);
-//         const snapshot = await getDocs(ref);
-//         let data: any;
-//         snapshot.forEach((doc) => {
-//             const parsedOwnerAddress = JSON.parse(doc.data()[keyName]);
-//             data = parsedOwnerAddress;
-//         });
-//         return data;
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
-
-/* 
-FIREBASE CUMAN BUTUH 7 FUNCTION HARUSNYA
-1. ADD WALLET [V]
-2. DELETE WALLET [V]
-3. ADD INFORMATION [V]
-4. ADD OWNER WALLETS [V]
-5. FETCH FIREBASE WALLET [V]
-6. QUERY IN [V]
-7. QUERY EQUALS TO [V]
-8. DELETE FOUNDATION [V]
-*/
 
 // this function is to get all wallets according either to approvalAddresses, candidateAddresses, foundationAddresses, ownerAddresses, or devAddresses
 export const fetchFirebaseWallets = async (
@@ -139,6 +110,7 @@ export const addInformationData = async (
     formData: any
 ) => {
     try {
+        initializeApp(firebaseConfig);
         const db = getFirestore();
         const colRef = collection(db, collectionName);
         const addInformation = await addDoc(colRef, formData);
@@ -157,6 +129,7 @@ export const addOwnerAddress = async (
     documentId: string
 ) => {
     try {
+        initializeApp(firebaseConfig);
         const db = getFirestore();
         const docRef = doc(db, collectionName, documentId);
         const docSnapshot = await getDoc(docRef);
@@ -165,7 +138,8 @@ export const addOwnerAddress = async (
             return;
         }
         const existingData = docSnapshot.data();
-        const existingAddresses = existingData?.address || [];
+        const existingAddresses =
+            (existingData && existingData[OwnerEnum.KeyName]) || [];
         const parsed = JSON.parse(existingAddresses);
         parsed.push(formData[0]);
         parsed.push(formData[1]);
@@ -287,13 +261,3 @@ export const updateCandidateLosingVote = async (
         console.log(error);
     }
 };
-
-// export const fetchDataById = async (collectionName: string, id: string) => {
-//     try {
-//         const db = getFirestore();
-//         const docRef = doc(db, collectionName, id);
-//         return docRef;
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };

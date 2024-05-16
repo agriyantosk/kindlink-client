@@ -32,3 +32,7 @@ export enum InformationEnum {
     CollectionName = "information",
     KeyName = "contractAddress",
 }
+
+export enum Kindlink {
+    contractAddress = "",
+}

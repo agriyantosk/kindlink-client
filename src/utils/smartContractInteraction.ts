@@ -25,8 +25,13 @@ export const addCandidate = async (
             args: [foundationOwnerAddress, foundationCoOwnerAddress],
         });
         console.log(request);
-        return request;
-        // await walletClient.writeContract(request);
+        const executeAddCandidate = await walletClient.writeContract(request);
+        if (executeAddCandidate) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeAddCandidate,
+            });
+            return transaction.status;
+        }
     } catch (error) {
         console.log(error);
     }
@@ -80,7 +85,17 @@ export const approveCandidate = async (foundationOwnerAddress: string) => {
             args: [foundationOwnerAddress],
         });
         console.log(request);
-        return true;
+        const executeApproveCandidate = await walletClient.writeContract(
+            request
+        );
+        console.log("berhasil writecontract");
+        if (executeApproveCandidate) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeApproveCandidate,
+            });
+            console.log("berhasil dapetin receipt");
+            return transaction.status;
+        }
     } catch (error) {
         console.log(error);
     }
@@ -106,15 +121,11 @@ export const donate = async (
             args: [foundationAddress],
             value: bigintWei,
         });
-        console.log(request);
-        console.log("berhasil simulate");
         const executeDonation = await walletClient.writeContract(request);
-        console.log("berhasil writecontract");
         if (executeDonation) {
             const transaction = await publicClient.waitForTransactionReceipt({
                 hash: executeDonation,
             });
-            console.log("berhasil dapetin receipt");
             return transaction.status;
         }
     } catch (error) {
@@ -142,7 +153,6 @@ export const withdrawal = async (foundationAddress: string) => {
             const transaction = await publicClient.waitForTransactionReceipt({
                 hash: executeWithdrawal,
             });
-            console.log("berhasil dapetin receipt");
             return transaction.status;
         }
         return true;
@@ -174,7 +184,6 @@ export const foundationWithdrawalRequest = async (
             const transaction = await publicClient.waitForTransactionReceipt({
                 hash: executeWithdrawalRequest,
             });
-            console.log("berhasil dapetin receipt");
             return transaction.status;
         }
         return true;
@@ -206,7 +215,6 @@ export const foundationWithdrawalApprove = async (
             const transaction = await publicClient.waitForTransactionReceipt({
                 hash: executeWithdrawalRequest,
             });
-            console.log("berhasil dapetin receipt");
             return transaction.status;
         }
         return true;

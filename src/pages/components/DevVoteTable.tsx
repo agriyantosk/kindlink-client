@@ -19,7 +19,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                 const approveSmartContract = await approveCandidate(
                     candidateData.foundationOwnerAddress
                 );
-                if (approveSmartContract) {
+                if (approveSmartContract === "success") {
                     if (
                         Number(candidateData.yesVotes) >
                         Number(candidateData.noVotes)
@@ -49,7 +49,6 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                             InformationEnum.CollectionName,
                             candidateData.id
                         );
-                        console.log("losing");
                     }
                     const del = await deleteFirebaseWallet(
                         CandidateEnum.CollectionName,
@@ -57,6 +56,8 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                         CandidateEnum.DocumentId,
                         CandidateEnum.KeyName
                     );
+                } else {
+                    alert("Failed on Voting");
                 }
             }
         } catch (error) {
