@@ -6,6 +6,7 @@ import { sepolia } from "viem/chains";
 
 const contractAddress = "0xC4CDaC2f39823CDCAc91009412b6bfe6C395472A";
 
+// CALL MAIN KINDLINK FUNCTION
 export const addCandidate = async (
     foundationOwnerAddress: string,
     foundationCoOwnerAddress: string
@@ -121,6 +122,7 @@ export const donate = async (
     }
 };
 
+// KINDLINK DELEGATE FUNCTION
 export const withdrawal = async (foundationAddress: string) => {
     try {
         const walletClient = createWalletClient({
@@ -149,6 +151,71 @@ export const withdrawal = async (foundationAddress: string) => {
     }
 };
 
+export const foundationWithdrawalRequest = async (
+    foundationAddress: string
+) => {
+    try {
+        const walletClient = createWalletClient({
+            chain: sepolia,
+            transport: custom(window.ethereum),
+        });
+        const [account] = await walletClient.getAddresses();
+        const { request } = await publicClient.simulateContract({
+            account,
+            address: contractAddress,
+            abi: kindlinkAbi,
+            functionName: "delegateWithdrawalRequest",
+            args: [foundationAddress],
+        });
+        const executeWithdrawalRequest = await walletClient.writeContract(
+            request
+        );
+        if (executeWithdrawalRequest) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeWithdrawalRequest,
+            });
+            console.log("berhasil dapetin receipt");
+            return transaction.status;
+        }
+        return true;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const foundationWithdrawalApprove = async (
+    foundationAddress: string
+) => {
+    try {
+        const walletClient = createWalletClient({
+            chain: sepolia,
+            transport: custom(window.ethereum),
+        });
+        const [account] = await walletClient.getAddresses();
+        const { request } = await publicClient.simulateContract({
+            account,
+            address: contractAddress,
+            abi: kindlinkAbi,
+            functionName: "delegateApprove",
+            args: [foundationAddress],
+        });
+        const executeWithdrawalRequest = await walletClient.writeContract(
+            request
+        );
+        if (executeWithdrawalRequest) {
+            const transaction = await publicClient.waitForTransactionReceipt({
+                hash: executeWithdrawalRequest,
+            });
+            console.log("berhasil dapetin receipt");
+            return transaction.status;
+        }
+        return true;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// GETTER FUNCTION
 export const getAllCandidates = async (
     userAddress: string | `0x${string}` | undefined,
     foundationOwnerAddresses: [`0x${string}`]
