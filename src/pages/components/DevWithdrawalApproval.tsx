@@ -8,6 +8,7 @@ import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { withdrawal } from "@/utils/smartContractInteraction";
+import { ApprovalEnum } from "@/enum/enum";
 
 const DevWithdrawalApproval = () => {
     const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
@@ -17,9 +18,9 @@ const DevWithdrawalApproval = () => {
     const fetchApprovalWallets = async () => {
         try {
             const withdrawalData = await fetchFirebaseWallets(
-                "approvalAddresses",
-                "1Tud4ZRa96AJodX9EvGL",
-                "contractAddresses"
+                ApprovalEnum.CollectionName,
+                ApprovalEnum.DocumentId,
+                ApprovalEnum.KeyName
             );
             setApprovalWallets(withdrawalData);
         } catch (error) {
@@ -30,7 +31,7 @@ const DevWithdrawalApproval = () => {
     const fetchApprovalInformation = async () => {
         try {
             console.log(approvalWallets);
-            const info = await queryIn("contractAddress", approvalWallets);
+            const info = await queryIn(ApprovalEnum.KeyName, approvalWallets);
             console.log(info);
             setApprovalInformations(info);
         } catch (error) {
@@ -55,10 +56,10 @@ const DevWithdrawalApproval = () => {
             if (withdraw === "success") {
                 const deleteFirebaseWithdrawalRequest =
                     await deleteFirebaseWallet(
-                        "approvalAddresses",
+                        ApprovalEnum.CollectionName,
                         foundationAddress,
-                        "1Tud4ZRa96AJodX9EvGL",
-                        "contractAddresses"
+                        ApprovalEnum.DocumentId,
+                        ApprovalEnum.KeyName
                     );
             } else {
                 alert("FAiled");

@@ -3,6 +3,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { fetchFirebaseWallets } from "@/utils/firebase";
 import { useEffect, useState } from "react";
+import { DevEnum, OwnerEnum } from "@/enum/enum";
 
 const Navbar = () => {
     const { address, isConnected } = useAccount();
@@ -12,9 +13,9 @@ const Navbar = () => {
     const checkOwnerAddress = async (userAddress: string) => {
         try {
             const ownerAddress = await fetchFirebaseWallets(
-                "ownerAddresses",
-                "I02LGg5smLtAZF6a09ON",
-                "address"
+                OwnerEnum.CollectionName,
+                OwnerEnum.DocumentId,
+                OwnerEnum.KeyName
             );
             const check =
                 ownerAddress &&
@@ -27,14 +28,13 @@ const Navbar = () => {
 
     const checkDevAddress = async (userAddress: string) => {
         try {
-            const ownerAddress = await fetchFirebaseWallets(
-                "devAddress",
-                "M3QpmvtyUP3ORB2dGYs2",
-                "address"
+            const devAddress = await fetchFirebaseWallets(
+                DevEnum.CollectionName,
+                DevEnum.DocumentId,
+                DevEnum.KeyName
             );
             const check =
-                ownerAddress &&
-                ownerAddress.find((el: any) => el === userAddress);
+                devAddress && devAddress.find((el: any) => el === userAddress);
             setIsDev(check);
         } catch (error) {
             console.log(error);
@@ -43,8 +43,8 @@ const Navbar = () => {
 
     useEffect(() => {
         if (address) {
-            checkOwnerAddress("0xd970296155f94540f622dc727932684Fd418de2D");
-            checkDevAddress("0xd970296155f94540f622dc727932684Fd418de2D");
+            checkOwnerAddress(address);
+            checkDevAddress(address);
         }
     }, [address]);
 

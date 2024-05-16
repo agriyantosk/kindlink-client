@@ -34,7 +34,7 @@ const DonationCard = ({ foundations }: any) => {
             return `${Number(balance) / 1e18} ETH`;
         } catch (error) {
             console.log(error);
-            return "Error getting raised funds"; // Return 0 in case of error
+            return "Error getting raised funds";
         }
     };
 

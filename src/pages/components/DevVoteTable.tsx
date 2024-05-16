@@ -1,3 +1,4 @@
+import { CandidateEnum, InformationEnum, OwnerEnum } from "@/enum/enum";
 import {
     addOwnerAddress,
     deleteFirebaseWallet,
@@ -25,36 +26,36 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     ) {
                         const updateCandidate =
                             await updateCandidateWinningVote(
-                                "information",
+                                InformationEnum.CollectionName,
                                 {
                                     conrtactAddress:
-                                        "0x3D91a008036d093081732F50b847483CAD6FEaF4",
+                                        candidateData.contractAddress,
                                     foundationCoOwnerAddress:
                                         candidateData.foundationCoOwnerAddress,
                                 },
-                                "2vvLJqomt3wPX4fssSyT"
+                                candidateData.id
                             );
                         const ownerAddresses = [
                             candidateData.foundationCoOwnerAddress,
                             candidateData.foundationCoOwnerAddress,
                         ];
                         const addAddress = await addOwnerAddress(
-                            "ownerAddresses",
+                            OwnerEnum.CollectionName,
                             ownerAddresses,
-                            "I02LGg5smLtAZF6a09ON"
+                            OwnerEnum.DocumentId
                         );
                     } else {
                         const updateCandidate = await updateCandidateLosingVote(
-                            "information",
+                            InformationEnum.CollectionName,
                             candidateData.id
                         );
                         console.log("losing");
                     }
                     const del = await deleteFirebaseWallet(
-                        "candidateAddresses",
+                        CandidateEnum.CollectionName,
                         candidateData.foundationOwnerAddress,
-                        "kjqc51iTPhLPAtFqdRoZ",
-                        "foundationOwnerAddress"
+                        CandidateEnum.DocumentId,
+                        CandidateEnum.KeyName
                     );
                 }
             }

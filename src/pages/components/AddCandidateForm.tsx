@@ -3,6 +3,7 @@ import firebase from "firebase/firestore";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
 import { addCandidate } from "@/utils/smartContractInteraction";
+import { CandidateEnum } from "@/enum/enum";
 
 const AddCandidateForm = () => {
     const [formData, setFormData] = useState<FormData>({
@@ -44,10 +45,10 @@ const AddCandidateForm = () => {
             //     "kjqc51iTPhLPAtFqdRoZ"
             // );
             const firebaseCandidateAdd = await addFirebaseWallets(
-                "candidateAddresses",
+                CandidateEnum.CollectionName,
                 formData.foundationOwnerAddress,
-                "kjqc51iTPhLPAtFqdRoZ",
-                "foundationOwnerAddress"
+                CandidateEnum.DocumentId,
+                CandidateEnum.KeyName
             );
             const firebaseInformationAdd = await addInformationData(
                 "information",

@@ -7,6 +7,7 @@ import AddCandidateForm from "./components/AddCandidateForm";
 import DevWithdrawalApproval from "./components/DevWithdrawalApproval";
 import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
+import { CandidateEnum } from "@/enum/enum";
 
 const Dev = () => {
     const { address } = useAccount();
@@ -16,9 +17,9 @@ const Dev = () => {
     const fetchCandidateWallets = async () => {
         try {
             const wallets = await fetchFirebaseWallets(
-                "candidateAddresses",
-                "kjqc51iTPhLPAtFqdRoZ",
-                "foundationOwnerAddress"
+                CandidateEnum.CollectionName,
+                CandidateEnum.DocumentId,
+                CandidateEnum.KeyName
             );
             setCandidateWallets(wallets);
         } catch (error) {
@@ -30,7 +31,7 @@ const Dev = () => {
         try {
             if (candidateWallets) {
                 const informations = await queryIn(
-                    "foundationOwnerAddress",
+                    CandidateEnum.KeyName,
                     candidateWallets
                 );
                 return informations;

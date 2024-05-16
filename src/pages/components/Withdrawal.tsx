@@ -5,6 +5,7 @@ import { getContract } from "viem";
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
 import { addFirebaseWallets } from "@/utils/firebase";
+import { ApprovalEnum } from "@/enum/enum";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
@@ -51,10 +52,10 @@ const Withdrawal = ({ contractState }: any) => {
             /* KALO BERHASIL */
 
             const addFirebaseWithdrawalRequest = await addFirebaseWallets(
-                "approvalAddresses",
+                ApprovalEnum.CollectionName,
                 contractAddress,
-                "1Tud4ZRa96AJodX9EvGL",
-                "contractAddress"
+                ApprovalEnum.DocumentId,
+                ApprovalEnum.KeyName
             );
         } catch (error) {
             console.log(error);

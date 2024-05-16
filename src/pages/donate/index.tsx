@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import DonationCard from "../components/DonationCard";
-import {
-    fetchFirebaseWallets,
-    queryIn,
-} from "@/utils/firebase";
+import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import { getAllListedFoundation } from "@/utils/smartContractInteraction";
 import { getBalance } from "viem/actions";
+import { FoundationEnum } from "@/enum/enum";
 
 const Donate = () => {
     const [foundationWallets, setFoundationWallets] = useState<any>();
@@ -14,9 +12,9 @@ const Donate = () => {
     const fetchFoundationWallets = async () => {
         try {
             const data = await fetchFirebaseWallets(
-                "foundationAddresses",
-                "2vvLJqomt3wPX4fssSyT",
-                "contractAddress"
+                FoundationEnum.CollectionName,
+                FoundationEnum.DocumentId,
+                FoundationEnum.KeyName
             );
             setFoundationWallets(data);
         } catch (error) {
@@ -28,7 +26,7 @@ const Donate = () => {
         try {
             if (foundationWallets) {
                 const informations = await queryIn(
-                    "contractAddress",
+                    FoundationEnum.KeyName,
                     foundationWallets
                 );
                 return informations;

@@ -3,6 +3,7 @@ import VoteCard from "./components/VoteCard";
 import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
+import { CandidateEnum } from "@/enum/enum";
 
 const Vote = () => {
     const { address } = useAccount();
@@ -10,11 +11,10 @@ const Vote = () => {
     const [candidates, setCandidates] = useState<any>();
     const fetchCandidateWallets = async () => {
         try {
-            console.log("fetchCandidateWallets KEpanggil");
             const wallets = await fetchFirebaseWallets(
-                "candidateAddresses",
-                "kjqc51iTPhLPAtFqdRoZ",
-                "foundationOwnerAddress"
+                CandidateEnum.CollectionName,
+                CandidateEnum.DocumentId,
+                CandidateEnum.KeyName
             );
             console.log(wallets, "dari function fetchCAndidateWallets");
             setCandidateWallets(wallets);
@@ -27,7 +27,7 @@ const Vote = () => {
         try {
             if (candidateWallets) {
                 const informations = await queryIn(
-                    "foundationOwnerAddress",
+                    CandidateEnum.KeyName,
                     candidateWallets
                 );
                 return informations;
