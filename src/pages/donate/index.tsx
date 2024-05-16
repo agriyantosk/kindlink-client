@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import DonationCard from "../components/DonationCard";
-import { fetchFirebaseData, queryIn } from "@/utils/firebase";
+import {
+    fetchFirebaseWallets,
+    queryIn,
+} from "@/utils/firebase";
 import { getAllListedFoundation } from "@/utils/smartContractInteraction";
 import { getBalance } from "viem/actions";
 
@@ -10,7 +13,7 @@ const Donate = () => {
 
     const fetchFoundationWallets = async () => {
         try {
-            const data = await fetchFirebaseData(
+            const data = await fetchFirebaseWallets(
                 "foundationAddresses",
                 "2vvLJqomt3wPX4fssSyT",
                 "contractAddress"

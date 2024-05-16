@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
-import { addApprovalData, queryEqualsTo } from "@/utils/firebase";
+import { addFirebaseWallets } from "@/utils/firebase";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
@@ -38,6 +38,24 @@ const Withdrawal = ({ contractState }: any) => {
                     return;
                 }
             }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleRequestWithdrawal = async (contractAddress: string) => {
+        try {
+            // const requestWithdrawal = await
+            // ini ceritanya ke smart contract dulu
+
+            /* KALO BERHASIL */
+
+            const addFirebaseWithdrawalRequest = await addFirebaseWallets(
+                "approvalAddresses",
+                contractAddress,
+                "1Tud4ZRa96AJodX9EvGL",
+                "contractAddress"
+            );
         } catch (error) {
             console.log(error);
         }
@@ -108,10 +126,8 @@ const Withdrawal = ({ contractState }: any) => {
                     {!contractState?.isRequestWithdrawal ? (
                         <button
                             onClick={() => {
-                                addApprovalData(
-                                    "approvalAddresses",
-                                    contractState?.contractAddress,
-                                    "1Tud4ZRa96AJodX9EvGL"
+                                handleRequestWithdrawal(
+                                    contractState?.contractAddress
                                 );
                             }}
                             className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${

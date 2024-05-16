@@ -1,4 +1,4 @@
-import { foundationABI, kindlinkAbi } from "@/utils/ABI";
+import { foundationABI } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
 import { queryIn } from "@/utils/firebase";
 import { useEffect, useState } from "react";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import VoteCard from "./components/VoteCard";
-import { fetchFirebaseWallet, queryIn } from "@/utils/firebase";
+import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
 
@@ -11,7 +11,11 @@ const Vote = () => {
     const fetchCandidateWallets = async () => {
         try {
             console.log("fetchCandidateWallets KEpanggil");
-            const wallets = await fetchFirebaseWallet("candidateAddresses");
+            const wallets = await fetchFirebaseWallets(
+                "candidateAddresses",
+                "kjqc51iTPhLPAtFqdRoZ",
+                "foundationOwnerAddress"
+            );
             console.log(wallets, "dari function fetchCAndidateWallets");
             setCandidateWallets(wallets);
         } catch (error) {

@@ -39,7 +39,7 @@ export const firebaseTimestampToDate = (timestamp: any) => {
 };
 export const votingPeriodCompare = (timestampSeconds: number) => {
     const currentTimeMilliseconds = Date.now();
-    const timestampMilliseconds = timestampSeconds * 1000; // Convert seconds to milliseconds
+    const timestampMilliseconds = timestampSeconds * 1000;
 
     if (timestampMilliseconds > currentTimeMilliseconds) {
         return true;

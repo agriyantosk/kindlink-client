@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { fetchFirebaseData } from "@/utils/firebase";
+import { fetchFirebaseWallets } from "@/utils/firebase";
 import { useEffect, useState } from "react";
 
 const Navbar = () => {
@@ -11,7 +11,7 @@ const Navbar = () => {
 
     const checkOwnerAddress = async (userAddress: string) => {
         try {
-            const ownerAddress = await fetchFirebaseData(
+            const ownerAddress = await fetchFirebaseWallets(
                 "ownerAddresses",
                 "I02LGg5smLtAZF6a09ON",
                 "address"
@@ -27,7 +27,7 @@ const Navbar = () => {
 
     const checkDevAddress = async (userAddress: string) => {
         try {
-            const ownerAddress = await fetchFirebaseData(
+            const ownerAddress = await fetchFirebaseWallets(
                 "devAddress",
                 "M3QpmvtyUP3ORB2dGYs2",
                 "address"

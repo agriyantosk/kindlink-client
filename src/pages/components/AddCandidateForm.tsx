@@ -1,14 +1,8 @@
-import { addCandidateData, addInformationData } from "@/utils/firebase";
-import {
-    dateToFirebaseTimestamp,
-    firebaseTimestampToDate,
-} from "@/utils/utilsFunction";
+import { addFirebaseWallets, addInformationData } from "@/utils/firebase";
 import firebase from "firebase/firestore";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
-import { addCandidate, donate } from "@/utils/smartContractInteraction";
-
-const endVotingDate = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
+import { addCandidate } from "@/utils/smartContractInteraction";
 
 const AddCandidateForm = () => {
     const [formData, setFormData] = useState<FormData>({
@@ -44,10 +38,16 @@ const AddCandidateForm = () => {
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
             );
-            const firebaseCandidateAdd = await addCandidateData(
+            // const firebaseCandidateAdd = await addCandidateData(
+            //     "candidateAddresses",
+            //     formData.foundationOwnerAddress,
+            //     "kjqc51iTPhLPAtFqdRoZ"
+            // );
+            const firebaseCandidateAdd = await addFirebaseWallets(
                 "candidateAddresses",
                 formData.foundationOwnerAddress,
-                "kjqc51iTPhLPAtFqdRoZ"
+                "kjqc51iTPhLPAtFqdRoZ",
+                "foundationOwnerAddress"
             );
             const firebaseInformationAdd = await addInformationData(
                 "information",
