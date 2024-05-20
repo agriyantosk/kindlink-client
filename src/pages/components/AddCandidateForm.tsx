@@ -4,14 +4,10 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
 import { addCandidate } from "@/utils/smartContractInteraction";
 import { CandidateEnum } from "@/enum/enum";
-import { useIsLoading, useLoadingMessage } from "./Layout";
 import { toast } from "react-toastify";
 import { extractErrorMessage } from "@/utils/utilsFunction";
 
 const AddCandidateForm = () => {
-    const { setIsLoading } = useIsLoading();
-    const { setLoadingMessage } = useLoadingMessage();
-
     const [formData, setFormData] = useState<FormData>({
         foundationCoOwnerAddress: "",
         description: "",
@@ -39,7 +35,7 @@ const AddCandidateForm = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        let hash;
+        let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
         try {
             e.preventDefault();

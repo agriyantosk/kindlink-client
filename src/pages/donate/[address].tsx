@@ -6,12 +6,9 @@ import {
     donate,
     getAllListedFoundation,
 } from "@/utils/smartContractInteraction";
-import { convertTimestamp } from "@/utils/utilsFunction";
+import { convertTimestamp, extractErrorMessage } from "@/utils/utilsFunction";
 import { Button, Tooltip } from "flowbite-react";
-import {
-    useIsLoading,
-    useLoadingMessage,
-} from "../components/Layout";
+import { toast } from "react-toastify";
 
 interface FoundationContractDetailPayload {
     contractAddress: string;
@@ -27,8 +24,6 @@ const Detail = () => {
     const [detail, setDetail] = useState<any>();
     const [contractDetail, setContractDetail] = useState<any>();
     const [value, setValue] = useState<number | undefined>();
-    const { setIsLoading } = useIsLoading();
-    const { setLoadingMessage } = useLoadingMessage();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(Number(event.target.value));
@@ -39,10 +34,10 @@ const Detail = () => {
         value: string | undefined | number,
         foundationContractAddress: string
     ) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
             event.preventDefault();
-            setIsLoading(true);
-            setLoadingMessage("Writing Smart Contract");
             if (!value || !foundationContractAddress) {
                 return new Error("Invalid Input");
             }
@@ -51,10 +46,28 @@ const Detail = () => {
                 foundationContractAddress,
                 convertToNumber
             );
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+            if (executeDonation) {
+                toast.success(
+                    ({ closeToast }) => (
+                        <div className="custom-toast">
+                            <a
+                                href={`https://sepolia.etherscan.io/address/${hash}`}
+                            >
+                                {`https://sepolia.etherscan.io/address/${hash}`}
+                            </a>
+                        </div>
+                    ),
+                    {
+                        autoClose: false,
+                    }
+                );
+                toast.dismiss(toastId);
+            }
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
 
