@@ -179,13 +179,14 @@ export const foundationWithdrawalRequest = async (
         const executeWithdrawalRequest = await walletClient.writeContract(
             request
         );
-        if (executeWithdrawalRequest) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeWithdrawalRequest,
-            });
-            return transaction.status;
-        }
-        return true;
+        // if (executeWithdrawalRequest) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeWithdrawalRequest,
+        //     });
+        //     return transaction.status;
+        // }
+        // return true;
+        return executeWithdrawalRequest;
     } catch (error) {
         console.log(error);
     }

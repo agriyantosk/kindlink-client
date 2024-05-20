@@ -7,10 +7,20 @@ import { publicClient } from "@/utils/client";
 import { addFirebaseWallets } from "@/utils/firebase";
 import { ApprovalEnum } from "@/enum/enum";
 import { foundationWithdrawalRequest } from "@/utils/smartContractInteraction";
+import {
+    useIsLoading,
+    useLoadingMessage,
+    useResultMessage,
+    useResultModal,
+} from "./Layout";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
     const [allowWithdrawalRequest, setAllowWithdrawalRequest] = useState<any>();
+    const { setIsLoading } = useIsLoading();
+    const { setLoadingMessage } = useLoadingMessage();
+    const { setShowResultModal } = useResultModal();
+    const { setResultMessage } = useResultMessage();
 
     const checkAllowRequest = async () => {
         try {
@@ -47,21 +57,28 @@ const Withdrawal = ({ contractState }: any) => {
 
     const handleRequestWithdrawal = async (contractAddress: string) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("Wiritng Smart Contract");
             const requestWithdrawal = await foundationWithdrawalRequest(
                 contractAddress
             );
-            if (requestWithdrawal === "success") {
-                const addFirebaseWithdrawalRequest = await addFirebaseWallets(
-                    ApprovalEnum.CollectionName,
-                    contractAddress,
-                    ApprovalEnum.DocumentId,
-                    ApprovalEnum.KeyName
-                );
-            } else {
-                alert("Failed");
+            if (requestWithdrawal) {
+                setResultMessage(requestWithdrawal);
             }
+
+            setLoadingMessage("Storing Withdrawal Request");
+            const addFirebaseWithdrawalRequest = await addFirebaseWallets(
+                ApprovalEnum.CollectionName,
+                contractAddress,
+                ApprovalEnum.DocumentId,
+                ApprovalEnum.KeyName
+            );
         } catch (error) {
-            console.log(error);
+            setIsLoading(false);
+            setResultMessage(error);
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
         }
     };
 
