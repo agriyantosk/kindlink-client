@@ -4,8 +4,11 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
 import { addCandidate } from "@/utils/smartContractInteraction";
 import { CandidateEnum } from "@/enum/enum";
+import { useIsLoading, useLoadingMessage } from "./Layout";
 
 const AddCandidateForm = () => {
+    const { setIsLoading } = useIsLoading();
+    const { setLoadingMessage } = useLoadingMessage();
     const [formData, setFormData] = useState<FormData>({
         foundationCoOwnerAddress: "",
         description: "",
@@ -35,6 +38,7 @@ const AddCandidateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
+            setIsLoading(true);
             const contractAdd = await addCandidate(
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
@@ -58,10 +62,13 @@ const AddCandidateForm = () => {
                     }
                 );
             } else {
-                alert("Failed");
+                throw new Error("Transaction Reverted");
             }
         } catch (error) {
+            setIsLoading(false);
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     };
     return (

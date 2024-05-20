@@ -1,7 +1,14 @@
 import { Progress } from "flowbite-react";
 import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useCandidateDetail, useModal } from "./Layout";
+import {
+    useCandidateDetail,
+    useIsLoading,
+    useLoadingMessage,
+    useModal,
+    useResultMessage,
+    useResultModal,
+} from "./Layout";
 import {
     convertTimestampToDateString,
     formatRemainingTime,
@@ -12,8 +19,12 @@ const VoteCard = ({ candidates, refetch }: any) => {
     const [countdown, setCountdown] = useState([]);
     const { setShowModal } = useModal();
     const { setCandidateDetail } = useCandidateDetail();
+    const { setIsLoading } = useIsLoading();
+    const { setLoadingMessage } = useLoadingMessage();
+    const { setResultMessage } = useResultMessage();
+    const { setShowResultModal } = useResultModal();
 
-    const handleShowModal = (candidateIndex: number) => {
+    const handleShowModal: any = (candidateIndex: number) => {
         setShowModal(true);
         setCandidateDetail(candidates[candidateIndex]);
     };
@@ -41,16 +52,22 @@ const VoteCard = ({ candidates, refetch }: any) => {
         foundationOwnerAddress: string
     ) => {
         try {
-            const vote = await voteCandidate(voteInput, foundationOwnerAddress);
-            if (vote === "success") {
-                alert("Success");
-            } else {
-                alert("Failed");
+            setIsLoading(true);
+            const tx = await voteCandidate(voteInput, foundationOwnerAddress);
+            setLoadingMessage(
+                "Please wait while we send your most honest vote :)"
+            );
+            if (tx) {
+                setResultMessage(tx);
             }
             await refetch();
         } catch (error) {
+            setIsLoading(false);
             console.log(error);
             alert("An error occurred during voting. Please try again.");
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
         }
     };
 

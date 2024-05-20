@@ -55,16 +55,14 @@ export const voteCandidate = async (
             args: [voteInput, foundationOwnerAddress],
         });
         console.log(request);
-        console.log("berhasil simulate");
         const executeVote = await walletClient.writeContract(request);
-        console.log("berhasil writecontract");
-        if (executeVote) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeVote,
-            });
-            console.log("berhasil dapetin receipt");
-            return transaction.status;
-        }
+        // if (executeVote) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeVote,
+        //     });
+        //     return { status: transaction.status, txHash: executeVote };
+        // }
+        return executeVote;
     } catch (error) {
         throw error;
     }

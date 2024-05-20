@@ -1,12 +1,18 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
 import Footer from "./Footer";
 import CandidateDetailModal from "./CandidateDetailModal";
 import Navbar from "./navbar";
+import TransactionLoading from "./TransactionLoading";
+import TransactionResult from "./TransactionResult";
 
 // Step 1: Create a context
 const ModalContext = createContext<any>(null);
 const CandidateDataContext = createContext<any>(null);
 const FilterContext = createContext<any>(null);
+const LoadingContext = createContext<any>(false);
+const LoadingMessageContext = createContext<any>("");
+const ResultModalContext = createContext<any>(false);
+const ResultMessageContext = createContext<any>("");
 
 type LayoutsProps = {
     children: React.ReactNode;
@@ -16,6 +22,10 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [candidateDetail, setCandidateDetail] = useState<any>(null);
     const [filterOption, setFilterOption] = useState<string>("progress");
+    const [isLoading, setIsLoading] = useState<boolean>();
+    const [loadingMessage, setLoadingMessage] = useState<string>();
+    const [showResultModal, setShowResultModal] = useState<boolean>(false);
+    const [resultMessage, setResultMessage] = useState<string>("");
 
     return (
         <CandidateDataContext.Provider
@@ -23,18 +33,52 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
         >
             <FilterContext.Provider value={{ filterOption, setFilterOption }}>
                 <ModalContext.Provider value={{ setShowModal }}>
-                    <>
-                        {showModal && (
-                            <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
-                                <CandidateDetailModal />
-                            </div>
-                        )}
-                        <div className="h-screen flex flex-col px-48">
-                            <Navbar />
-                            <div className="flex-grow">{children}</div>
-                        </div>
-                        {/* <Footer /> */}
-                    </>
+                    <LoadingContext.Provider value={{ setIsLoading }}>
+                        <LoadingMessageContext.Provider
+                            value={{ setLoadingMessage }}
+                        >
+                            <ResultModalContext.Provider
+                                value={{ setShowResultModal }}
+                            >
+                                <ResultMessageContext.Provider
+                                    value={{ setResultMessage }}
+                                >
+                                    <>
+                                        {showModal && (
+                                            <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
+                                                <CandidateDetailModal />
+                                            </div>
+                                        )}
+                                        {isLoading && (
+                                            <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
+                                                <TransactionLoading
+                                                    loadingMessage={
+                                                        loadingMessage
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                        {showResultModal && (
+                                            <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
+                                                <TransactionResult
+                                                    resultMessage={
+                                                        resultMessage
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="h-screen flex flex-col px-48">
+                                            <Navbar />
+                                            <div className="flex-grow">
+                                                {children}
+                                            </div>
+                                        </div>
+                                        {/* <Footer /> */}
+                                    </>
+                                </ResultMessageContext.Provider>
+                            </ResultModalContext.Provider>
+                        </LoadingMessageContext.Provider>
+                    </LoadingContext.Provider>
                 </ModalContext.Provider>
             </FilterContext.Provider>
         </CandidateDataContext.Provider>
@@ -42,6 +86,10 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
 };
 
 // Custom hook to consume the context
+export const useIsLoading = () => useContext(LoadingContext);
 export const useModal = () => useContext(ModalContext);
 export const useCandidateDetail = () => useContext(CandidateDataContext);
 export const useFilterContext = () => useContext(FilterContext);
+export const useLoadingMessage = () => useContext(LoadingMessageContext);
+export const useResultModal = () => useContext(ResultModalContext);
+export const useResultMessage = () => useContext(ResultMessageContext);
