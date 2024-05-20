@@ -8,26 +8,25 @@ import {
 import { approveCandidate } from "@/utils/smartContractInteraction";
 import {
     convertTimestamp,
-    firebaseTimestampToDate,
+    extractErrorMessage,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
-import {
-    useIsLoading,
-    useLoadingMessage,
-} from "./Layout";
+import { toast } from "react-toastify";
 
 const DevVoteTable = ({ filterOption, candidates }: any) => {
-    const { setIsLoading } = useIsLoading();
-    const { setLoadingMessage } = useLoadingMessage();
     const handleApprove = async (candidateData: any) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
-            setIsLoading(true);
             if (votingPeriodCompare(Number(candidateData.endVotingTime))) {
-                setLoadingMessage("Writing Smart Contract");
                 const approveSmartContract = await approveCandidate(
                     candidateData.foundationOwnerAddress
                 );
-                setLoadingMessage("Syncronizing Candidate States");
+                if (approveSmartContract) {
+                    toast.update(toastId, {
+                        render: "Storing Candidate Information",
+                    });
+                }
                 if (
                     Number(candidateData.yesVotes) >
                     Number(candidateData.noVotes)
@@ -62,11 +61,29 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     CandidateEnum.DocumentId,
                     CandidateEnum.KeyName
                 );
+                if (del) {
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/address/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/address/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
+                }
             }
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
     return (
