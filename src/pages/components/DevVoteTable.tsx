@@ -48,7 +48,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     const addAddress = await addOwnerAddress(
                         OwnerEnum.CollectionName,
                         ownerAddresses,
-                        OwnerEnum.DocumentId
+                        process.env.NEXT_PUBLIC_OWNER_DOCUMENTID as string
                     );
                 } else {
                     const updateCandidate = await updateCandidateLosingVote(
@@ -59,7 +59,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                 const del = await deleteFirebaseWallet(
                     CandidateEnum.CollectionName,
                     candidateData.foundationOwnerAddress,
-                    CandidateEnum.DocumentId,
+                    process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
                     CandidateEnum.KeyName
                 );
                 if (del) {

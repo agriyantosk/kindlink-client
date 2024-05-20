@@ -55,7 +55,7 @@ const AddCandidateForm = () => {
                 const firebaseCandidateAdd = await addFirebaseWallets(
                     CandidateEnum.CollectionName,
                     formData.foundationOwnerAddress,
-                    CandidateEnum.DocumentId,
+                    process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
                     CandidateEnum.KeyName
                 );
                 const firebaseInformationAdd = await addInformationData(

@@ -13,7 +13,7 @@ const Donate = () => {
         try {
             const data = await fetchFirebaseWallets(
                 FoundationEnum.CollectionName,
-                FoundationEnum.DocumentId,
+                process.env.NEXT_PUBLIC_FOUNDATION_DOCUMENTID as string,
                 FoundationEnum.KeyName
             );
             setFoundationWallets(data);

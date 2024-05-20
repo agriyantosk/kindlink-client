@@ -67,7 +67,7 @@ const Withdrawal = ({ contractState }: any) => {
                 const addFirebaseWithdrawalRequest = await addFirebaseWallets(
                     ApprovalEnum.CollectionName,
                     contractAddress,
-                    ApprovalEnum.DocumentId,
+                    process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
                     ApprovalEnum.KeyName
                 );
                 if (addFirebaseWithdrawalRequest) {

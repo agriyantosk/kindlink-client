@@ -14,7 +14,7 @@ const Navbar = () => {
         try {
             const ownerAddress = await fetchFirebaseWallets(
                 OwnerEnum.CollectionName,
-                OwnerEnum.DocumentId,
+                process.env.NEXT_PUBLIC_OWNER_DOCUMENTID as string,
                 OwnerEnum.KeyName
             );
             const check =
@@ -30,7 +30,7 @@ const Navbar = () => {
         try {
             const devAddress = await fetchFirebaseWallets(
                 DevEnum.CollectionName,
-                DevEnum.DocumentId,
+                process.env.NEXT_PUBLIC_DEV_DOCUMENTID as string,
                 DevEnum.KeyName
             );
             const check =

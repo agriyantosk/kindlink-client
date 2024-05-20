@@ -3,7 +3,6 @@ import Footer from "./Footer";
 import CandidateDetailModal from "./CandidateDetailModal";
 import Navbar from "./navbar";
 
-// Step 1: Create a context
 const ModalContext = createContext<any>(null);
 const CandidateDataContext = createContext<any>(null);
 const FilterContext = createContext<any>(null);

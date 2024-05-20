@@ -18,7 +18,7 @@ const Dev = () => {
         try {
             const wallets = await fetchFirebaseWallets(
                 CandidateEnum.CollectionName,
-                CandidateEnum.DocumentId,
+                process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
                 CandidateEnum.KeyName
             );
             setCandidateWallets(wallets);

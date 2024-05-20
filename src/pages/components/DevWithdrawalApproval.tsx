@@ -21,7 +21,7 @@ const DevWithdrawalApproval = () => {
         try {
             const withdrawalData = await fetchFirebaseWallets(
                 ApprovalEnum.CollectionName,
-                ApprovalEnum.DocumentId,
+                process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
                 ApprovalEnum.KeyName
             );
             setApprovalWallets(withdrawalData);

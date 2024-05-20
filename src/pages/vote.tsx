@@ -13,7 +13,7 @@ const Vote = () => {
         try {
             const wallets = await fetchFirebaseWallets(
                 CandidateEnum.CollectionName,
-                CandidateEnum.DocumentId,
+                process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
                 CandidateEnum.KeyName
             );
             console.log(wallets, "dari function fetchCAndidateWallets");
