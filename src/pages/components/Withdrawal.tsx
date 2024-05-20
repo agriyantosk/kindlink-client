@@ -14,8 +14,6 @@ import {
 import {
     useIsLoading,
     useLoadingMessage,
-    useResultMessage,
-    useResultModal,
 } from "./Layout";
 
 const Withdrawal = ({ contractState }: any) => {
@@ -23,8 +21,6 @@ const Withdrawal = ({ contractState }: any) => {
     const [allowWithdrawalRequest, setAllowWithdrawalRequest] = useState<any>();
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
-    const { setShowResultModal } = useResultModal();
-    const { setResultMessage } = useResultMessage();
 
     const checkAllowRequest = async () => {
         try {
@@ -66,9 +62,6 @@ const Withdrawal = ({ contractState }: any) => {
             const requestWithdrawal = await foundationWithdrawalRequest(
                 contractAddress
             );
-            if (requestWithdrawal) {
-                setResultMessage(requestWithdrawal);
-            }
 
             setLoadingMessage("Storing Withdrawal Request");
             const addFirebaseWithdrawalRequest = await addFirebaseWallets(
@@ -79,10 +72,8 @@ const Withdrawal = ({ contractState }: any) => {
             );
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
 
@@ -93,15 +84,10 @@ const Withdrawal = ({ contractState }: any) => {
             const approveWithdrawal = await foundationWithdrawalApprove(
                 contractAddress
             );
-            if (approveWithdrawal) {
-                setResultMessage(approveWithdrawal);
-            }
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
 
@@ -113,16 +99,11 @@ const Withdrawal = ({ contractState }: any) => {
             } else {
                 setLoadingMessage("Wiritng Smart Contract");
                 const executeWithdrawal = await withdrawal(contractAddress);
-                if (executeWithdrawal) {
-                    setResultMessage(executeWithdrawal);
-                }
             }
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
 

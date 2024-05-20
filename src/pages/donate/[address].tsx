@@ -11,8 +11,6 @@ import { Button, Tooltip } from "flowbite-react";
 import {
     useIsLoading,
     useLoadingMessage,
-    useResultMessage,
-    useResultModal,
 } from "../components/Layout";
 
 interface FoundationContractDetailPayload {
@@ -31,8 +29,6 @@ const Detail = () => {
     const [value, setValue] = useState<number | undefined>();
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
-    const { setShowResultModal } = useResultModal();
-    const { setResultMessage } = useResultMessage();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(Number(event.target.value));
@@ -55,20 +51,10 @@ const Detail = () => {
                 foundationContractAddress,
                 convertToNumber
             );
-            if (executeDonation) {
-                setResultMessage(executeDonation);
-            }
-            // if (executeDonation === "success") {
-            //     alert("Success");
-            // } else {
-            //     alert("Failed");
-            // }
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
 

@@ -6,8 +6,6 @@ import {
     useIsLoading,
     useLoadingMessage,
     useModal,
-    useResultMessage,
-    useResultModal,
 } from "./Layout";
 import {
     convertTimestampToDateString,
@@ -21,8 +19,6 @@ const VoteCard = ({ candidates, refetch }: any) => {
     const { setCandidateDetail } = useCandidateDetail();
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
-    const { setResultMessage } = useResultMessage();
-    const { setShowResultModal } = useResultModal();
 
     const handleShowModal: any = (candidateIndex: number) => {
         setShowModal(true);
@@ -53,20 +49,15 @@ const VoteCard = ({ candidates, refetch }: any) => {
     ) => {
         try {
             setIsLoading(true);
-            const tx = await voteCandidate(voteInput, foundationOwnerAddress);
             setLoadingMessage(
                 "Please wait while we send your most honest vote :)"
             );
-            if (tx) {
-                setResultMessage(tx);
-            }
+            const vote = await voteCandidate(voteInput, foundationOwnerAddress);
             await refetch();
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
 

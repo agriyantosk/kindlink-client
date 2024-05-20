@@ -11,8 +11,8 @@ const CandidateDataContext = createContext<any>(null);
 const FilterContext = createContext<any>(null);
 const LoadingContext = createContext<any>(false);
 const LoadingMessageContext = createContext<any>("");
-const ResultModalContext = createContext<any>(false);
-const ResultMessageContext = createContext<any>("");
+// const ResultModalContext = createContext<any>(false);
+// const ResultMessageContext = createContext<any>("");
 
 type LayoutsProps = {
     children: React.ReactNode;
@@ -24,8 +24,8 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
     const [filterOption, setFilterOption] = useState<string>("progress");
     const [isLoading, setIsLoading] = useState<boolean>();
     const [loadingMessage, setLoadingMessage] = useState<string>();
-    const [showResultModal, setShowResultModal] = useState<boolean>(false);
-    const [resultMessage, setResultMessage] = useState<string>("");
+    // const [showResultModal, setShowResultModal] = useState<boolean>(false);
+    // const [resultMessage, setResultMessage] = useState<string>("");
 
     return (
         <CandidateDataContext.Provider
@@ -37,19 +37,19 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                         <LoadingMessageContext.Provider
                             value={{ setLoadingMessage }}
                         >
-                            <ResultModalContext.Provider
+                            {/* <ResultModalContext.Provider
                                 value={{ setShowResultModal }}
                             >
                                 <ResultMessageContext.Provider
                                     value={{ setResultMessage }}
-                                >
+                                > */}
                                     <>
                                         {showModal && (
                                             <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
                                                 <CandidateDetailModal />
                                             </div>
                                         )}
-                                        {isLoading && (
+                                        {!isLoading && (
                                             <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
                                                 <TransactionLoading
                                                     loadingMessage={
@@ -58,7 +58,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                                                 />
                                             </div>
                                         )}
-                                        {showResultModal && (
+                                        {/* {showResultModal && (
                                             <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
                                                 <TransactionResult
                                                     resultMessage={
@@ -66,7 +66,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                                                     }
                                                 />
                                             </div>
-                                        )}
+                                        )} */}
                                         <div className="h-screen flex flex-col px-48">
                                             <Navbar />
                                             <div className="flex-grow">
@@ -75,8 +75,8 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                                         </div>
                                         {/* <Footer /> */}
                                     </>
-                                </ResultMessageContext.Provider>
-                            </ResultModalContext.Provider>
+                                {/* </ResultMessageContext.Provider>
+                            </ResultModalContext.Provider> */}
                         </LoadingMessageContext.Provider>
                     </LoadingContext.Provider>
                 </ModalContext.Provider>
@@ -91,5 +91,5 @@ export const useModal = () => useContext(ModalContext);
 export const useCandidateDetail = () => useContext(CandidateDataContext);
 export const useFilterContext = () => useContext(FilterContext);
 export const useLoadingMessage = () => useContext(LoadingMessageContext);
-export const useResultModal = () => useContext(ResultModalContext);
-export const useResultMessage = () => useContext(ResultMessageContext);
+// export const useResultModal = () => useContext(ResultModalContext);
+// export const useResultMessage = () => useContext(ResultMessageContext);

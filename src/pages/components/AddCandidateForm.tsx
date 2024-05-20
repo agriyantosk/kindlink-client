@@ -7,15 +7,11 @@ import { CandidateEnum } from "@/enum/enum";
 import {
     useIsLoading,
     useLoadingMessage,
-    useResultMessage,
-    useResultModal,
 } from "./Layout";
 
 const AddCandidateForm = () => {
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
-    const { setShowResultModal } = useResultModal();
-    const { setResultMessage } = useResultMessage();
 
     const [formData, setFormData] = useState<FormData>({
         foundationCoOwnerAddress: "",
@@ -52,9 +48,6 @@ const AddCandidateForm = () => {
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
             );
-            if (contractAdd) {
-                setResultMessage(contractAdd);
-            }
             // if (contractAdd === "success") {
             setLoadingMessage("Storing Candidate Informations");
             const firebaseCandidateAdd = await addFirebaseWallets(
@@ -79,10 +72,8 @@ const AddCandidateForm = () => {
             // }
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
     return (

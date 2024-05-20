@@ -14,15 +14,11 @@ import {
 import {
     useIsLoading,
     useLoadingMessage,
-    useResultMessage,
-    useResultModal,
 } from "./Layout";
 
 const DevVoteTable = ({ filterOption, candidates }: any) => {
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
-    const { setShowResultModal } = useResultModal();
-    const { setResultMessage } = useResultMessage();
     const handleApprove = async (candidateData: any) => {
         try {
             setIsLoading(true);
@@ -31,9 +27,6 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                 const approveSmartContract = await approveCandidate(
                     candidateData.foundationOwnerAddress
                 );
-                if (approveSmartContract) {
-                    setResultMessage(approveSmartContract);
-                }
                 setLoadingMessage("Syncronizing Candidate States");
                 if (
                     Number(candidateData.yesVotes) >
@@ -72,10 +65,8 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
             }
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
     return (

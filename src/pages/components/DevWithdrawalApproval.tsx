@@ -12,8 +12,6 @@ import { ApprovalEnum } from "@/enum/enum";
 import {
     useIsLoading,
     useLoadingMessage,
-    useResultMessage,
-    useResultModal,
 } from "./Layout";
 
 const DevWithdrawalApproval = () => {
@@ -22,8 +20,6 @@ const DevWithdrawalApproval = () => {
     const [approvals, setApprovals] = useState<any[]>([]);
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
-    const { setShowResultModal } = useResultModal();
-    const { setResultMessage } = useResultMessage();
 
     const fetchApprovalWallets = async () => {
         try {
@@ -80,10 +76,8 @@ const DevWithdrawalApproval = () => {
             // }
         } catch (error) {
             setIsLoading(false);
-            setResultMessage(error);
         } finally {
             setIsLoading(false);
-            setShowResultModal(true);
         }
     };
 
