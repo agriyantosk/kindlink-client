@@ -121,12 +121,13 @@ export const donate = async (
             value: bigintWei,
         });
         const executeDonation = await walletClient.writeContract(request);
-        if (executeDonation) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeDonation,
-            });
-            return transaction.status;
-        }
+        // if (executeDonation) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeDonation,
+        //     });
+        //     return transaction.status;
+        // }
+        return executeDonation;
     } catch (error) {
         console.log(error);
     }

@@ -8,6 +8,12 @@ import {
 } from "@/utils/smartContractInteraction";
 import { convertTimestamp } from "@/utils/utilsFunction";
 import { Button, Tooltip } from "flowbite-react";
+import {
+    useIsLoading,
+    useLoadingMessage,
+    useResultMessage,
+    useResultModal,
+} from "../components/Layout";
 
 interface FoundationContractDetailPayload {
     contractAddress: string;
@@ -23,6 +29,10 @@ const Detail = () => {
     const [detail, setDetail] = useState<any>();
     const [contractDetail, setContractDetail] = useState<any>();
     const [value, setValue] = useState<number | undefined>();
+    const { setIsLoading } = useIsLoading();
+    const { setLoadingMessage } = useLoadingMessage();
+    const { setShowResultModal } = useResultModal();
+    const { setResultMessage } = useResultMessage();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(Number(event.target.value));
@@ -35,6 +45,8 @@ const Detail = () => {
     ) => {
         try {
             event.preventDefault();
+            setIsLoading(true);
+            setLoadingMessage("Writing Smart Contract");
             if (!value || !foundationContractAddress) {
                 return new Error("Invalid Input");
             }
@@ -43,14 +55,20 @@ const Detail = () => {
                 foundationContractAddress,
                 convertToNumber
             );
-            if (executeDonation === "success") {
-                alert("Success");
-            } else {
-                alert("Failed");
+            if (executeDonation) {
+                setResultMessage(executeDonation);
             }
+            // if (executeDonation === "success") {
+            //     alert("Success");
+            // } else {
+            //     alert("Failed");
+            // }
         } catch (error) {
-            console.log(error);
-            alert("An error occurred during voting. Please try again.");
+            setIsLoading(false);
+            setResultMessage(error);
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
         }
     };
 
