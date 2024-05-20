@@ -1,24 +1,19 @@
 import { Progress } from "flowbite-react";
 import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import {
-    useCandidateDetail,
-    useIsLoading,
-    useLoadingMessage,
-    useModal,
-} from "./Layout";
+import { useCandidateDetail, useModal } from "./Layout";
 import {
     convertTimestampToDateString,
+    extractErrorMessage,
     formatRemainingTime,
 } from "@/utils/utilsFunction";
 import { voteCandidate } from "@/utils/smartContractInteraction";
+import { toast } from "react-toastify";
 
 const VoteCard = ({ candidates, refetch }: any) => {
     const [countdown, setCountdown] = useState([]);
     const { setShowModal } = useModal();
     const { setCandidateDetail } = useCandidateDetail();
-    const { setIsLoading } = useIsLoading();
-    const { setLoadingMessage } = useLoadingMessage();
 
     const handleShowModal: any = (candidateIndex: number) => {
         setShowModal(true);
@@ -47,17 +42,33 @@ const VoteCard = ({ candidates, refetch }: any) => {
         voteInput: boolean,
         foundationOwnerAddress: string
     ) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
-            setIsLoading(true);
-            setLoadingMessage(
-                "Please wait while we send your most honest vote :)"
-            );
             const vote = await voteCandidate(voteInput, foundationOwnerAddress);
+            if (vote) {
+                toast.success(
+                    ({ closeToast }) => (
+                        <div className="custom-toast">
+                            <a
+                                href={`https://sepolia.etherscan.io/address/${hash}`}
+                            >
+                                {`https://sepolia.etherscan.io/address/${hash}`}
+                            </a>
+                        </div>
+                    ),
+                    {
+                        autoClose: false,
+                    }
+                );
+                toast.dismiss(toastId);
+            }
             await refetch();
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
 
