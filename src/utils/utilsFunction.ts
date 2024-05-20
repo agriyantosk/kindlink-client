@@ -89,3 +89,11 @@ export const convertTimestamp = (timestamp: any) => {
 
     return `${day}, ${month} ${dateNum} ${year}`;
 };
+
+export const extractErrorMessage = (errorMessage: string) => {
+    console.log(errorMessage);
+    const reasonSplit = errorMessage.replace(/\n/g, ": ").split(": ");
+    if (reasonSplit.length === 2) {
+        return reasonSplit[1];
+    }
+};

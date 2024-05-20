@@ -6,6 +6,8 @@ import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const config = getDefaultConfig({
     appName: "My RainbowKit App",
@@ -23,6 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 <QueryClientProvider client={queryClient}>
                     <RainbowKitProvider>
                         <Layout>
+                            <ToastContainer />
                             <Component {...pageProps} />
                         </Layout>
                     </RainbowKitProvider>

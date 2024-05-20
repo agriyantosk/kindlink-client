@@ -4,10 +4,9 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
 import { addCandidate } from "@/utils/smartContractInteraction";
 import { CandidateEnum } from "@/enum/enum";
-import {
-    useIsLoading,
-    useLoadingMessage,
-} from "./Layout";
+import { useIsLoading, useLoadingMessage } from "./Layout";
+import { toast } from "react-toastify";
+import { extractErrorMessage } from "@/utils/utilsFunction";
 
 const AddCandidateForm = () => {
     const { setIsLoading } = useIsLoading();
@@ -40,40 +39,63 @@ const AddCandidateForm = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        let hash;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
             e.preventDefault();
-            setIsLoading(true);
-            setLoadingMessage("Writing Smart Contract");
+            // setIsLoading(true);
+            // setLoadingMessage("Writing Smart Contract");
             const contractAdd = await addCandidate(
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
             );
             // if (contractAdd === "success") {
-            setLoadingMessage("Storing Candidate Informations");
-            const firebaseCandidateAdd = await addFirebaseWallets(
-                CandidateEnum.CollectionName,
-                formData.foundationOwnerAddress,
-                CandidateEnum.DocumentId,
-                CandidateEnum.KeyName
-            );
-            const firebaseInformationAdd = await addInformationData(
-                "information",
-                {
-                    description: formData.description,
-                    imgUrl: formData.imgUrl,
-                    instagramUrl: formData.instagramUrl,
-                    name: formData.name,
-                    websiteUrl: formData.websiteUrl,
-                    xUrl: formData.xUrl,
+
+            if (contractAdd) {
+                hash = contractAdd;
+                toast.update(toastId, {
+                    render: "Storing Candidate Information",
+                });
+                const firebaseCandidateAdd = await addFirebaseWallets(
+                    CandidateEnum.CollectionName,
+                    formData.foundationOwnerAddress,
+                    CandidateEnum.DocumentId,
+                    CandidateEnum.KeyName
+                );
+                const firebaseInformationAdd = await addInformationData(
+                    "information",
+                    {
+                        description: formData.description,
+                        imgUrl: formData.imgUrl,
+                        instagramUrl: formData.instagramUrl,
+                        name: formData.name,
+                        websiteUrl: formData.websiteUrl,
+                        xUrl: formData.xUrl,
+                    }
+                );
+                if (firebaseCandidateAdd && firebaseInformationAdd) {
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/address/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/address/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
                 }
-            );
-            // } else {
-            //     throw new Error("Transaction Reverted");
-            // }
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+            }
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
     return (

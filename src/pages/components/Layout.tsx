@@ -49,7 +49,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                                                 <CandidateDetailModal />
                                             </div>
                                         )}
-                                        {!isLoading && (
+                                        {isLoading && (
                                             <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
                                                 <TransactionLoading
                                                     loadingMessage={

@@ -34,7 +34,7 @@ export const addCandidate = async (
         // }
         return executeAddCandidate;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 };
 
