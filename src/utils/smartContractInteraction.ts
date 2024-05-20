@@ -149,13 +149,14 @@ export const withdrawal = async (foundationAddress: string) => {
             args: [foundationAddress],
         });
         const executeWithdrawal = await walletClient.writeContract(request);
-        if (executeWithdrawal) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeWithdrawal,
-            });
-            return transaction.status;
-        }
-        return true;
+        // if (executeWithdrawal) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeWithdrawal,
+        //     });
+        //     return transaction.status;
+        // }
+        // return true;
+        return executeWithdrawal;
     } catch (error) {
         console.log(error);
     }

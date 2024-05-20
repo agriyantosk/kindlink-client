@@ -9,6 +9,7 @@ import { ApprovalEnum } from "@/enum/enum";
 import {
     foundationWithdrawalApprove,
     foundationWithdrawalRequest,
+    withdrawal,
 } from "@/utils/smartContractInteraction";
 import {
     useIsLoading,
@@ -92,6 +93,30 @@ const Withdrawal = ({ contractState }: any) => {
             const approveWithdrawal = await foundationWithdrawalApprove(
                 contractAddress
             );
+            if (approveWithdrawal) {
+                setResultMessage(approveWithdrawal);
+            }
+        } catch (error) {
+            setIsLoading(false);
+            setResultMessage(error);
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
+        }
+    };
+
+    const handleWithdrawal = async (contractAddress: string) => {
+        try {
+            setIsLoading(true);
+            if (!allowWithdrawalRequest) {
+                throw new Error("Haven't met the withdrawal requirements");
+            } else {
+                setLoadingMessage("Wiritng Smart Contract");
+                const executeWithdrawal = await withdrawal(contractAddress);
+                if (executeWithdrawal) {
+                    setResultMessage(executeWithdrawal);
+                }
+            }
         } catch (error) {
             setIsLoading(false);
             setResultMessage(error);
@@ -207,6 +232,11 @@ const Withdrawal = ({ contractState }: any) => {
                                         : "cursor-not-allowed"
                                 }`}
                                 disabled={allowWithdrawalRequest}
+                                onClick={() =>
+                                    handleWithdrawal(
+                                        contractState.contractAddress
+                                    )
+                                }
                             >
                                 Withdraw
                             </button>
