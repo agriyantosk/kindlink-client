@@ -7,15 +7,23 @@ import {
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
-import {
-    foundationWithdrawalApprove,
-} from "@/utils/smartContractInteraction";
+import { foundationWithdrawalApprove } from "@/utils/smartContractInteraction";
 import { ApprovalEnum } from "@/enum/enum";
+import {
+    useIsLoading,
+    useLoadingMessage,
+    useResultMessage,
+    useResultModal,
+} from "./Layout";
 
 const DevWithdrawalApproval = () => {
     const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
     const [approvalInformations, setApprovalInformations] = useState<any[]>([]);
     const [approvals, setApprovals] = useState<any[]>([]);
+    const { setIsLoading } = useIsLoading();
+    const { setLoadingMessage } = useLoadingMessage();
+    const { setShowResultModal } = useResultModal();
+    const { setResultMessage } = useResultMessage();
 
     const fetchApprovalWallets = async () => {
         try {
@@ -54,22 +62,28 @@ const DevWithdrawalApproval = () => {
 
     const handleWithdrawalApprove = async (foundationAddress: string) => {
         try {
+            setIsLoading(true);
+            setLoadingMessage("Writing Smart Contract");
             const approveWithdraw = await foundationWithdrawalApprove(
                 foundationAddress
             );
-            if (approveWithdraw === "success") {
-                const deleteFirebaseWithdrawalRequest =
-                    await deleteFirebaseWallet(
-                        ApprovalEnum.CollectionName,
-                        foundationAddress,
-                        ApprovalEnum.DocumentId,
-                        ApprovalEnum.KeyName
-                    );
-            } else {
-                alert("Failed");
-            }
+            // if (approveWithdraw === "success") {
+            setLoadingMessage("Syncronizing Approval");
+            // const deleteFirebaseWithdrawalRequest = await deleteFirebaseWallet(
+            //     ApprovalEnum.CollectionName,
+            //     foundationAddress,
+            //     ApprovalEnum.DocumentId,
+            //     ApprovalEnum.KeyName
+            // );
+            // } else {
+            //     alert("Failed");
+            // }
         } catch (error) {
-            console.log(error);
+            setIsLoading(false);
+            setResultMessage(error);
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
         }
     };
 

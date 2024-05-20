@@ -211,13 +211,14 @@ export const foundationWithdrawalApprove = async (
         const executeWithdrawalRequest = await walletClient.writeContract(
             request
         );
-        if (executeWithdrawalRequest) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeWithdrawalRequest,
-            });
-            return transaction.status;
-        }
-        return true;
+        return executeWithdrawalRequest;
+        // if (executeWithdrawalRequest) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeWithdrawalRequest,
+        //     });
+        //     return transaction.status;
+        // }
+        // return true;
     } catch (error) {
         console.log(error);
     }
