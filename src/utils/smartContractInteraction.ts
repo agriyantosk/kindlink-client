@@ -26,12 +26,13 @@ export const addCandidate = async (
         });
         console.log(request);
         const executeAddCandidate = await walletClient.writeContract(request);
-        if (executeAddCandidate) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeAddCandidate,
-            });
-            return transaction.status;
-        }
+        // if (executeAddCandidate) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeAddCandidate,
+        //     });
+        //     return transaction.status;
+        // }
+        return executeAddCandidate;
     } catch (error) {
         console.log(error);
     }

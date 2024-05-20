@@ -63,8 +63,7 @@ const VoteCard = ({ candidates, refetch }: any) => {
             await refetch();
         } catch (error) {
             setIsLoading(false);
-            console.log(error);
-            alert("An error occurred during voting. Please try again.");
+            setResultMessage(error);
         } finally {
             setIsLoading(false);
             setShowResultModal(true);

@@ -4,11 +4,19 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
 import { addCandidate } from "@/utils/smartContractInteraction";
 import { CandidateEnum } from "@/enum/enum";
-import { useIsLoading, useLoadingMessage } from "./Layout";
+import {
+    useIsLoading,
+    useLoadingMessage,
+    useResultMessage,
+    useResultModal,
+} from "./Layout";
 
 const AddCandidateForm = () => {
     const { setIsLoading } = useIsLoading();
     const { setLoadingMessage } = useLoadingMessage();
+    const { setShowResultModal } = useResultModal();
+    const { setResultMessage } = useResultMessage();
+
     const [formData, setFormData] = useState<FormData>({
         foundationCoOwnerAddress: "",
         description: "",
@@ -39,36 +47,42 @@ const AddCandidateForm = () => {
         try {
             e.preventDefault();
             setIsLoading(true);
+            setLoadingMessage("Writing Smart Contract");
             const contractAdd = await addCandidate(
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
             );
-            if (contractAdd === "success") {
-                const firebaseCandidateAdd = await addFirebaseWallets(
-                    CandidateEnum.CollectionName,
-                    formData.foundationOwnerAddress,
-                    CandidateEnum.DocumentId,
-                    CandidateEnum.KeyName
-                );
-                const firebaseInformationAdd = await addInformationData(
-                    "information",
-                    {
-                        description: formData.description,
-                        imgUrl: formData.imgUrl,
-                        instagramUrl: formData.instagramUrl,
-                        name: formData.name,
-                        websiteUrl: formData.websiteUrl,
-                        xUrl: formData.xUrl,
-                    }
-                );
-            } else {
-                throw new Error("Transaction Reverted");
+            if (contractAdd) {
+                setResultMessage(contractAdd);
             }
+            // if (contractAdd === "success") {
+            setLoadingMessage("Storing Candidate Informations");
+            const firebaseCandidateAdd = await addFirebaseWallets(
+                CandidateEnum.CollectionName,
+                formData.foundationOwnerAddress,
+                CandidateEnum.DocumentId,
+                CandidateEnum.KeyName
+            );
+            const firebaseInformationAdd = await addInformationData(
+                "information",
+                {
+                    description: formData.description,
+                    imgUrl: formData.imgUrl,
+                    instagramUrl: formData.instagramUrl,
+                    name: formData.name,
+                    websiteUrl: formData.websiteUrl,
+                    xUrl: formData.xUrl,
+                }
+            );
+            // } else {
+            //     throw new Error("Transaction Reverted");
+            // }
         } catch (error) {
             setIsLoading(false);
-            console.log(error);
+            setResultMessage(error);
         } finally {
             setIsLoading(false);
+            setShowResultModal(true);
         }
     };
     return (
