@@ -2,8 +2,6 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import Footer from "./Footer";
 import CandidateDetailModal from "./CandidateDetailModal";
 import Navbar from "./navbar";
-import TransactionLoading from "./TransactionLoading";
-import TransactionResult from "./TransactionResult";
 
 // Step 1: Create a context
 const ModalContext = createContext<any>(null);
@@ -11,8 +9,6 @@ const CandidateDataContext = createContext<any>(null);
 const FilterContext = createContext<any>(null);
 const LoadingContext = createContext<any>(false);
 const LoadingMessageContext = createContext<any>("");
-// const ResultModalContext = createContext<any>(false);
-// const ResultMessageContext = createContext<any>("");
 
 type LayoutsProps = {
     children: React.ReactNode;
@@ -39,13 +35,6 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                                 {showModal && (
                                     <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
                                         <CandidateDetailModal />
-                                    </div>
-                                )}
-                                {isLoading && (
-                                    <div className="absolute flex justify-center items-center h-screen w-screen bg-black bg-opacity-20">
-                                        <TransactionLoading
-                                            loadingMessage={loadingMessage}
-                                        />
                                     </div>
                                 )}
                                 <div className="h-screen flex flex-col px-48">

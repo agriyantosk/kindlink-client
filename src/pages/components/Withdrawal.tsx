@@ -11,16 +11,12 @@ import {
     foundationWithdrawalRequest,
     withdrawal,
 } from "@/utils/smartContractInteraction";
-import {
-    useIsLoading,
-    useLoadingMessage,
-} from "./Layout";
+import { toast } from "react-toastify";
+import { extractErrorMessage } from "@/utils/utilsFunction";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
     const [allowWithdrawalRequest, setAllowWithdrawalRequest] = useState<any>();
-    const { setIsLoading } = useIsLoading();
-    const { setLoadingMessage } = useLoadingMessage();
 
     const checkAllowRequest = async () => {
         try {
@@ -56,54 +52,115 @@ const Withdrawal = ({ contractState }: any) => {
     };
 
     const handleRequestWithdrawal = async (contractAddress: string) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
-            setIsLoading(true);
-            setLoadingMessage("Wiritng Smart Contract");
             const requestWithdrawal = await foundationWithdrawalRequest(
                 contractAddress
             );
 
-            setLoadingMessage("Storing Withdrawal Request");
-            const addFirebaseWithdrawalRequest = await addFirebaseWallets(
-                ApprovalEnum.CollectionName,
-                contractAddress,
-                ApprovalEnum.DocumentId,
-                ApprovalEnum.KeyName
-            );
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+            if (requestWithdrawal) {
+                hash = requestWithdrawal;
+                toast.update(toastId, {
+                    render: "Storing Candidate Information",
+                });
+                const addFirebaseWithdrawalRequest = await addFirebaseWallets(
+                    ApprovalEnum.CollectionName,
+                    contractAddress,
+                    ApprovalEnum.DocumentId,
+                    ApprovalEnum.KeyName
+                );
+                if (addFirebaseWithdrawalRequest) {
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/address/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/address/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
+                }
+            }
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
 
     const handleWithdrawalApprove = async (contractAddress: string) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
-            setIsLoading(true);
-            setLoadingMessage("Wiritng Smart Contract");
             const approveWithdrawal = await foundationWithdrawalApprove(
                 contractAddress
             );
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+            if (approveWithdrawal) {
+                hash = approveWithdrawal;
+                toast.success(
+                    ({ closeToast }) => (
+                        <div className="custom-toast">
+                            <a
+                                href={`https://sepolia.etherscan.io/address/${hash}`}
+                            >
+                                {`https://sepolia.etherscan.io/address/${hash}`}
+                            </a>
+                        </div>
+                    ),
+                    {
+                        autoClose: false,
+                    }
+                );
+                toast.dismiss(toastId);
+            }
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
 
     const handleWithdrawal = async (contractAddress: string) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
-            setIsLoading(true);
             if (!allowWithdrawalRequest) {
                 throw new Error("Haven't met the withdrawal requirements");
             } else {
-                setLoadingMessage("Wiritng Smart Contract");
                 const executeWithdrawal = await withdrawal(contractAddress);
+                if (executeWithdrawal) {
+                    hash = executeWithdrawal;
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/address/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/address/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
+                }
             }
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
 
