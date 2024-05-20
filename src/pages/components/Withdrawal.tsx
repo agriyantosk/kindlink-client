@@ -6,7 +6,10 @@ import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
 import { addFirebaseWallets } from "@/utils/firebase";
 import { ApprovalEnum } from "@/enum/enum";
-import { foundationWithdrawalRequest } from "@/utils/smartContractInteraction";
+import {
+    foundationWithdrawalApprove,
+    foundationWithdrawalRequest,
+} from "@/utils/smartContractInteraction";
 import {
     useIsLoading,
     useLoadingMessage,
@@ -72,6 +75,22 @@ const Withdrawal = ({ contractState }: any) => {
                 contractAddress,
                 ApprovalEnum.DocumentId,
                 ApprovalEnum.KeyName
+            );
+        } catch (error) {
+            setIsLoading(false);
+            setResultMessage(error);
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
+        }
+    };
+
+    const handleWithdrawalApprove = async (contractAddress: string) => {
+        try {
+            setIsLoading(true);
+            setLoadingMessage("Wiritng Smart Contract");
+            const approveWithdrawal = await foundationWithdrawalApprove(
+                contractAddress
             );
         } catch (error) {
             setIsLoading(false);
@@ -172,6 +191,11 @@ const Withdrawal = ({ contractState }: any) => {
                                 disabled={
                                     contractState &&
                                     contractState.foundationOwnerAddress
+                                }
+                                onClick={() =>
+                                    handleWithdrawalApprove(
+                                        contractState.contractAddress
+                                    )
                                 }
                             >
                                 Approve
