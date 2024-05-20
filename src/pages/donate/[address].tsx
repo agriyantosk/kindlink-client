@@ -47,6 +47,7 @@ const Detail = () => {
                 convertToNumber
             );
             if (executeDonation) {
+                hash = executeDonation;
                 toast.success(
                     ({ closeToast }) => (
                         <div className="custom-toast">

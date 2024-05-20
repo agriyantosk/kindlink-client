@@ -23,6 +23,7 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     candidateData.foundationOwnerAddress
                 );
                 if (approveSmartContract) {
+                    hash = approveSmartContract;
                     toast.update(toastId, {
                         render: "Storing Candidate Information",
                     });

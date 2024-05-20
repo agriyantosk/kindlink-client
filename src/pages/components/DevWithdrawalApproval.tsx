@@ -9,17 +9,13 @@ import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { foundationWithdrawalApprove } from "@/utils/smartContractInteraction";
 import { ApprovalEnum } from "@/enum/enum";
-import {
-    useIsLoading,
-    useLoadingMessage,
-} from "./Layout";
+import { toast } from "react-toastify";
+import { extractErrorMessage } from "@/utils/utilsFunction";
 
 const DevWithdrawalApproval = () => {
     const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
     const [approvalInformations, setApprovalInformations] = useState<any[]>([]);
     const [approvals, setApprovals] = useState<any[]>([]);
-    const { setIsLoading } = useIsLoading();
-    const { setLoadingMessage } = useLoadingMessage();
 
     const fetchApprovalWallets = async () => {
         try {
@@ -57,27 +53,35 @@ const DevWithdrawalApproval = () => {
     };
 
     const handleWithdrawalApprove = async (foundationAddress: string) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
         try {
-            setIsLoading(true);
-            setLoadingMessage("Writing Smart Contract");
             const approveWithdraw = await foundationWithdrawalApprove(
                 foundationAddress
             );
-            // if (approveWithdraw === "success") {
-            setLoadingMessage("Syncronizing Approval");
-            // const deleteFirebaseWithdrawalRequest = await deleteFirebaseWallet(
-            //     ApprovalEnum.CollectionName,
-            //     foundationAddress,
-            //     ApprovalEnum.DocumentId,
-            //     ApprovalEnum.KeyName
-            // );
-            // } else {
-            //     alert("Failed");
-            // }
-        } catch (error) {
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
+            if (approveWithdraw) {
+                hash = approveWithdraw;
+                toast.success(
+                    ({ closeToast }) => (
+                        <div className="custom-toast">
+                            <a
+                                href={`https://sepolia.etherscan.io/address/${hash}`}
+                            >
+                                {`https://sepolia.etherscan.io/address/${hash}`}
+                            </a>
+                        </div>
+                    ),
+                    {
+                        autoClose: false,
+                    }
+                );
+                toast.dismiss(toastId);
+            }
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
         }
     };
 

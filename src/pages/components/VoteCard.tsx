@@ -47,6 +47,7 @@ const VoteCard = ({ candidates, refetch }: any) => {
         try {
             const vote = await voteCandidate(voteInput, foundationOwnerAddress);
             if (vote) {
+                hash = vote;
                 toast.success(
                     ({ closeToast }) => (
                         <div className="custom-toast">
