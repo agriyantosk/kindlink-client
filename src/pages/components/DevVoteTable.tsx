@@ -11,57 +11,71 @@ import {
     firebaseTimestampToDate,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
+import {
+    useIsLoading,
+    useLoadingMessage,
+    useResultMessage,
+    useResultModal,
+} from "./Layout";
 
 const DevVoteTable = ({ filterOption, candidates }: any) => {
+    const { setIsLoading } = useIsLoading();
+    const { setLoadingMessage } = useLoadingMessage();
+    const { setShowResultModal } = useResultModal();
+    const { setResultMessage } = useResultMessage();
     const handleApprove = async (candidateData: any) => {
         try {
+            setIsLoading(true);
             if (votingPeriodCompare(Number(candidateData.endVotingTime))) {
+                setLoadingMessage("Writing Smart Contract");
                 const approveSmartContract = await approveCandidate(
                     candidateData.foundationOwnerAddress
                 );
-                if (approveSmartContract === "success") {
-                    if (
-                        Number(candidateData.yesVotes) >
-                        Number(candidateData.noVotes)
-                    ) {
-                        const updateCandidate =
-                            await updateCandidateWinningVote(
-                                InformationEnum.CollectionName,
-                                {
-                                    conrtactAddress:
-                                        candidateData.contractAddress,
-                                    foundationCoOwnerAddress:
-                                        candidateData.foundationCoOwnerAddress,
-                                },
-                                candidateData.id
-                            );
-                        const ownerAddresses = [
-                            candidateData.foundationCoOwnerAddress,
-                            candidateData.foundationCoOwnerAddress,
-                        ];
-                        const addAddress = await addOwnerAddress(
-                            OwnerEnum.CollectionName,
-                            ownerAddresses,
-                            OwnerEnum.DocumentId
-                        );
-                    } else {
-                        const updateCandidate = await updateCandidateLosingVote(
-                            InformationEnum.CollectionName,
-                            candidateData.id
-                        );
-                    }
-                    const del = await deleteFirebaseWallet(
-                        CandidateEnum.CollectionName,
-                        candidateData.foundationOwnerAddress,
-                        CandidateEnum.DocumentId,
-                        CandidateEnum.KeyName
+                if (approveSmartContract) {
+                    setResultMessage(approveSmartContract);
+                }
+                setLoadingMessage("Syncronizing Candidate States");
+                if (
+                    Number(candidateData.yesVotes) >
+                    Number(candidateData.noVotes)
+                ) {
+                    const updateCandidate = await updateCandidateWinningVote(
+                        InformationEnum.CollectionName,
+                        {
+                            conrtactAddress: candidateData.contractAddress,
+                            foundationCoOwnerAddress:
+                                candidateData.foundationCoOwnerAddress,
+                        },
+                        candidateData.id
+                    );
+                    const ownerAddresses = [
+                        candidateData.foundationCoOwnerAddress,
+                        candidateData.foundationCoOwnerAddress,
+                    ];
+                    const addAddress = await addOwnerAddress(
+                        OwnerEnum.CollectionName,
+                        ownerAddresses,
+                        OwnerEnum.DocumentId
                     );
                 } else {
-                    alert("Failed on Voting");
+                    const updateCandidate = await updateCandidateLosingVote(
+                        InformationEnum.CollectionName,
+                        candidateData.id
+                    );
                 }
+                const del = await deleteFirebaseWallet(
+                    CandidateEnum.CollectionName,
+                    candidateData.foundationOwnerAddress,
+                    CandidateEnum.DocumentId,
+                    CandidateEnum.KeyName
+                );
             }
         } catch (error) {
-            console.log(error);
+            setIsLoading(false);
+            setResultMessage(error);
+        } finally {
+            setIsLoading(false);
+            setShowResultModal(true);
         }
     };
     return (

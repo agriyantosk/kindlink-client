@@ -83,18 +83,17 @@ export const approveCandidate = async (foundationOwnerAddress: string) => {
             functionName: "approveCandidate",
             args: [foundationOwnerAddress],
         });
-        console.log(request);
         const executeApproveCandidate = await walletClient.writeContract(
             request
         );
-        console.log("berhasil writecontract");
-        if (executeApproveCandidate) {
-            const transaction = await publicClient.waitForTransactionReceipt({
-                hash: executeApproveCandidate,
-            });
-            console.log("berhasil dapetin receipt");
-            return transaction.status;
-        }
+        return executeApproveCandidate;
+        // if (executeApproveCandidate) {
+        //     const transaction = await publicClient.waitForTransactionReceipt({
+        //         hash: executeApproveCandidate,
+        //     });
+        //     console.log("berhasil dapetin receipt");
+        //     return transaction.status;
+        // }
     } catch (error) {
         console.log(error);
     }
