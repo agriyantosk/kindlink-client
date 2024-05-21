@@ -28,6 +28,6 @@ export enum InformationEnum {
     KeyName = "contractAddress",
 }
 
-export enum Kindlink {
+export enum KindlinkEnum {
     contractAddress = "",
 }

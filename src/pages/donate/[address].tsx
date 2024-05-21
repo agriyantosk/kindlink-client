@@ -52,9 +52,9 @@ const Detail = () => {
                     ({ closeToast }) => (
                         <div className="custom-toast">
                             <a
-                                href={`https://sepolia.etherscan.io/address/${hash}`}
+                                href={`https://sepolia.etherscan.io/tx/${hash}`}
                             >
-                                {`https://sepolia.etherscan.io/address/${hash}`}
+                                {`https://sepolia.etherscan.io/tx/${hash}`}
                             </a>
                         </div>
                     ),

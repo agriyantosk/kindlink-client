@@ -39,13 +39,10 @@ const AddCandidateForm = () => {
         const toastId = toast.loading("Writing Smart Contract");
         try {
             e.preventDefault();
-            // setIsLoading(true);
-            // setLoadingMessage("Writing Smart Contract");
             const contractAdd = await addCandidate(
                 formData.foundationOwnerAddress,
                 formData.foundationCoOwnerAddress
             );
-            // if (contractAdd === "success") {
 
             if (contractAdd) {
                 hash = contractAdd;
@@ -74,9 +71,9 @@ const AddCandidateForm = () => {
                         ({ closeToast }) => (
                             <div className="custom-toast">
                                 <a
-                                    href={`https://sepolia.etherscan.io/address/${hash}`}
+                                    href={`https://sepolia.etherscan.io/tx/${hash}`}
                                 >
-                                    {`https://sepolia.etherscan.io/address/${hash}`}
+                                    {`https://sepolia.etherscan.io/tx/${hash}`}
                                 </a>
                             </div>
                         ),

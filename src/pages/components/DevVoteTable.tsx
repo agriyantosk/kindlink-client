@@ -27,57 +27,59 @@ const DevVoteTable = ({ filterOption, candidates }: any) => {
                     toast.update(toastId, {
                         render: "Storing Candidate Information",
                     });
-                }
-                if (
-                    Number(candidateData.yesVotes) >
-                    Number(candidateData.noVotes)
-                ) {
-                    const updateCandidate = await updateCandidateWinningVote(
-                        InformationEnum.CollectionName,
-                        {
-                            conrtactAddress: candidateData.contractAddress,
-                            foundationCoOwnerAddress:
-                                candidateData.foundationCoOwnerAddress,
-                        },
-                        candidateData.id
+                    if (
+                        Number(candidateData.yesVotes) >
+                        Number(candidateData.noVotes)
+                    ) {
+                        const updateCandidate =
+                            await updateCandidateWinningVote(
+                                InformationEnum.CollectionName,
+                                {
+                                    conrtactAddress:
+                                        candidateData.contractAddress,
+                                    foundationCoOwnerAddress:
+                                        candidateData.foundationCoOwnerAddress,
+                                },
+                                candidateData.id
+                            );
+                        const ownerAddresses = [
+                            candidateData.foundationCoOwnerAddress,
+                            candidateData.foundationCoOwnerAddress,
+                        ];
+                        const addAddress = await addOwnerAddress(
+                            OwnerEnum.CollectionName,
+                            ownerAddresses,
+                            process.env.NEXT_PUBLIC_OWNER_DOCUMENTID as string
+                        );
+                    } else {
+                        const updateCandidate = await updateCandidateLosingVote(
+                            InformationEnum.CollectionName,
+                            candidateData.id
+                        );
+                    }
+                    const del = await deleteFirebaseWallet(
+                        CandidateEnum.CollectionName,
+                        candidateData.foundationOwnerAddress,
+                        process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
+                        CandidateEnum.KeyName
                     );
-                    const ownerAddresses = [
-                        candidateData.foundationCoOwnerAddress,
-                        candidateData.foundationCoOwnerAddress,
-                    ];
-                    const addAddress = await addOwnerAddress(
-                        OwnerEnum.CollectionName,
-                        ownerAddresses,
-                        process.env.NEXT_PUBLIC_OWNER_DOCUMENTID as string
-                    );
-                } else {
-                    const updateCandidate = await updateCandidateLosingVote(
-                        InformationEnum.CollectionName,
-                        candidateData.id
-                    );
-                }
-                const del = await deleteFirebaseWallet(
-                    CandidateEnum.CollectionName,
-                    candidateData.foundationOwnerAddress,
-                    process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
-                    CandidateEnum.KeyName
-                );
-                if (del) {
-                    toast.success(
-                        ({ closeToast }) => (
-                            <div className="custom-toast">
-                                <a
-                                    href={`https://sepolia.etherscan.io/address/${hash}`}
-                                >
-                                    {`https://sepolia.etherscan.io/address/${hash}`}
-                                </a>
-                            </div>
-                        ),
-                        {
-                            autoClose: false,
-                        }
-                    );
-                    toast.dismiss(toastId);
+                    if (del) {
+                        toast.success(
+                            ({ closeToast }) => (
+                                <div className="custom-toast">
+                                    <a
+                                        href={`https://sepolia.etherscan.io/address/${hash}`}
+                                    >
+                                        {`https://sepolia.etherscan.io/address/${hash}`}
+                                    </a>
+                                </div>
+                            ),
+                            {
+                                autoClose: false,
+                            }
+                        );
+                        toast.dismiss(toastId);
+                    }
                 }
             }
         } catch (error: any) {

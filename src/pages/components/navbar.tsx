@@ -50,7 +50,7 @@ const Navbar = () => {
 
     return (
         <>
-            <header className="top-0 z-50 bg-transparent backdrop-blur-lg w-full">
+            <header className="sticky top-0 z-50 bg-transparent backdrop-blur-lg w-full">
                 <nav className="mx-auto flex justify-between max-w-6xl transition-all duration-200 ease-in-out py-4 border-b border-slate-400 items-center">
                     <div className="relative flex items-center w-64">
                         <ul className="hidden items-center justify-center md:flex">
@@ -64,7 +64,7 @@ const Navbar = () => {
                                     <p>Donate</p>
                                 </li>
                             </Link>
-                            <Link href={"/under-development"}>
+                            <Link href={"/activity"}>
                                 <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                     <p>Activity</p>
                                 </li>
@@ -95,18 +95,13 @@ const Navbar = () => {
                         </ul>
                     </div>
                     <div className="flex items-center justify-center">
-                        {/* <Link href={"/"}> */}
-                        <h1 className="font-bold text-4xl text-blue-500">
-                            KINDLINK
-                        </h1>
-                        {/* </Link> */}
+                        <Link href={"/"}>
+                            <h1 className="font-bold text-4xl text-blue-500">
+                                KINDLINK
+                            </h1>
+                        </Link>
                     </div>
                     <div className="items-center justify-end gap-6">
-                        {/* <Link href={"/under-development"}>
-                            <button className="rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]">
-                                Connect Wallet
-                            </button>
-                        </Link> */}
                         <ConnectButton.Custom>
                             {({
                                 account,

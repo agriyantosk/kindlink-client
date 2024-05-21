@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import Footer from "./Footer";
 import CandidateDetailModal from "./CandidateDetailModal";
-import Navbar from "./navbar";
+import Navbar from "./Navbar";
 
 const ModalContext = createContext<any>(null);
 const CandidateDataContext = createContext<any>(null);
