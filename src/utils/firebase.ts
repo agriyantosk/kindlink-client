@@ -54,22 +54,30 @@ export const fetchFirebaseWallets = async (
 // This function is to get the information regarding foundation to a specific key and value in cases of getting foundation that needs approval, getting the current candidate address, etc
 export const queryIn = async (key: string, values: string[]) => {
     try {
-        if (key && values.length > 0) {
-            initializeApp(firebaseConfig);
-            const db = getFirestore();
-            const colRef = collection(db, "information");
-            const q = query(colRef, where(key, "in", values));
-            const querySnapshot = await getDocs(q);
-            const queryResult: any = [];
-            querySnapshot.forEach((doc) => {
-                console.log(doc.data());
-                queryResult.push({ ...doc.data(), id: doc.id });
-            });
-            console.log(queryResult);
-            return queryResult;
+        console.log(key, values); // Check if values are passed correctly
+        if (!key || values.length === 0) {
+            console.log("Empty key or values");
+            return []; // Handle empty key or values
         }
+
+        // Assuming Firebase is initialized globally
+        const db = getFirestore();
+        const colRef = collection(db, "information");
+        const q = query(colRef, where(key, "in", values));
+        const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.docs); // Log retrieved documents
+
+        const queryResult = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+        }));
+
+        console.log(queryResult, "ini query result");
+
+        return queryResult;
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return []; // Handle errors by returning an empty array
     }
 };
 

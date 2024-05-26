@@ -16,7 +16,7 @@ type LayoutsProps = {
 export const Layout: React.FC<LayoutsProps> = ({ children }) => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [candidateDetail, setCandidateDetail] = useState<any>(null);
-    const [filterOption, setFilterOption] = useState<string>("progress");
+    const [filterOption, setFilterOption] = useState<string>("withdraw");
     const [isLoading, setIsLoading] = useState<boolean>();
     const [loadingMessage, setLoadingMessage] = useState<string>();
 

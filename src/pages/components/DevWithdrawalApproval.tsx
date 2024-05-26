@@ -4,11 +4,11 @@ import {
     fetchFirebaseWallets,
     queryIn,
 } from "@/utils/firebase";
-import { foundationABI, kindlinkAbi } from "@/utils/ABI";
+import { foundationABI } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { foundationWithdrawalApprove } from "@/utils/smartContractInteraction";
-import { ApprovalEnum } from "@/enum/enum";
+import { ApprovalEnum, InformationEnum } from "@/enum/enum";
 import { toast } from "react-toastify";
 import { extractErrorMessage } from "@/utils/utilsFunction";
 
@@ -24,7 +24,6 @@ const DevWithdrawalApproval = () => {
                 process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
                 ApprovalEnum.KeyName
             );
-            console.log(withdrawalData);
             setApprovalWallets(withdrawalData);
         } catch (error) {
             console.log(error);
@@ -32,14 +31,16 @@ const DevWithdrawalApproval = () => {
     };
 
     const fetchApprovalInformation = async () => {
+        console.log("fetch info kepanggil");
         try {
-            if (approvalWallets && approvalWallets.length > 0) {
+            if (approvalWallets && approvalWallets.length !== 0) {
                 const info = await queryIn(
-                    ApprovalEnum.KeyName,
+                    InformationEnum.KeyName,
                     approvalWallets
                 );
-                console.log(info);
-                setApprovalInformations(info);
+                if (info && info.length !== 0) {
+                    setApprovalInformations(info);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -104,11 +105,11 @@ const DevWithdrawalApproval = () => {
     const fetchContractState = async () => {
         try {
             let compiledData = [];
-            console.log(approvalInformations);
+
             if (approvalInformations) {
                 for (let i = 0; i < approvalInformations.length; i++) {
                     const approval = approvalInformations[i];
-                    console.log(approval);
+
                     const contract = getContract({
                         address: approval.contractAddress,
                         abi: foundationABI,
@@ -131,7 +132,6 @@ const DevWithdrawalApproval = () => {
                     };
                     compiledData.push(state);
                 }
-                console.log(compiledData);
                 setApprovals(compiledData);
             }
         } catch (error) {
@@ -145,15 +145,12 @@ const DevWithdrawalApproval = () => {
 
     useEffect(() => {
         if (approvalWallets && approvalWallets.length !== 0) {
-            console.log(approvalWallets);
             fetchApprovalInformation();
         }
     }, [approvalWallets]);
 
     useEffect(() => {
-        console.log(approvalInformations);
         if (approvalInformations && approvalInformations.length !== 0) {
-            console.log(approvalInformations);
             fetchContractState();
         }
     }, [approvalInformations]);
@@ -216,9 +213,6 @@ const DevWithdrawalApproval = () => {
                                                     <div className="ps-3">
                                                         <div className="text-base font-semibold">
                                                             {el?.name}
-                                                        </div>
-                                                        <div className="font-normal text-gray-500">
-                                                            Category
                                                         </div>
                                                     </div>
                                                 </td>

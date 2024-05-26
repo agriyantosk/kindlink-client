@@ -2,18 +2,119 @@ import { CandidateEnum, InformationEnum, OwnerEnum } from "@/enum/enum";
 import {
     addOwnerAddress,
     deleteFirebaseWallet,
+    fetchFirebaseWallets,
+    queryIn,
     updateCandidateLosingVote,
     updateCandidateWinningVote,
 } from "@/utils/firebase";
-import { approveCandidate } from "@/utils/smartContractInteraction";
+import {
+    approveCandidate,
+    getAllCandidates,
+} from "@/utils/smartContractInteraction";
 import {
     convertTimestamp,
     extractErrorMessage,
     votingPeriodCompare,
 } from "@/utils/utilsFunction";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAccount } from "wagmi";
 
-const DevVoteTable = ({ filterOption, candidates }: any) => {
+const DevVoteTable = ({ filterOption }: any) => {
+    const { address } = useAccount();
+    const [candidateWallets, setCandidateWallets] = useState<any>();
+    const [candidates, setCandidates] = useState<any>(false);
+    const fetchCandidateWallets = async () => {
+        try {
+            const wallets = await fetchFirebaseWallets(
+                CandidateEnum.CollectionName,
+                process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
+                CandidateEnum.KeyName
+            );
+            setCandidateWallets(wallets);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchCandidatesInformation = async () => {
+        try {
+            if (candidateWallets) {
+                const informations = await queryIn(
+                    CandidateEnum.KeyName,
+                    candidateWallets
+                );
+                return informations;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const fetchCandidateState = async () => {
+        try {
+            const smartContractCandidate = await getAllCandidates(
+                address,
+                candidateWallets
+            );
+            return smartContractCandidate;
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const compileCandidates = async () => {
+        try {
+            const candidateState = (await fetchCandidateState()) as any[];
+            const candidateInformation = await fetchCandidatesInformation();
+            if (candidateState && candidateInformation) {
+                const matchedData: any[] = [];
+
+                candidateInformation.forEach((infoItem: any) => {
+                    const contractItem = candidateState.find(
+                        (stateItem: any) =>
+                            stateItem.foundationOwnerAddress ===
+                            infoItem.foundationOwnerAddress
+                    );
+
+                    if (contractItem) {
+                        const combinedData = {
+                            id: infoItem.id,
+                            foundationOwnerAddress:
+                                infoItem.foundationOwnerAddress,
+                            foundationCoOwnerAddress:
+                                contractItem.foundationCoOwnerAddress,
+                            websiteUrl: infoItem.websiteUrl,
+                            instagramUrl: infoItem.instagramUrl,
+                            name: infoItem.name,
+                            xUrl: infoItem.xUrl,
+                            imgUrl: infoItem.imgUrl,
+                            description: infoItem.description,
+                            endVotingTime: contractItem.endVotingTime,
+                            createdAt: contractItem.createdAt,
+                            yesVotes: contractItem.yesVotes,
+                            noVotes: contractItem.noVotes,
+                            hasVoted: contractItem.hasVoted,
+                        };
+                        matchedData.push(combinedData);
+                    }
+                });
+                setCandidates(matchedData);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCandidateWallets();
+    }, []);
+
+    useEffect(() => {
+        if (candidateWallets) {
+            compileCandidates();
+        }
+    }, [candidateWallets]);
     const handleApprove = async (candidateData: any) => {
         let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
