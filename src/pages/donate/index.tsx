@@ -29,6 +29,7 @@ const Donate = () => {
                     FoundationEnum.KeyName,
                     foundationWallets
                 );
+                console.log(informations);
                 return informations;
             }
         } catch (error) {

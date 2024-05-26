@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { fetchFirebaseWallets } from "@/utils/firebase";
 import { useEffect, useState } from "react";
 import { DevEnum, OwnerEnum } from "@/enum/enum";
+import { usePathname } from "next/navigation";
+import ConnectButtonComponent from "./ConnectButton";
 
 const Navbar = () => {
     const { address, isConnected } = useAccount();
     const [isOwner, setIsOwner] = useState();
     const [isDev, setIsDev] = useState();
+    const pathname = usePathname();
 
     const checkOwnerAddress = async (userAddress: string) => {
         try {
@@ -55,17 +57,35 @@ const Navbar = () => {
                     <div className="relative flex items-center w-64">
                         <ul className="hidden items-center justify-center md:flex">
                             <Link href={"/donate"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <li
+                                    className={`font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg px-2 py-1 ease-out transition-all duration-200 ${
+                                        pathname === "/donate"
+                                            ? "text-white bg-blue-500"
+                                            : ""
+                                    }`}
+                                >
                                     <p>Donate</p>
                                 </li>
                             </Link>
                             <Link href={"/activity"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <li
+                                    className={`font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg px-2 py-1 ease-out transition-all duration-200 ${
+                                        pathname === "/activity"
+                                            ? "text-white bg-blue-500"
+                                            : ""
+                                    }`}
+                                >
                                     <p>Activity</p>
                                 </li>
                             </Link>
                             <Link href={"/vote"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
+                                <li
+                                    className={`font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg px-2 py-1 ease-out transition-all duration-200 ${
+                                        pathname === "/vote"
+                                            ? "text-white bg-blue-500"
+                                            : ""
+                                    }`}
+                                >
                                     <p>Vote</p>
                                 </li>
                             </Link>
@@ -97,134 +117,7 @@ const Navbar = () => {
                         </Link>
                     </div>
                     <div className="items-center justify-end gap-6">
-                        <ConnectButton.Custom>
-                            {({
-                                account,
-                                chain,
-                                openAccountModal,
-                                openChainModal,
-                                openConnectModal,
-                                authenticationStatus,
-                                mounted,
-                            }) => {
-                                // Note: If your app doesn't use authentication, you
-                                // can remove all 'authenticationStatus' checks
-                                const ready =
-                                    mounted &&
-                                    authenticationStatus !== "loading";
-                                const connected =
-                                    ready &&
-                                    account &&
-                                    chain &&
-                                    (!authenticationStatus ||
-                                        authenticationStatus ===
-                                            "authenticated");
-
-                                return (
-                                    <div
-                                        {...(!ready && {
-                                            "aria-hidden": true,
-                                            style: {
-                                                opacity: 0,
-                                                pointerEvents: "none",
-                                                userSelect: "none",
-                                            },
-                                        })}
-                                    >
-                                        {(() => {
-                                            if (!connected) {
-                                                return (
-                                                    <button
-                                                        onClick={
-                                                            openConnectModal
-                                                        }
-                                                        type="button"
-                                                        className="rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-                                                    >
-                                                        Connect Wallet
-                                                    </button>
-                                                );
-                                            }
-
-                                            if (chain.unsupported) {
-                                                return (
-                                                    <button
-                                                        onClick={openChainModal}
-                                                        type="button"
-                                                    >
-                                                        Wrong network
-                                                    </button>
-                                                );
-                                            }
-
-                                            return (
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        gap: 12,
-                                                    }}
-                                                    className="rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
-                                                >
-                                                    <button
-                                                        onClick={openChainModal}
-                                                        style={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                        }}
-                                                        type="button"
-                                                    >
-                                                        {chain.hasIcon && (
-                                                            <div
-                                                                style={{
-                                                                    background:
-                                                                        chain.iconBackground,
-                                                                    width: 12,
-                                                                    height: 12,
-                                                                    borderRadius: 999,
-                                                                    overflow:
-                                                                        "hidden",
-                                                                    marginRight: 4,
-                                                                }}
-                                                            >
-                                                                {chain.iconUrl && (
-                                                                    <img
-                                                                        alt={
-                                                                            chain.name ??
-                                                                            "Chain icon"
-                                                                        }
-                                                                        src={
-                                                                            chain.iconUrl
-                                                                        }
-                                                                        style={{
-                                                                            width: 12,
-                                                                            height: 12,
-                                                                        }}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                        {chain.name}
-                                                    </button>
-
-                                                    <button
-                                                        onClick={
-                                                            openAccountModal
-                                                        }
-                                                        type="button"
-                                                    >
-                                                        {account.displayName}
-                                                        {account.displayBalance
-                                                            ? ` (${account.displayBalance})`
-                                                            : ""}
-                                                    </button>
-                                                </div>
-                                            );
-                                        })()}
-                                    </div>
-                                );
-                            }}
-                        </ConnectButton.Custom>
+                        <ConnectButtonComponent />
                     </div>
                 </nav>
             </header>

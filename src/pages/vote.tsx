@@ -4,9 +4,10 @@ import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
 import { CandidateEnum } from "@/enum/enum";
+import ConnectButtonComponent from "./components/ConnectButton";
 
 const Vote = () => {
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
     const [candidateWallets, setCandidateWallets] = useState<any>();
     const [candidates, setCandidates] = useState<any>();
     const fetchCandidateWallets = async () => {
@@ -25,11 +26,13 @@ const Vote = () => {
 
     const fetchCandidatesInformation = async () => {
         try {
+            console.log(candidateWallets);
             if (candidateWallets) {
                 const informations = await queryIn(
                     CandidateEnum.KeyName,
                     candidateWallets
                 );
+                console.log(informations);
                 return informations;
             }
         } catch (error) {
@@ -43,6 +46,7 @@ const Vote = () => {
                 address,
                 candidateWallets
             );
+            console.log(smartContractCandidate);
             return smartContractCandidate;
         } catch (error) {
             console.log(error);
@@ -57,11 +61,14 @@ const Vote = () => {
                 const matchedData: any[] = [];
 
                 candidateInformation.forEach((infoItem: any) => {
+                    console.log("test");
                     const contractItem = candidateState.find(
                         (stateItem: any) =>
                             stateItem.foundationOwnerAddress ===
                             infoItem.foundationOwnerAddress
                     );
+
+                    console.log(contractItem);
 
                     if (contractItem) {
                         const combinedData = {
@@ -92,7 +99,6 @@ const Vote = () => {
     };
 
     useEffect(() => {
-        console.log("pertama kali di panggil");
         fetchCandidateWallets();
     }, []);
 
@@ -105,6 +111,14 @@ const Vote = () => {
     return (
         <>
             <div className="w-full h-full">
+                {!isConnected && (
+                    <div className="flex justify-center items-center h-full">
+                        <h1>
+                            Looks like your wallet isn't connected. You'll need
+                            to connect your wallet to participate.
+                        </h1>
+                    </div>
+                )}
                 {candidates && (
                     <VoteCard
                         candidates={candidates}

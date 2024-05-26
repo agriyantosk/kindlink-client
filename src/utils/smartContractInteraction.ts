@@ -74,7 +74,7 @@ export const approveCandidate = async (foundationOwnerAddress: string) => {
         );
         return executeApproveCandidate;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 };
 
@@ -101,7 +101,7 @@ export const donate = async (
         const executeDonation = await walletClient.writeContract(request);
         return executeDonation;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 };
 
@@ -123,7 +123,7 @@ export const withdrawal = async (foundationAddress: string) => {
         const executeWithdrawal = await walletClient.writeContract(request);
         return executeWithdrawal;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 };
 
@@ -148,7 +148,7 @@ export const foundationWithdrawalRequest = async (
         );
         return executeWithdrawalRequest;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 };
 
@@ -173,7 +173,7 @@ export const foundationWithdrawalApprove = async (
         );
         return executeWithdrawalRequest;
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 };
 

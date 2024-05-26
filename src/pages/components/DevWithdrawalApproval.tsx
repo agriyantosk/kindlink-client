@@ -24,6 +24,7 @@ const DevWithdrawalApproval = () => {
                 process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
                 ApprovalEnum.KeyName
             );
+            console.log(withdrawalData);
             setApprovalWallets(withdrawalData);
         } catch (error) {
             console.log(error);
@@ -32,10 +33,14 @@ const DevWithdrawalApproval = () => {
 
     const fetchApprovalInformation = async () => {
         try {
-            console.log(approvalWallets);
-            const info = await queryIn(ApprovalEnum.KeyName, approvalWallets);
-            console.log(info);
-            setApprovalInformations(info);
+            if (approvalWallets && approvalWallets.length > 0) {
+                const info = await queryIn(
+                    ApprovalEnum.KeyName,
+                    approvalWallets
+                );
+                console.log(info);
+                setApprovalInformations(info);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -52,7 +57,10 @@ const DevWithdrawalApproval = () => {
         }
     };
 
-    const handleWithdrawalApprove = async (foundationAddress: string) => {
+    const handleWithdrawalApprove = async (
+        foundationAddress: string,
+        documentId: string
+    ) => {
         let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
         try {
@@ -61,21 +69,29 @@ const DevWithdrawalApproval = () => {
             );
             if (approveWithdraw) {
                 hash = approveWithdraw;
-                toast.success(
-                    ({ closeToast }) => (
-                        <div className="custom-toast">
-                            <a
-                                href={`https://sepolia.etherscan.io/address/${hash}`}
-                            >
-                                {`https://sepolia.etherscan.io/address/${hash}`}
-                            </a>
-                        </div>
-                    ),
-                    {
-                        autoClose: false,
-                    }
+                const deleteWithdrawal = await deleteFirebaseWallet(
+                    ApprovalEnum.CollectionName,
+                    documentId,
+                    process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
+                    ApprovalEnum.KeyName
                 );
-                toast.dismiss(toastId);
+                if (deleteWithdrawal) {
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/address/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/address/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
+                }
             }
         } catch (error: any) {
             const errorMessage = error?.shortMessage;
@@ -88,6 +104,7 @@ const DevWithdrawalApproval = () => {
     const fetchContractState = async () => {
         try {
             let compiledData = [];
+            console.log(approvalInformations);
             if (approvalInformations) {
                 for (let i = 0; i < approvalInformations.length; i++) {
                     const approval = approvalInformations[i];
@@ -114,6 +131,7 @@ const DevWithdrawalApproval = () => {
                     };
                     compiledData.push(state);
                 }
+                console.log(compiledData);
                 setApprovals(compiledData);
             }
         } catch (error) {
@@ -126,233 +144,249 @@ const DevWithdrawalApproval = () => {
     }, []);
 
     useEffect(() => {
-        if (approvalWallets && approvalWallets.length > 0) {
+        if (approvalWallets && approvalWallets.length !== 0) {
+            console.log(approvalWallets);
             fetchApprovalInformation();
         }
     }, [approvalWallets]);
 
     useEffect(() => {
-        if (approvalInformations && approvalInformations.length > 0) {
+        console.log(approvalInformations);
+        if (approvalInformations && approvalInformations.length !== 0) {
+            console.log(approvalInformations);
             fetchContractState();
         }
     }, [approvalInformations]);
 
     return (
         <>
-            <div className="relative overflow-y-auto w-full px-10">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="text-xs text-gray-700 uppercase">
-                        <tr>
-                            <th scope="col" className="px-3 py-1.5">
-                                Project Name
-                            </th>
-                            <th scope="col" className="px-3 py-1.5">
-                                Contract Address
-                            </th>
-                            <th scope="col" className="px-3 py-1.5">
-                                Withdrawal Funds
-                            </th>
-                            <th scope="col" className="px-3 py-1.5">
-                                Kindlink Approval
-                            </th>
-                            <th scope="col" className="px-3 py-1.5">
-                                Owner Approval
-                            </th>
-                            <th scope="col" className="px-3 py-1.5">
-                                Co Owner Appro
-                            </th>
-                            <th scope="col" className="px-3 py-1.5">
-                                Status
-                            </th>
-                        </tr>
-                    </thead>
-                    {approvals &&
-                        approvals.map((el: any, index: number) => {
-                            return (
-                                <>
-                                    <tbody key={index}>
-                                        <tr className="border-b border-gray-400">
-                                            <td
-                                                scope="row"
-                                                className="flex items-center px-3 py-2 text-gray-900 whitespace-nowrap"
-                                            >
-                                                <img
-                                                    className="w-10 h-10 rounded-full"
-                                                    src={el?.imgUrl}
-                                                    alt="Foundation Logo"
-                                                />
-                                                <div className="ps-3">
-                                                    <div className="text-base font-semibold">
-                                                        {el?.name}
-                                                    </div>
-                                                    <div className="font-normal text-gray-500">
-                                                        Category
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {el?.contractAddress}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {el?.balance}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {el?.kindlinkApproval ? (
-                                                    <svg
-                                                        viewBox="0 0 32 32"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        height="30px"
-                                                        width="30px"
-                                                    >
-                                                        <defs></defs>
-                                                        <title />
-                                                        <g
-                                                            data-name="Layer 28"
-                                                            id="Layer_28"
-                                                        >
-                                                            <path
-                                                                className="cls-1"
-                                                                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
-                                                            />
-                                                            <path
-                                                                className="cls-1"
-                                                                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
-                                                            />
-                                                        </g>
-                                                    </svg>
-                                                ) : (
-                                                    <svg
-                                                        viewBox="0 0 512 512"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        height="30px"
-                                                        width="30px"
-                                                    >
-                                                        <title />
-                                                        <g
-                                                            data-name="1"
-                                                            id="_1"
-                                                            className="text-red-300"
-                                                        >
-                                                            <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
-                                                            <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
-                                                            <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
-                                                        </g>
-                                                    </svg>
-                                                )}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {el?.foundationOwnerApproval ? (
-                                                    <svg
-                                                        viewBox="0 0 32 32"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        height="30px"
-                                                        width="30px"
-                                                    >
-                                                        <defs></defs>
-                                                        <title />
-                                                        <g
-                                                            data-name="Layer 28"
-                                                            id="Layer_28"
-                                                        >
-                                                            <path
-                                                                className="cls-1"
-                                                                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
-                                                            />
-                                                            <path
-                                                                className="cls-1"
-                                                                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
-                                                            />
-                                                        </g>
-                                                    </svg>
-                                                ) : (
-                                                    <svg
-                                                        viewBox="0 0 512 512"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        height="30px"
-                                                        width="30px"
-                                                    >
-                                                        <title />
-                                                        <g
-                                                            data-name="1"
-                                                            id="_1"
-                                                            className="text-red-300"
-                                                        >
-                                                            <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
-                                                            <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
-                                                            <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
-                                                        </g>
-                                                    </svg>
-                                                )}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {el?.foundationCoOwnerApproval ? (
-                                                    <svg
-                                                        viewBox="0 0 32 32"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        height="30px"
-                                                        width="30px"
-                                                    >
-                                                        <defs></defs>
-                                                        <title />
-                                                        <g
-                                                            data-name="Layer 28"
-                                                            id="Layer_28"
-                                                        >
-                                                            <path
-                                                                className="cls-1"
-                                                                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
-                                                            />
-                                                            <path
-                                                                className="cls-1"
-                                                                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
-                                                            />
-                                                        </g>
-                                                    </svg>
-                                                ) : (
-                                                    <svg
-                                                        viewBox="0 0 512 512"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        height="30px"
-                                                        width="30px"
-                                                    >
-                                                        <title />
-                                                        <g
-                                                            data-name="1"
-                                                            id="_1"
-                                                            className="text-red-300"
-                                                        >
-                                                            <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
-                                                            <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
-                                                            <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
-                                                        </g>
-                                                    </svg>
-                                                )}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                                {el?.isRequestWithdrawal
-                                                    ? "Ongoing Request"
-                                                    : "No Ongoing Request"}
-                                            </td>
-                                            <td className="px-3 py-2 text-right">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleWithdrawalApprove(
-                                                            el?.contractAddress
-                                                        )
-                                                    }
-                                                    className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
+            {approvals.length === 0 ? (
+                <>
+                    <div className="h-full w-full flex flex-col gap-5 justify-center items-center">
+                        <img
+                            src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png"
+                            alt="No Data"
+                        />
+                        <h1>No Withdrawal Request Currently Available</h1>
+                    </div>
+                </>
+            ) : (
+                <div className="relative overflow-y-auto w-full px-10">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+                        <thead className="text-xs text-gray-700 uppercase">
+                            <tr>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Project Name
+                                </th>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Contract Address
+                                </th>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Withdrawal Funds
+                                </th>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Kindlink Approval
+                                </th>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Owner Approval
+                                </th>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Co Owner Appro
+                                </th>
+                                <th scope="col" className="px-3 py-1.5">
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+                        {approvals &&
+                            approvals.map((el: any, index: number) => {
+                                return (
+                                    <>
+                                        <tbody key={index}>
+                                            <tr className="border-b border-gray-400">
+                                                <td
+                                                    scope="row"
+                                                    className="flex items-center px-3 py-2 text-gray-900 whitespace-nowrap"
                                                 >
-                                                    Approve
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </>
-                            );
-                        })}
-                </table>
-            </div>
+                                                    <img
+                                                        className="w-10 h-10 rounded-full"
+                                                        src={el?.imgUrl}
+                                                        alt="Foundation Logo"
+                                                    />
+                                                    <div className="ps-3">
+                                                        <div className="text-base font-semibold">
+                                                            {el?.name}
+                                                        </div>
+                                                        <div className="font-normal text-gray-500">
+                                                            Category
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    {el?.contractAddress}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    {el?.balance}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    {el?.kindlinkApproval ? (
+                                                        <svg
+                                                            viewBox="0 0 32 32"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            height="30px"
+                                                            width="30px"
+                                                        >
+                                                            <defs></defs>
+                                                            <title />
+                                                            <g
+                                                                data-name="Layer 28"
+                                                                id="Layer_28"
+                                                            >
+                                                                <path
+                                                                    className="cls-1"
+                                                                    d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+                                                                />
+                                                                <path
+                                                                    className="cls-1"
+                                                                    d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+                                                                />
+                                                            </g>
+                                                        </svg>
+                                                    ) : (
+                                                        <svg
+                                                            viewBox="0 0 512 512"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            height="30px"
+                                                            width="30px"
+                                                        >
+                                                            <title />
+                                                            <g
+                                                                data-name="1"
+                                                                id="_1"
+                                                                className="text-red-300"
+                                                            >
+                                                                <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
+                                                                <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
+                                                                <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
+                                                            </g>
+                                                        </svg>
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    {el?.foundationOwnerApproval ? (
+                                                        <svg
+                                                            viewBox="0 0 32 32"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            height="30px"
+                                                            width="30px"
+                                                        >
+                                                            <defs></defs>
+                                                            <title />
+                                                            <g
+                                                                data-name="Layer 28"
+                                                                id="Layer_28"
+                                                            >
+                                                                <path
+                                                                    className="cls-1"
+                                                                    d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+                                                                />
+                                                                <path
+                                                                    className="cls-1"
+                                                                    d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+                                                                />
+                                                            </g>
+                                                        </svg>
+                                                    ) : (
+                                                        <svg
+                                                            viewBox="0 0 512 512"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            height="30px"
+                                                            width="30px"
+                                                        >
+                                                            <title />
+                                                            <g
+                                                                data-name="1"
+                                                                id="_1"
+                                                                className="text-red-300"
+                                                            >
+                                                                <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
+                                                                <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
+                                                                <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
+                                                            </g>
+                                                        </svg>
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    {el?.foundationCoOwnerApproval ? (
+                                                        <svg
+                                                            viewBox="0 0 32 32"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            height="30px"
+                                                            width="30px"
+                                                        >
+                                                            <defs></defs>
+                                                            <title />
+                                                            <g
+                                                                data-name="Layer 28"
+                                                                id="Layer_28"
+                                                            >
+                                                                <path
+                                                                    className="cls-1"
+                                                                    d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+                                                                />
+                                                                <path
+                                                                    className="cls-1"
+                                                                    d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+                                                                />
+                                                            </g>
+                                                        </svg>
+                                                    ) : (
+                                                        <svg
+                                                            viewBox="0 0 512 512"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            height="30px"
+                                                            width="30px"
+                                                        >
+                                                            <title />
+                                                            <g
+                                                                data-name="1"
+                                                                id="_1"
+                                                                className="text-red-300"
+                                                            >
+                                                                <path d="M257,461.46c-114,0-206.73-92.74-206.73-206.73S143,48,257,48s206.73,92.74,206.73,206.73S371,461.46,257,461.46ZM257,78C159.55,78,80.27,157.28,80.27,254.73S159.55,431.46,257,431.46s176.73-79.28,176.73-176.73S354.45,78,257,78Z" />
+                                                                <path d="M342.92,358a15,15,0,0,1-10.61-4.39L160.47,181.76a15,15,0,1,1,21.21-21.21L353.53,332.4A15,15,0,0,1,342.92,358Z" />
+                                                                <path d="M171.07,358a15,15,0,0,1-10.6-25.6L332.31,160.55a15,15,0,0,1,21.22,21.21L181.68,353.61A15,15,0,0,1,171.07,358Z" />
+                                                            </g>
+                                                        </svg>
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    {el?.isRequestWithdrawal
+                                                        ? "Ongoing Request"
+                                                        : "No Ongoing Request"}
+                                                </td>
+                                                <td className="px-3 py-2 text-right">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleWithdrawalApprove(
+                                                                el?.contractAddress,
+                                                                el?.id
+                                                            )
+                                                        }
+                                                        className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
+                                                    >
+                                                        Approve
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </>
+                                );
+                            })}
+                    </table>
+                </div>
+            )}
         </>
     );
 };

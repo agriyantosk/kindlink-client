@@ -6,11 +6,8 @@ import {
     doc,
     getDocs,
     getFirestore,
-    onSnapshot,
     query,
-    serverTimestamp,
     where,
-    Timestamp,
     updateDoc,
     getDoc,
 } from "firebase/firestore";
@@ -57,17 +54,20 @@ export const fetchFirebaseWallets = async (
 // This function is to get the information regarding foundation to a specific key and value in cases of getting foundation that needs approval, getting the current candidate address, etc
 export const queryIn = async (key: string, values: string[]) => {
     try {
-        initializeApp(firebaseConfig);
-        const db = getFirestore();
-        const colRef = collection(db, "information");
-        const q = query(colRef, where(key, "in", values));
-        const querySnapshot = await getDocs(q);
-        const queryResult: any = [];
-        querySnapshot.forEach((doc) => {
-            queryResult.push({ ...doc.data(), id: doc.id });
-        });
-        console.log(queryResult);
-        return queryResult;
+        if (key && values.length > 0) {
+            initializeApp(firebaseConfig);
+            const db = getFirestore();
+            const colRef = collection(db, "information");
+            const q = query(colRef, where(key, "in", values));
+            const querySnapshot = await getDocs(q);
+            const queryResult: any = [];
+            querySnapshot.forEach((doc) => {
+                console.log(doc.data());
+                queryResult.push({ ...doc.data(), id: doc.id });
+            });
+            console.log(queryResult);
+            return queryResult;
+        }
     } catch (error) {
         console.log(error);
     }
@@ -91,14 +91,19 @@ export const addFirebaseWallets = async (
         }
         const existingData = docSnapshot.data();
         const existingAddresses = existingData && existingData[keyName];
-        const parsed = JSON.parse(existingAddresses);
-        parsed.push(formData);
-        const addCandidate = await updateDoc(docRef, {
-            foundationOwnerAddress: JSON.stringify(parsed),
-        });
-        return `Successfully Added foundation candidate: ${JSON.stringify(
-            addCandidate
-        )}`;
+        const checkIfExists = existingAddresses.find(formData);
+        if (checkIfExists) {
+            throw Error("Candidate has already exist");
+        } else {
+            const parsed = JSON.parse(existingAddresses);
+            parsed.push(formData);
+            const addCandidate = await updateDoc(docRef, {
+                foundationOwnerAddress: JSON.stringify(parsed),
+            });
+            return `Successfully Added foundation candidate: ${JSON.stringify(
+                addCandidate
+            )}`;
+        }
     } catch (error) {
         console.log(error);
     }

@@ -51,9 +51,7 @@ const Detail = () => {
                 toast.success(
                     ({ closeToast }) => (
                         <div className="custom-toast">
-                            <a
-                                href={`https://sepolia.etherscan.io/tx/${hash}`}
-                            >
+                            <a href={`https://sepolia.etherscan.io/tx/${hash}`}>
                                 {`https://sepolia.etherscan.io/tx/${hash}`}
                             </a>
                         </div>
@@ -65,9 +63,9 @@ const Detail = () => {
                 toast.dismiss(toastId);
             }
         } catch (error: any) {
+            console.log(error);
             const errorMessage = error?.shortMessage;
-            const extractedMessage = extractErrorMessage(errorMessage);
-            toast.error(extractedMessage);
+            toast.error(errorMessage);
             toast.dismiss(toastId);
         }
     };

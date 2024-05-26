@@ -122,9 +122,7 @@ const Dev = () => {
                     filterOption === "add" ? (
                         <AddCandidateForm />
                     ) : (
-                        <div>
-                            <DevWithdrawalApproval />
-                        </div>
+                        <DevWithdrawalApproval />
                     )}
                 </div>
             </div>

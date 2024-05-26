@@ -9,6 +9,7 @@ import {
 } from "@/utils/utilsFunction";
 import { voteCandidate } from "@/utils/smartContractInteraction";
 import { toast } from "react-toastify";
+import { useAccount } from "wagmi";
 
 const VoteCard = ({ candidates, refetch }: any) => {
     const [countdown, setCountdown] = useState([]);
@@ -51,9 +52,7 @@ const VoteCard = ({ candidates, refetch }: any) => {
                 toast.success(
                     ({ closeToast }) => (
                         <div className="custom-toast">
-                            <a
-                                href={`https://sepolia.etherscan.io/tx/${hash}`}
-                            >
+                            <a href={`https://sepolia.etherscan.io/tx/${hash}`}>
                                 {`https://sepolia.etherscan.io/tx/${hash}`}
                             </a>
                         </div>
