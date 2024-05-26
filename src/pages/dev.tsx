@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
 import DevFilter from "./components/DevFilter";
 import DevVoteTable from "./components/DevVoteTable";
 import { useFilterContext } from "./components/Layout";
-import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import AddCandidateForm from "./components/AddCandidateForm";
 import DevWithdrawalApproval from "./components/DevWithdrawalApproval";
-import { getAllCandidates } from "@/utils/smartContractInteraction";
-import { useAccount } from "wagmi";
-import { CandidateEnum } from "@/enum/enum";
 
 const Dev = () => {
     const { filterOption, setFilterOption } = useFilterContext();
