@@ -78,9 +78,6 @@ const DonationCard = ({ foundations }: any) => {
                                                     <div className="text-base font-semibold">
                                                         {el.name}
                                                     </div>
-                                                    <div className="font-normal text-gray-500">
-                                                        Category
-                                                    </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">

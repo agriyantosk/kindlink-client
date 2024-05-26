@@ -1,10 +1,10 @@
+import { KindlinkEnum } from "@/enum/enum";
 import { kindlinkAbi } from "./ABI";
 import { publicClient } from "./client";
-// import { walletClient } from "./wallet";
-import { createWalletClient, custom, getContract, isAddress } from "viem";
+import { createWalletClient, custom, getContract } from "viem";
 import { sepolia } from "viem/chains";
 
-const contractAddress = "0xC4CDaC2f39823CDCAc91009412b6bfe6C395472A";
+const contractAddress = KindlinkEnum.contractAddress;
 
 // CALL MAIN KINDLINK FUNCTION
 export const addCandidate = async (
@@ -24,14 +24,7 @@ export const addCandidate = async (
             functionName: "addCandidates",
             args: [foundationOwnerAddress, foundationCoOwnerAddress],
         });
-        console.log(request);
         const executeAddCandidate = await walletClient.writeContract(request);
-        // if (executeAddCandidate) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeAddCandidate,
-        //     });
-        //     return transaction.status;
-        // }
         return executeAddCandidate;
     } catch (error) {
         throw error;
@@ -55,14 +48,7 @@ export const voteCandidate = async (
             functionName: "vote",
             args: [voteInput, foundationOwnerAddress],
         });
-        console.log(request);
         const executeVote = await walletClient.writeContract(request);
-        // if (executeVote) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeVote,
-        //     });
-        //     return { status: transaction.status, txHash: executeVote };
-        // }
         return executeVote;
     } catch (error) {
         throw error;
@@ -87,13 +73,6 @@ export const approveCandidate = async (foundationOwnerAddress: string) => {
             request
         );
         return executeApproveCandidate;
-        // if (executeApproveCandidate) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeApproveCandidate,
-        //     });
-        //     console.log("berhasil dapetin receipt");
-        //     return transaction.status;
-        // }
     } catch (error) {
         console.log(error);
     }
@@ -120,12 +99,6 @@ export const donate = async (
             value: bigintWei,
         });
         const executeDonation = await walletClient.writeContract(request);
-        // if (executeDonation) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeDonation,
-        //     });
-        //     return transaction.status;
-        // }
         return executeDonation;
     } catch (error) {
         console.log(error);
@@ -148,13 +121,6 @@ export const withdrawal = async (foundationAddress: string) => {
             args: [foundationAddress],
         });
         const executeWithdrawal = await walletClient.writeContract(request);
-        // if (executeWithdrawal) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeWithdrawal,
-        //     });
-        //     return transaction.status;
-        // }
-        // return true;
         return executeWithdrawal;
     } catch (error) {
         console.log(error);
@@ -180,13 +146,6 @@ export const foundationWithdrawalRequest = async (
         const executeWithdrawalRequest = await walletClient.writeContract(
             request
         );
-        // if (executeWithdrawalRequest) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeWithdrawalRequest,
-        //     });
-        //     return transaction.status;
-        // }
-        // return true;
         return executeWithdrawalRequest;
     } catch (error) {
         console.log(error);
@@ -213,13 +172,6 @@ export const foundationWithdrawalApprove = async (
             request
         );
         return executeWithdrawalRequest;
-        // if (executeWithdrawalRequest) {
-        //     const transaction = await publicClient.waitForTransactionReceipt({
-        //         hash: executeWithdrawalRequest,
-        //     });
-        //     return transaction.status;
-        // }
-        // return true;
     } catch (error) {
         console.log(error);
     }

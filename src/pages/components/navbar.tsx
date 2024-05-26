@@ -54,11 +54,6 @@ const Navbar = () => {
                 <nav className="mx-auto flex justify-between max-w-6xl transition-all duration-200 ease-in-out py-4 border-b border-slate-400 items-center">
                     <div className="relative flex items-center w-64">
                         <ul className="hidden items-center justify-center md:flex">
-                            <Link href={"/under-development"}>
-                                <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
-                                    <p>About</p>
-                                </li>
-                            </Link>
                             <Link href={"/donate"}>
                                 <li className="font-dm text-sm font-medium text-blue-500 hover:bg-blue-500 rounded-lg px-2 py-1 hover:text-white ease-out transition-all duration-200">
                                     <p>Donate</p>

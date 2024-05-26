@@ -139,7 +139,7 @@ const Detail = () => {
                                     content={
                                         contractDetail &&
                                         contractDetail[0]
-                                            ?.foundationOwnerAddress
+                                            ?.foundationCoOwnerAddress
                                     }
                                     className="text-xs"
                                 >
@@ -174,7 +174,7 @@ const Detail = () => {
                                     content={
                                         contractDetail &&
                                         contractDetail[0]
-                                            ?.foundationCoOwnerAddress
+                                            ?.foundationOwnerAddress
                                     }
                                     className="text-xs"
                                 >
