@@ -97,3 +97,22 @@ export const extractErrorMessage = (errorMessage: string) => {
         return reasonSplit[1];
     }
 };
+
+export const checkToDeleteFirebaseApprovalWallets = (state: any) => {
+    const approvalKeys = [
+        "foundationOwnerApproval",
+        "foundationCoOwnerApproval",
+        "kindlinkApproval",
+    ];
+    let trueCount = 0;
+
+    for (const key of approvalKeys) {
+        if (state.hasOwnProperty(key) && state[key]) {
+            trueCount++;
+        }
+        if (trueCount >= 2) {
+            return true;
+        }
+    }
+    return false;
+};

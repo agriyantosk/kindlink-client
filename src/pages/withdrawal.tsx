@@ -53,8 +53,9 @@ const Foundations = () => {
                     address as string,
                 ]);
             }
+            console.log(data);
             if (data) {
-                setContractAddress(data[0].contractAddress);
+                setContractAddress(data[0]?.contractAddress);
             }
         } catch (error) {
             console.log(error);

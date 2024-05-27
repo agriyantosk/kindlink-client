@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { foundationABI, kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
-import { addFirebaseWallets } from "@/utils/firebase";
+import { addFirebaseWallets, deleteFirebaseWallet } from "@/utils/firebase";
 import { ApprovalEnum } from "@/enum/enum";
 import {
     foundationWithdrawalApprove,
@@ -12,7 +12,10 @@ import {
     withdrawal,
 } from "@/utils/smartContractInteraction";
 import { toast } from "react-toastify";
-import { extractErrorMessage } from "@/utils/utilsFunction";
+import {
+    checkToDeleteFirebaseApprovalWallets,
+    extractErrorMessage,
+} from "@/utils/utilsFunction";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
@@ -51,26 +54,85 @@ const Withdrawal = ({ contractState }: any) => {
         }
     };
 
-    const handleRequestWithdrawal = async (contractAddress: string) => {
+    const handleRequestWithdrawal = async (state: any) => {
         let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
         try {
-            const requestWithdrawal = await foundationWithdrawalRequest(
-                contractAddress
-            );
-
-            if (requestWithdrawal) {
-                hash = requestWithdrawal;
-                toast.update(toastId, {
-                    render: "Storing Candidate Information",
-                });
-                const addFirebaseWithdrawalRequest = await addFirebaseWallets(
-                    ApprovalEnum.CollectionName,
-                    contractAddress,
-                    process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
-                    ApprovalEnum.KeyName
+            if (state.isRequestWithdrawal) {
+                throw Error("You have already requested Withdrawal");
+            } else if (address !== state.foundationOwnerAddress) {
+                throw Error("Only Foundation Owner Can Execute this Action");
+            } else {
+                const requestWithdrawal = await foundationWithdrawalRequest(
+                    state.contractAddress
                 );
-                if (addFirebaseWithdrawalRequest) {
+
+                if (requestWithdrawal) {
+                    hash = requestWithdrawal;
+                    toast.update(toastId, {
+                        render: "Storing Candidate Information",
+                    });
+                    const addFirebaseWithdrawalRequest =
+                        await addFirebaseWallets(
+                            ApprovalEnum.CollectionName,
+                            state.contractAddress,
+                            process.env
+                                .NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
+                            ApprovalEnum.KeyName
+                        );
+                    if (addFirebaseWithdrawalRequest) {
+                        toast.success(
+                            ({ closeToast }) => (
+                                <div className="custom-toast">
+                                    <a
+                                        href={`https://sepolia.etherscan.io/tx/${hash}`}
+                                    >
+                                        {`https://sepolia.etherscan.io/tx/${hash}`}
+                                    </a>
+                                </div>
+                            ),
+                            {
+                                autoClose: false,
+                            }
+                        );
+                        toast.dismiss(toastId);
+                    }
+                }
+            }
+        } catch (error: any) {
+            const errorMessage = error?.shortMessage;
+            const extractedMessage = extractErrorMessage(errorMessage);
+            toast.error(extractedMessage);
+            toast.dismiss(toastId);
+        }
+    };
+
+    const handleWithdrawalApprove = async (state: any) => {
+        let hash: string;
+        const toastId = toast.loading("Writing Smart Contract");
+        try {
+            const check = checkDisableApproval(state);
+            if (check) {
+                throw Error(
+                    "Please Approve With Registered Wallet And Make Sure You Haven't Approved this Withdrawal"
+                );
+            } else {
+                const approveWithdrawal = await foundationWithdrawalApprove(
+                    state.contractAddress
+                );
+                if (approveWithdrawal) {
+                    hash = approveWithdrawal;
+                    const checkToDelete =
+                        checkToDeleteFirebaseApprovalWallets(state);
+                    if (checkToDelete) {
+                        await deleteFirebaseWallet(
+                            ApprovalEnum.CollectionName,
+                            state.contractAddress,
+                            process.env
+                                .NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
+                            ApprovalEnum.KeyName
+                        );
+                    }
                     toast.success(
                         ({ closeToast }) => (
                             <div className="custom-toast">
@@ -96,47 +158,34 @@ const Withdrawal = ({ contractState }: any) => {
         }
     };
 
-    const handleWithdrawalApprove = async (contractAddress: string) => {
-        let hash: string;
-        const toastId = toast.loading("Writing Smart Contract");
-        try {
-            const approveWithdrawal = await foundationWithdrawalApprove(
-                contractAddress
-            );
-            if (approveWithdrawal) {
-                hash = approveWithdrawal;
-                toast.success(
-                    ({ closeToast }) => (
-                        <div className="custom-toast">
-                            <a
-                                href={`https://sepolia.etherscan.io/tx/${hash}`}
-                            >
-                                {`https://sepolia.etherscan.io/tx/${hash}`}
-                            </a>
-                        </div>
-                    ),
-                    {
-                        autoClose: false,
-                    }
-                );
-                toast.dismiss(toastId);
+    const checkDisableApproval = (state: any) => {
+        if (address === state.foundationOwnerAddress) {
+            if (!state.foundationOwnerApproval) {
+                return true;
             }
-        } catch (error: any) {
-            const errorMessage = error?.shortMessage;
-            const extractedMessage = extractErrorMessage(errorMessage);
-            toast.error(extractedMessage);
-            toast.dismiss(toastId);
+        } else if (address === state.foundationCoOwnerAddress) {
+            if (!state.foundationCoOwnerApproval) {
+                return true;
+            }
+        } else {
+            return false;
         }
     };
 
-    const handleWithdrawal = async (contractAddress: string) => {
+    const handleWithdrawal = async (state: any) => {
         let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
         try {
             if (!allowWithdrawalRequest) {
-                throw new Error("Haven't met the withdrawal requirements");
+                throw Error("Haven't met the withdrawal requirements");
+            } else if (address !== state.foundationOwnerAddress) {
+                throw Error(
+                    "Please Withdraw With The Registered Foundation Owner Address"
+                );
             } else {
-                const executeWithdrawal = await withdrawal(contractAddress);
+                const executeWithdrawal = await withdrawal(
+                    state.contractAddress
+                );
                 if (executeWithdrawal) {
                     hash = executeWithdrawal;
                     toast.success(
@@ -166,6 +215,7 @@ const Withdrawal = ({ contractState }: any) => {
 
     useEffect(() => {
         if (contractState) {
+            console.log(contractState);
             checkAllowRequest();
         }
     }, [contractState]);
@@ -226,59 +276,61 @@ const Withdrawal = ({ contractState }: any) => {
                     <h1>Total Funds Received</h1>
                 </div>
                 <div>
-                    {!contractState?.isRequestWithdrawal ? (
-                        <button
-                            onClick={() => {
-                                handleRequestWithdrawal(
-                                    contractState?.contractAddress
-                                );
-                            }}
-                            className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                address !== contractState?.ownerAddress
-                                    ? "cursor-not-allowed"
-                                    : ""
-                            }`}
-                            disabled={address !== contractState?.ownerAddress}
-                        >
-                            Request Withdrawal
-                        </button>
-                    ) : (
+                    {contractState?.isRequestWithdrawal ? (
                         <div className="flex gap-5">
                             <button
                                 className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                     contractState &&
-                                    contractState.foundationOwnerAddress
-                                        ? "cursor-not-allowed"
-                                        : ""
+                                    checkDisableApproval(contractState)
+                                        ? ""
+                                        : "cursor-not-allowed"
                                 }`}
                                 disabled={
                                     contractState &&
-                                    contractState.foundationOwnerAddress
+                                    checkDisableApproval(contractState)
                                 }
                                 onClick={() =>
-                                    handleWithdrawalApprove(
-                                        contractState.contractAddress
-                                    )
+                                    handleWithdrawalApprove(contractState)
                                 }
                             >
                                 Approve
                             </button>
                             <button
                                 className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                    allowWithdrawalRequest
+                                    allowWithdrawalRequest &&
+                                    address ===
+                                        contractState.foundationOwnerAddress
                                         ? ""
                                         : "cursor-not-allowed"
                                 }`}
-                                disabled={allowWithdrawalRequest}
-                                onClick={() =>
-                                    handleWithdrawal(
-                                        contractState.contractAddress
-                                    )
+                                disabled={
+                                    !allowWithdrawalRequest ||
+                                    address !==
+                                        contractState.foundationOwnerAddress
                                 }
+                                onClick={() => handleWithdrawal(contractState)}
                             >
                                 Withdraw
                             </button>
                         </div>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                handleRequestWithdrawal(contractState);
+                            }}
+                            className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                address !==
+                                contractState?.foundationOwnerAddress
+                                    ? "cursor-not-allowed"
+                                    : ""
+                            }`}
+                            disabled={
+                                address !==
+                                contractState?.foundationOwnerAddress
+                            }
+                        >
+                            Request Withdrawal
+                        </button>
                     )}
                 </div>
             </div>

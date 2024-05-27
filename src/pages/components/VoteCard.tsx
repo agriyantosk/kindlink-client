@@ -46,24 +46,33 @@ const VoteCard = ({ candidates, refetch }: any) => {
         let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
         try {
-            const vote = await voteCandidate(voteInput, foundationOwnerAddress);
-            if (vote) {
-                hash = vote;
-                toast.success(
-                    ({ closeToast }) => (
-                        <div className="custom-toast">
-                            <a href={`https://sepolia.etherscan.io/tx/${hash}`}>
-                                {`https://sepolia.etherscan.io/tx/${hash}`}
-                            </a>
-                        </div>
-                    ),
-                    {
-                        autoClose: false,
-                    }
+            if (candidates.hasVoted) {
+                throw Error("You already voted this foundation!");
+            } else {
+                const vote = await voteCandidate(
+                    voteInput,
+                    foundationOwnerAddress
                 );
-                toast.dismiss(toastId);
+                if (vote) {
+                    hash = vote;
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/tx/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/tx/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
+                }
+                await refetch();
             }
-            await refetch();
         } catch (error: any) {
             const errorMessage = error?.shortMessage;
             const extractedMessage = extractErrorMessage(errorMessage);
@@ -188,8 +197,6 @@ const VoteCard = ({ candidates, refetch }: any) => {
                                                       viewBox="0 0 22 20"
                                                       width="22px"
                                                       xmlns="http://www.w3.org/2000/svg"
-                                                      //   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-                                                      //   xmlns:xlink="http://www.w3.org/1999/xlink"
                                                   >
                                                       <title />
                                                       <desc />

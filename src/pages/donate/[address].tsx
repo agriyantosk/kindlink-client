@@ -39,7 +39,7 @@ const Detail = () => {
         try {
             event.preventDefault();
             if (!value || !foundationContractAddress) {
-                return new Error("Invalid Input");
+                throw Error("Invalid Donation Input");
             }
             const convertToNumber = Number(value);
             const executeDonation = await donate(

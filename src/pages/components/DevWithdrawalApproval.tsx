@@ -8,16 +8,19 @@ import { foundationABI } from "@/utils/ABI";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { foundationWithdrawalApprove } from "@/utils/smartContractInteraction";
-import { ApprovalEnum, InformationEnum } from "@/enum/enum";
+import { ApprovalEnum, DevEnum, InformationEnum } from "@/enum/enum";
 import { toast } from "react-toastify";
 import { extractErrorMessage } from "@/utils/utilsFunction";
 import NoData from "./NoData";
+import { useAccount } from "wagmi";
 
 const DevWithdrawalApproval = () => {
+    const { address } = useAccount();
     const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
     const [approvalInformations, setApprovalInformations] = useState<any[]>([]);
     const [approvals, setApprovals] = useState<any[]>([]);
     const [loading, setIsLoading] = useState<boolean>(false);
+    const [isDev, setIsDev] = useState();
 
     const fetchApprovalWallets = async () => {
         try {
@@ -33,8 +36,22 @@ const DevWithdrawalApproval = () => {
         }
     };
 
+    const checkDevAddress = async (userAddress: string) => {
+        try {
+            const devAddress = await fetchFirebaseWallets(
+                DevEnum.CollectionName,
+                process.env.NEXT_PUBLIC_DEV_DOCUMENTID as string,
+                DevEnum.KeyName
+            );
+            const check =
+                devAddress && devAddress.find((el: any) => el === userAddress);
+            setIsDev(check);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     const fetchApprovalInformation = async () => {
-        console.log("fetch info kepanggil");
         try {
             if (approvalWallets && approvalWallets.length !== 0) {
                 const info = await queryIn(
@@ -61,25 +78,20 @@ const DevWithdrawalApproval = () => {
         }
     };
 
-    const handleWithdrawalApprove = async (
-        foundationAddress: string,
-        documentId: string
-    ) => {
+    const handleWithdrawalApprove = async (state: any) => {
         let hash: string;
         const toastId = toast.loading("Writing Smart Contract");
         try {
-            const approveWithdraw = await foundationWithdrawalApprove(
-                foundationAddress
-            );
-            if (approveWithdraw) {
-                hash = approveWithdraw;
-                const deleteWithdrawal = await deleteFirebaseWallet(
-                    ApprovalEnum.CollectionName,
-                    documentId,
-                    process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
-                    ApprovalEnum.KeyName
+            if (state.kindlinkApproval) {
+                throw Error("You already Approve This Withdrawal Request");
+            } else if (!isDev) {
+                throw Error("You are not Kindlink Devs");
+            } else {
+                const approveWithdraw = await foundationWithdrawalApprove(
+                    state.contractAddress
                 );
-                if (deleteWithdrawal) {
+                if (approveWithdraw) {
+                    hash = approveWithdraw;
                     toast.success(
                         ({ closeToast }) => (
                             <div className="custom-toast">
@@ -159,6 +171,12 @@ const DevWithdrawalApproval = () => {
             fetchContractState();
         }
     }, [approvalInformations]);
+
+    useEffect(() => {
+        if (address) {
+            checkDevAddress(address);
+        }
+    }, [address]);
 
     return (
         <>
@@ -365,11 +383,17 @@ const DevWithdrawalApproval = () => {
                                                         type="button"
                                                         onClick={() =>
                                                             handleWithdrawalApprove(
-                                                                el?.contractAddress,
-                                                                el?.id
+                                                                el
                                                             )
                                                         }
-                                                        className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
+                                                        className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out ${
+                                                            el?.kindlinkApproval
+                                                                ? "cursor-not-allowed opacity-50"
+                                                                : ""
+                                                        }`}
+                                                        disabled={
+                                                            !el?.kindlinkApproval
+                                                        }
                                                     >
                                                         Approve
                                                     </button>
