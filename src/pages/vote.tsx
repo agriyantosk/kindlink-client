@@ -114,8 +114,9 @@ const Vote = () => {
                 {!isConnected && (
                     <div className="flex justify-center items-center h-full">
                         <h1>
-                            Looks like your wallet isn't connected. You'll need
-                            to connect your wallet to participate.
+                            Looks like your wallet isn&apos;t connected.
+                            You&apos;ll need to connect your wallet to
+                            participate.
                         </h1>
                     </div>
                 )}
