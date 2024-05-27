@@ -36,13 +36,13 @@ export const kindlinkAbi = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "foundationAddress",
+        "name": "foundationOwnerAddress",
         "type": "address"
       }
     ],
@@ -55,13 +55,13 @@ export const kindlinkAbi = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "foundationAddress",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
@@ -74,39 +74,13 @@ export const kindlinkAbi = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "foundation",
-        "type": "address"
-      }
-    ],
-    "name": "ConfirmCandidateApproval",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "foundation",
-        "type": "address"
-      }
-    ],
-    "name": "ConfirmCandidateDisapproval",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "foundation",
+        "name": "contractAddress",
         "type": "address"
       },
       {
@@ -125,13 +99,26 @@ export const kindlinkAbi = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "foundationOwnerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "LoseVote",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "candidateAddress",
+        "name": "candidateOwnerAddress",
         "type": "address"
       },
       {
@@ -150,13 +137,26 @@ export const kindlinkAbi = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "contractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "WinsVote",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "foundationAddress",
+        "name": "contractAddress",
         "type": "address"
       },
       {
@@ -175,13 +175,13 @@ export const kindlinkAbi = [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "from",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "foundationAddress",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
@@ -273,7 +273,7 @@ export const kindlinkAbi = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "foundationOwnerAddress",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
@@ -286,7 +286,7 @@ export const kindlinkAbi = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "foundationAddress",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
@@ -299,7 +299,7 @@ export const kindlinkAbi = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "foundationOwnerAddress",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
@@ -312,7 +312,7 @@ export const kindlinkAbi = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "foundationAddress",
+        "name": "contractAddress",
         "type": "address"
       }
     ],
@@ -579,7 +579,13 @@ export const foundationABI = [
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "callerAddress",
+        "type": "address"
+      }
+    ],
     "name": "approve",
     "outputs": [],
     "stateMutability": "nonpayable",

@@ -29,5 +29,5 @@ export enum InformationEnum {
 }
 
 export enum KindlinkEnum {
-    contractAddress = "0xC4CDaC2f39823CDCAc91009412b6bfe6C395472A",
+    contractAddress = "0xbAdc09F160C6Cf13F41e2309E870ca9E9EBAfC5D",
 }
