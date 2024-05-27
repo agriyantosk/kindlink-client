@@ -17,9 +17,11 @@ const DevWithdrawalApproval = () => {
     const [approvalWallets, setApprovalWallets] = useState<any[]>([]);
     const [approvalInformations, setApprovalInformations] = useState<any[]>([]);
     const [approvals, setApprovals] = useState<any[]>([]);
+    const [loading, setIsLoading] = useState<boolean>(false);
 
     const fetchApprovalWallets = async () => {
         try {
+            setIsLoading(true);
             const withdrawalData = await fetchFirebaseWallets(
                 ApprovalEnum.CollectionName,
                 process.env.NEXT_PUBLIC_APPROVAL_DOCUMENTID as string,
@@ -137,6 +139,8 @@ const DevWithdrawalApproval = () => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -158,7 +162,9 @@ const DevWithdrawalApproval = () => {
 
     return (
         <>
-            {approvals.length === 0 ? (
+            {loading ? (
+                <h1>Loading...</h1>
+            ) : approvals.length === 0 ? (
                 <>
                     <NoData />
                 </>
