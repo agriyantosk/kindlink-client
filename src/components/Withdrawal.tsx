@@ -16,10 +16,13 @@ import {
     checkToDeleteFirebaseApprovalWallets,
     extractErrorMessage,
 } from "@/utils/utilsFunction";
+import { useIsLoading } from "./Layout";
+import { ClipLoader } from "react-spinners";
 
 const Withdrawal = ({ contractState }: any) => {
     const { address } = useAccount();
     const [allowWithdrawalRequest, setAllowWithdrawalRequest] = useState<any>();
+    const { isLoading, setIsLoading } = useIsLoading();
 
     const checkAllowRequest = async () => {
         try {
@@ -56,6 +59,7 @@ const Withdrawal = ({ contractState }: any) => {
 
     const handleRequestWithdrawal = async (state: any) => {
         let hash: string;
+        setIsLoading(true);
         const toastId = toast.loading("Writing Smart Contract");
         try {
             if (state.isRequestWithdrawal) {
@@ -104,11 +108,14 @@ const Withdrawal = ({ contractState }: any) => {
             const extractedMessage = extractErrorMessage(errorMessage);
             toast.error(extractedMessage);
             toast.dismiss(toastId);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleWithdrawalApprove = async (state: any) => {
         let hash: string;
+        setIsLoading(true);
         const toastId = toast.loading("Writing Smart Contract");
         try {
             const check = checkDisableApproval(state);
@@ -155,6 +162,8 @@ const Withdrawal = ({ contractState }: any) => {
             const extractedMessage = extractErrorMessage(errorMessage);
             toast.error(extractedMessage);
             toast.dismiss(toastId);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -174,6 +183,7 @@ const Withdrawal = ({ contractState }: any) => {
 
     const handleWithdrawal = async (state: any) => {
         let hash: string;
+        setIsLoading(true);
         const toastId = toast.loading("Writing Smart Contract");
         try {
             if (!allowWithdrawalRequest) {
@@ -210,12 +220,13 @@ const Withdrawal = ({ contractState }: any) => {
             const extractedMessage = extractErrorMessage(errorMessage);
             toast.error(extractedMessage);
             toast.dismiss(toastId);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
         if (contractState) {
-            console.log(contractState);
             checkAllowRequest();
         }
     }, [contractState]);
@@ -280,15 +291,16 @@ const Withdrawal = ({ contractState }: any) => {
                         <div className="flex gap-5">
                             <button
                                 className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                    contractState &&
-                                    checkDisableApproval(contractState)
+                                    isLoading ||
+                                    (contractState &&
+                                        checkDisableApproval(contractState))
                                         ? ""
                                         : "cursor-not-allowed"
                                 }`}
-                                disabled={
+                                disabled={isLoading(
                                     contractState &&
-                                    checkDisableApproval(contractState)
-                                }
+                                        checkDisableApproval(contractState)
+                                )}
                                 onClick={() =>
                                     handleWithdrawalApprove(contractState)
                                 }
@@ -297,9 +309,10 @@ const Withdrawal = ({ contractState }: any) => {
                             </button>
                             <button
                                 className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
-                                    allowWithdrawalRequest &&
-                                    address ===
-                                        contractState.foundationOwnerAddress
+                                    isLoading ||
+                                    (allowWithdrawalRequest &&
+                                        address ===
+                                            contractState.foundationOwnerAddress)
                                         ? ""
                                         : "cursor-not-allowed"
                                 }`}
@@ -318,18 +331,24 @@ const Withdrawal = ({ contractState }: any) => {
                             onClick={() => {
                                 handleRequestWithdrawal(contractState);
                             }}
-                            className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                            className={`rounded-md bg-gradient-to-br flex items-center justify-center from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
+                                isLoading ||
                                 address !==
-                                contractState?.foundationOwnerAddress
+                                    contractState?.foundationOwnerAddress
                                     ? "cursor-not-allowed"
                                     : ""
                             }`}
                             disabled={
+                                isLoading ||
                                 address !==
-                                contractState?.foundationOwnerAddress
+                                    contractState?.foundationOwnerAddress
                             }
                         >
-                            Request Withdrawal
+                            {isLoading ? (
+                                <ClipLoader size={25} />
+                            ) : (
+                                "Request Withdrawal"
+                            )}
                         </button>
                     )}
                 </div>

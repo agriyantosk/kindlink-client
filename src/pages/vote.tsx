@@ -17,7 +17,6 @@ const Vote = () => {
                 process.env.NEXT_PUBLIC_CANDIDATE_DOCUMENTID as string,
                 CandidateEnum.KeyName
             );
-            console.log(wallets, "dari function fetchCAndidateWallets");
             setCandidateWallets(wallets);
         } catch (error) {
             console.log(error);
@@ -26,13 +25,11 @@ const Vote = () => {
 
     const fetchCandidatesInformation = async () => {
         try {
-            console.log(candidateWallets);
             if (candidateWallets) {
                 const informations = await queryIn(
                     CandidateEnum.KeyName,
                     candidateWallets
                 );
-                console.log(informations);
                 return informations;
             }
         } catch (error) {
@@ -46,7 +43,6 @@ const Vote = () => {
                 address,
                 candidateWallets
             );
-            console.log(smartContractCandidate);
             return smartContractCandidate;
         } catch (error) {
             console.log(error);
@@ -61,14 +57,11 @@ const Vote = () => {
                 const matchedData: any[] = [];
 
                 candidateInformation.forEach((infoItem: any) => {
-                    console.log("test");
                     const contractItem = candidateState.find(
                         (stateItem: any) =>
                             stateItem.foundationOwnerAddress ===
                             infoItem.foundationOwnerAddress
                     );
-
-                    console.log(contractItem);
 
                     if (contractItem) {
                         const combinedData = {
@@ -90,7 +83,6 @@ const Vote = () => {
                         matchedData.push(combinedData);
                     }
                 });
-                console.log(matchedData);
                 setCandidates(matchedData);
             }
         } catch (error) {

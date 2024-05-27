@@ -16,7 +16,7 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [candidateDetail, setCandidateDetail] = useState<any>(null);
     const [filterOption, setFilterOption] = useState<string>("withdraw");
-    const [isLoading, setIsLoading] = useState<boolean>();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [loadingMessage, setLoadingMessage] = useState<string>();
 
     return (
@@ -25,7 +25,9 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
         >
             <FilterContext.Provider value={{ filterOption, setFilterOption }}>
                 <ModalContext.Provider value={{ setShowModal }}>
-                    <LoadingContext.Provider value={{ setIsLoading }}>
+                    <LoadingContext.Provider
+                        value={{ isLoading, setIsLoading }}
+                    >
                         <LoadingMessageContext.Provider
                             value={{ setLoadingMessage }}
                         >

@@ -9,6 +9,8 @@ import {
 import { convertTimestamp, extractErrorMessage } from "@/utils/utilsFunction";
 import { Button, Tooltip } from "flowbite-react";
 import { toast } from "react-toastify";
+import { useIsLoading } from "@/components/Layout";
+import { ClipLoader } from "react-spinners";
 
 interface FoundationContractDetailPayload {
     contractAddress: string;
@@ -24,6 +26,7 @@ const Detail = () => {
     const [detail, setDetail] = useState<any>();
     const [contractDetail, setContractDetail] = useState<any>();
     const [value, setValue] = useState<number | undefined>();
+    const { isLoading, setIsLoading } = useIsLoading();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(Number(event.target.value));
@@ -35,6 +38,7 @@ const Detail = () => {
         foundationContractAddress: string
     ) => {
         let hash: string;
+        setIsLoading(true);
         const toastId = toast.loading("Writing Smart Contract");
         try {
             event.preventDefault();
@@ -67,6 +71,8 @@ const Detail = () => {
             const errorMessage = error?.shortMessage;
             toast.error(errorMessage);
             toast.dismiss(toastId);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -231,10 +237,20 @@ const Detail = () => {
                                         className="rounded-xl"
                                     />
                                     <button
-                                        className="rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
+                                        className="rounded-md bg-gradient-to-br flex justify-center w-16 items-center from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]"
                                         type="submit"
+                                        disabled={isLoading}
                                     >
-                                        Submit
+                                        {isLoading ? (
+                                            <>
+                                                <ClipLoader
+                                                    size={25}
+                                                    color="#36d7b7"
+                                                />
+                                            </>
+                                        ) : (
+                                            "Submit"
+                                        )}
                                     </button>
                                 </div>
                             </form>
