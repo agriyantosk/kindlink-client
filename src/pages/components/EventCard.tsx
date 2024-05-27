@@ -15,7 +15,7 @@ import { MdApproval } from "react-icons/md";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { IoPersonAddOutline } from "react-icons/io5";
 
-const EventCard = ({ event }: any) => {
+const EventCard = ({ event, key }: { event: any; key: number }) => {
     const constructIcon = () => {
         switch (event?.eventName) {
             case "AddCandidates":
@@ -158,7 +158,7 @@ const EventCard = ({ event }: any) => {
     };
     return (
         <>
-            <div className="w-[65%]">
+            <div className="w-[65%]" key={key}>
                 <VerticalTimeline layout="1-column-left">
                     <VerticalTimelineElement
                         contentStyle={{

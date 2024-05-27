@@ -49,7 +49,7 @@ const Activity = () => {
             <div className="text-black mt-10 w-full flex flex-col items-center">
                 {events &&
                     events.map((el: any, index: number) => {
-                        return <EventCard event={el} />;
+                        return <EventCard event={el} key={index} />;
                     })}
             </div>
         </>

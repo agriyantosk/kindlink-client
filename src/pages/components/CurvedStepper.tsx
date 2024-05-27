@@ -138,13 +138,13 @@ const CurvedStepper = () => {
                                         Ensure Secure Withdrawals
                                     </div>
                                     <div className="px-3 pb-6">
-                                        Each foundation's withdrawal requests
-                                        require three approvals: from the
-                                        foundation owner, the co-owner, and the
-                                        KindLink platform. This multi-signature
-                                        approach protects against misuse of
-                                        funds and maintains trust within the
-                                        community.
+                                        Each foundation&apos;s withdrawal
+                                        requests require three approvals: from
+                                        the foundation owner, the co-owner, and
+                                        the KindLink platform. This
+                                        multi-signature approach protects
+                                        against misuse of funds and maintains
+                                        trust within the community.
                                     </div>
                                 </div>
                                 <div className="md:w-96 w-full p-5">
