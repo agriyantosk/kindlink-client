@@ -1,7 +1,7 @@
 import { kindlinkAbi } from "@/utils/ABI";
 import { publicClient } from "@/utils/client";
 import { useEffect, useState } from "react";
-import EventCard from "./components/EventCard";
+import EventCard from "../components/EventCard";
 import { KindlinkEnum } from "@/enum/enum";
 
 const Activity = () => {

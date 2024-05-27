@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import VoteCard from "./components/VoteCard";
+import VoteCard from "../components/VoteCard";
 import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
 import { CandidateEnum } from "@/enum/enum";
-import ConnectButtonComponent from "./components/ConnectButton";
+import ConnectButtonComponent from "../components/ConnectButton";
 
 const Vote = () => {
     const { address, isConnected } = useAccount();

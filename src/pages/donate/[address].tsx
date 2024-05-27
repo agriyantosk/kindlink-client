@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { queryEqualsTo } from "@/utils/firebase";
-import FoundationSocials from "../components/FoundationSocials";
+import FoundationSocials from "../../components/FoundationSocials";
 import {
     donate,
     getAllListedFoundation,

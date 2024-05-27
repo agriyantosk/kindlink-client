@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DonationCard from "../components/DonationCard";
+import DonationCard from "../../components/DonationCard";
 import { fetchFirebaseWallets, queryIn } from "@/utils/firebase";
 import { getAllListedFoundation } from "@/utils/smartContractInteraction";
 import { getBalance } from "viem/actions";

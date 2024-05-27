@@ -4,7 +4,7 @@ import { queryIn } from "@/utils/firebase";
 import { useEffect, useState } from "react";
 import { getContract } from "viem";
 import { useAccount } from "wagmi";
-import Withdrawal from "./components/Withdrawal";
+import Withdrawal from "../components/Withdrawal";
 
 const Foundations = () => {
     const [contractAddress, setContractAddress] = useState<any>();

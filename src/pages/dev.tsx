@@ -1,8 +1,8 @@
-import DevFilter from "./components/DevFilter";
-import DevVoteTable from "./components/DevVoteTable";
-import { useFilterContext } from "./components/Layout";
-import AddCandidateForm from "./components/AddCandidateForm";
-import DevWithdrawalApproval from "./components/DevWithdrawalApproval";
+import DevFilter from "../components/DevFilter";
+import DevVoteTable from "../components/DevVoteTable";
+import { useFilterContext } from "../components/Layout";
+import AddCandidateForm from "../components/AddCandidateForm";
+import DevWithdrawalApproval from "../components/DevWithdrawalApproval";
 
 const Dev = () => {
     const { filterOption, setFilterOption } = useFilterContext();

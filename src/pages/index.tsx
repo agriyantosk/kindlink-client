@@ -1,5 +1,5 @@
 import { KindlinkEnum } from "@/enum/enum";
-import CurvedStepper from "./components/CurvedStepper";
+import CurvedStepper from "../components/CurvedStepper";
 
 export default function Home() {
     return (
