@@ -1,5 +1,5 @@
 import { addFirebaseWallets, addInformationData } from "@/utils/firebase";
-import firebase from "firebase/firestore";
+import firebase from "firebase/compat/app";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FormData } from "@/interfaces/interface";
 import { addCandidate } from "@/utils/smartContractInteraction";
