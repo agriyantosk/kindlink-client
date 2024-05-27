@@ -46,7 +46,7 @@ const Foundations = () => {
 
     const fetchContractAddress = async () => {
         try {
-            let data;
+            let data: any;
             data = await queryIn("foundationOwnerAddress", [address as string]);
             if (data.length === 0) {
                 data = await queryIn("foundationCoOwnerAddress", [
