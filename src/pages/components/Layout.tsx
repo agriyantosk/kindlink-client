@@ -1,5 +1,4 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
-import Footer from "./Footer";
 import CandidateDetailModal from "./CandidateDetailModal";
 import Navbar from "./Navbar";
 
@@ -40,7 +39,6 @@ export const Layout: React.FC<LayoutsProps> = ({ children }) => {
                                     <Navbar />
                                     <div className="flex-grow">{children}</div>
                                 </div>
-                                {/* <Footer /> */}
                             </>
                         </LoadingMessageContext.Provider>
                     </LoadingContext.Provider>
