@@ -83,7 +83,6 @@ export const donate = async (
     donationValue: number
 ) => {
     try {
-        console.log(foundationAddress);
         const walletClient = createWalletClient({
             chain: sepolia,
             transport: custom(window.ethereum),

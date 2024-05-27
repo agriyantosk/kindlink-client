@@ -48,40 +48,41 @@ const VoteCard = ({ candidates, refetch }: any) => {
         setIsLoading(true);
         const toastId = toast.loading("Writing Smart Contract");
         try {
-            // if (candidates.hasVoted) {
-            //     throw Error("You already voted this foundation!");
-            // } else {
-            //     const vote = await voteCandidate(
-            //         voteInput,
-            //         foundationOwnerAddress
-            //     );
-            //     if (vote) {
-            //         hash = vote;
-            //         toast.success(
-            //             ({ closeToast }) => (
-            //                 <div className="custom-toast">
-            //                     <a
-            //                         href={`https://sepolia.etherscan.io/tx/${hash}`}
-            //                     >
-            //                         {`https://sepolia.etherscan.io/tx/${hash}`}
-            //                     </a>
-            //                 </div>
-            //             ),
-            //             {
-            //                 autoClose: false,
-            //             }
-            //         );
-            //         toast.dismiss(toastId);
-            //     }
-            //     await refetch();
-            // }
+            if (candidates.hasVoted) {
+                throw Error("You already voted this foundation!");
+            } else {
+                const vote = await voteCandidate(
+                    voteInput,
+                    foundationOwnerAddress
+                );
+                if (vote) {
+                    hash = vote;
+                    toast.success(
+                        ({ closeToast }) => (
+                            <div className="custom-toast">
+                                <a
+                                    href={`https://sepolia.etherscan.io/tx/${hash}`}
+                                >
+                                    {`https://sepolia.etherscan.io/tx/${hash}`}
+                                </a>
+                            </div>
+                        ),
+                        {
+                            autoClose: false,
+                        }
+                    );
+                    toast.dismiss(toastId);
+                }
+                await refetch();
+            }
         } catch (error: any) {
+            console.log(error);
             const errorMessage = error?.shortMessage;
             const extractedMessage = extractErrorMessage(errorMessage);
             toast.error(extractedMessage);
             toast.dismiss(toastId);
         } finally {
-            // setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
