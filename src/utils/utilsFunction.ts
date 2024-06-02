@@ -41,7 +41,7 @@ export const votingPeriodCompare = (timestampSeconds: number) => {
     const currentTimeMilliseconds = Date.now();
     const timestampMilliseconds = timestampSeconds * 1000;
 
-    if (timestampMilliseconds > currentTimeMilliseconds) {
+    if (timestampMilliseconds < currentTimeMilliseconds) {
         return true;
     } else {
         return false;

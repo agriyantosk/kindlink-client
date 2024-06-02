@@ -1,5 +1,11 @@
-import { CandidateEnum, InformationEnum, OwnerEnum } from "@/enum/enum";
 import {
+    CandidateEnum,
+    FoundationEnum,
+    InformationEnum,
+    OwnerEnum,
+} from "@/enum/enum";
+import {
+    addFirebaseWallets,
     addOwnerAddress,
     deleteFirebaseWallet,
     fetchFirebaseWallets,
@@ -140,13 +146,19 @@ const DevVoteTable = ({ filterOption }: any) => {
                             await updateCandidateWinningVote(
                                 InformationEnum.CollectionName,
                                 {
-                                    conrtactAddress:
-                                        candidateData.contractAddress,
+                                    conrtactAddress: approveSmartContract,
                                     foundationCoOwnerAddress:
                                         candidateData.foundationCoOwnerAddress,
                                 },
                                 candidateData.id
                             );
+                        const addFoundation = await addFirebaseWallets(
+                            FoundationEnum.CollectionName,
+                            approveSmartContract,
+                            process.env
+                                .NEXT_PUBLIC_FOUNDATION_DOCUMENTID as string,
+                            FoundationEnum.KeyName
+                        );
                         const ownerAddresses = [
                             candidateData.foundationCoOwnerAddress,
                             candidateData.foundationCoOwnerAddress,
