@@ -83,7 +83,15 @@ const Foundations = () => {
                     />
                 </div>
                 <div className="w-[50%] flex flex-col gap-10">
-                    <Withdrawal contractState={contractState} />
+                    <Withdrawal
+                        contractState={contractState}
+                        addresses={{
+                            foundationOwnerAddress:
+                                contractAddress.foundationOwnerAddress,
+                            foundationCoOwnerAddress:
+                                contractAddress.foundationCoOwnerAddress,
+                        }}
+                    />
                 </div>
             </div>
         </>

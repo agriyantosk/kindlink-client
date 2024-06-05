@@ -19,8 +19,10 @@ import {
 import { useIsLoading } from "./Layout";
 import { ClipLoader } from "react-spinners";
 
-const Withdrawal = ({ contractState }: any) => {
+const Withdrawal = ({ contractState, addresses }: any) => {
     const { address } = useAccount();
+    console.log(contractState);
+    console.log(address);
     const [allowWithdrawalRequest, setAllowWithdrawalRequest] = useState<any>();
     const { isLoading, setIsLoading } = useIsLoading();
 
@@ -312,14 +314,13 @@ const Withdrawal = ({ contractState }: any) => {
                                     isLoading ||
                                     (allowWithdrawalRequest &&
                                         address ===
-                                            contractState.foundationOwnerAddress)
+                                            addresses.foundationOwnerAddress)
                                         ? ""
                                         : "cursor-not-allowed"
                                 }`}
                                 disabled={
                                     !allowWithdrawalRequest ||
-                                    address !==
-                                        contractState.foundationOwnerAddress
+                                    address !== addresses.foundationOwnerAddress
                                 }
                                 onClick={() => handleWithdrawal(contractState)}
                             >
@@ -333,15 +334,13 @@ const Withdrawal = ({ contractState }: any) => {
                             }}
                             className={`rounded-md bg-gradient-to-br flex items-center justify-center from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03] ${
                                 isLoading ||
-                                address !==
-                                    contractState?.foundationOwnerAddress
+                                address !== addresses?.foundationOwnerAddress
                                     ? "cursor-not-allowed"
                                     : ""
                             }`}
                             disabled={
                                 isLoading ||
-                                address !==
-                                    contractState?.foundationOwnerAddress
+                                address !== addresses?.foundationOwnerAddress
                             }
                         >
                             {isLoading ? (
