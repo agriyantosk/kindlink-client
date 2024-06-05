@@ -47,7 +47,17 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                             <h3>From: {event && event?.args?.from}</h3>
                             <h3>
                                 Foundation Owner Address:{" "}
-                                {event && event?.args?.foundationOwnerAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event &&
+                                        event?.args?.foundationOwnerAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event &&
+                                        event?.args?.foundationOwnerAddress}
+                                </a>
                             </h3>
                         </div>
                     </>
@@ -59,7 +69,17 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                             <h3>From: {event && event?.args?.from}</h3>
                             <h3>
                                 Candidate Owner Address:{" "}
-                                {event && event?.args?.candidateOwnerAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event &&
+                                        event?.args?.candidateOwnerAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event &&
+                                        event?.args?.candidateOwnerAddress}
+                                </a>
                             </h3>
                             <h3 className="flex gap-2 items-center">
                                 Vote:
@@ -81,7 +101,15 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                             <h3>From: {event && event?.args?.from}</h3>
                             <h3>
                                 Foundation Contract Addreses:{" "}
-                                {event && event?.args?.contractAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event && event?.args?.contractAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event && event?.args?.contractAddress}
+                                </a>
                             </h3>
                         </div>
                     </>
@@ -92,7 +120,15 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                         <div>
                             <h3>
                                 Winning Foundation Contract Addreses:{" "}
-                                {event && event?.args?.contractAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event && event?.args?.contractAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event && event?.args?.contractAddress}
+                                </a>
                             </h3>
                         </div>
                     </>
@@ -103,7 +139,17 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                         <div>
                             <h3>
                                 Losing Candidate Owner Address:{" "}
-                                {event && event?.args?.foundationOwnerAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event &&
+                                        event?.args?.foundationOwnerAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event &&
+                                        event?.args?.foundationOwnerAddress}
+                                </a>
                             </h3>
                         </div>
                     </>
@@ -115,7 +161,15 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                             <h3>From: {event && event?.args?.from}</h3>
                             <h3>
                                 Foundation Contract Addreses:{" "}
-                                {event && event?.args?.contractAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event && event?.args?.contractAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event && event?.args?.contractAddress}
+                                </a>
                             </h3>
                             <h3>
                                 Value:{" "}
@@ -131,7 +185,15 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                             <h3>From: {event && event?.args?.from}</h3>
                             <h3>
                                 Foundation Contract Addreses:{" "}
-                                {event && event?.args?.contractAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event && event?.args?.contractAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event && event?.args?.contractAddress}
+                                </a>
                             </h3>
                             <h3>
                                 Value:{" "}
@@ -147,7 +209,15 @@ const EventCard = ({ event, key }: { event: any; key: number }) => {
                             <h3>From: {event && event?.args?.from}</h3>
                             <h3>
                                 Foundation Contract Addreses:{" "}
-                                {event && event?.args?.contractAddress}
+                                <a
+                                    className="hover:underline hover:cursor-pointer"
+                                    href={`http://sepolia.etherscan.io/address/${
+                                        event && event?.args?.contractAddress
+                                    }`}
+                                    target="_blank"
+                                >
+                                    {event && event?.args?.contractAddress}
+                                </a>
                             </h3>
                         </div>
                     </>

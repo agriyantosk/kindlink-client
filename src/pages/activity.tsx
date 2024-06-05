@@ -13,7 +13,8 @@ const Activity = () => {
                 abi: kindlinkAbi,
                 fromBlock: BigInt(0),
             });
-            setEvents(item);
+            const reversedEvents = item && item.reverse();
+            setEvents(reversedEvents);
         } catch (error) {
             console.log(error);
         }
