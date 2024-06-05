@@ -82,6 +82,7 @@ const Vote = () => {
                             hasVoted: contractItem.hasVoted,
                         };
                         matchedData.push(combinedData);
+                        console.log(combinedData);
                     }
                 });
                 setCandidates(matchedData);
@@ -113,7 +114,7 @@ const Vote = () => {
                         </h1>
                     </div>
                 )}
-                {candidates ?? candidates?.length > 0 ? (
+                {candidates?.length === 0 ? (
                     <NoData input={"No Available Voting Currenly Available"} />
                 ) : (
                     <VoteCard
