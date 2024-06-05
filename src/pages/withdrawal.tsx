@@ -21,7 +21,6 @@ const Foundations = () => {
                     client: publicClient,
                 });
                 const approvalState = await contract.read.getApprovalState();
-                console.log(addresses);
                 if (approvalState) {
                     const state = {
                         ...approvalState,
