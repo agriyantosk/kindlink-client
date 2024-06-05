@@ -5,6 +5,7 @@ import { getAllCandidates } from "@/utils/smartContractInteraction";
 import { useAccount } from "wagmi";
 import { CandidateEnum } from "@/enum/enum";
 import ConnectButtonComponent from "../components/ConnectButton";
+import NoData from "@/components/NoData";
 
 const Vote = () => {
     const { address, isConnected } = useAccount();
@@ -112,7 +113,9 @@ const Vote = () => {
                         </h1>
                     </div>
                 )}
-                {candidates && (
+                {candidates ?? candidates?.length > 0 ? (
+                    <NoData input={"No Available Voting Currenly Available"} />
+                ) : (
                     <VoteCard
                         candidates={candidates}
                         refetch={compileCandidates}

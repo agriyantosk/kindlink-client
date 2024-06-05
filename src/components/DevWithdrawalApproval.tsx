@@ -169,6 +169,8 @@ const DevWithdrawalApproval = () => {
     useEffect(() => {
         if (approvalInformations && approvalInformations.length !== 0) {
             fetchContractState();
+        } else {
+            setIsLoading(false);
         }
     }, [approvalInformations]);
 
@@ -184,7 +186,7 @@ const DevWithdrawalApproval = () => {
                 <h1>Loading...</h1>
             ) : approvals.length === 0 ? (
                 <>
-                    <NoData />
+                    <NoData input="No Withdrawal Request Currently Available" />
                 </>
             ) : (
                 <div className="relative overflow-y-auto w-full px-10">

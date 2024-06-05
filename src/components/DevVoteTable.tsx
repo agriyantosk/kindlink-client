@@ -25,6 +25,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
+import NoData from "./NoData";
 
 const DevVoteTable = ({ filterOption }: any) => {
     const { address } = useAccount();
@@ -210,6 +211,8 @@ const DevVoteTable = ({ filterOption }: any) => {
         <>
             {loading ? (
                 <h1>Loading...</h1>
+            ) : candidates && candidates.length === 0 ? (
+                <NoData input="No Ongoing Voting Period Currenly Available" />
             ) : (
                 <div className="relative overflow-y-auto w-full px-10">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -285,11 +288,11 @@ const DevVoteTable = ({ filterOption }: any) => {
                                                     <button
                                                         type="button"
                                                         className={`rounded-md bg-gradient-to-br from-blue-400 to-blue-500 px-3 py-1.5 font-dm text-xs font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]`}
-                                                        // disabled={votingPeriodCompare(
-                                                        //     Number(
-                                                        //         el?.endVotingTime
-                                                        //     )
-                                                        // )}
+                                                        disabled={votingPeriodCompare(
+                                                            Number(
+                                                                el?.endVotingTime
+                                                            )
+                                                        )}
                                                         onClick={() =>
                                                             handleApprove(el)
                                                         }
