@@ -9,6 +9,7 @@ import Withdrawal from "../components/Withdrawal";
 const Foundations = () => {
     const [contractAddress, setContractAddress] = useState<any>();
     const [contractState, setContractState] = useState<any>();
+    const [addresses, setAddresses] = useState<any>();
     const { address } = useAccount();
 
     const getContractState = async () => {
@@ -20,10 +21,15 @@ const Foundations = () => {
                     client: publicClient,
                 });
                 const approvalState = await contract.read.getApprovalState();
+                console.log(addresses);
                 if (approvalState) {
                     const state = {
                         ...approvalState,
                         balance: await getContractBalance(contractAddress),
+                        foundationOwnerAddress:
+                            addresses.foundationOwnerAddress,
+                        foundationCoOwnerAddress:
+                            addresses.foundationCoOwnerAddress,
                     };
                     setContractState(state);
                 }
@@ -53,9 +59,12 @@ const Foundations = () => {
                     address as string,
                 ]);
             }
-            console.log(data);
             if (data) {
                 setContractAddress(data[0]?.contractAddress);
+                setAddresses({
+                    foundationOwnerAddress: data[0]?.foundationOwnerAddress,
+                    foundationCoOwnerAddress: data[0]?.foundationCoOwnerAddress,
+                });
             }
         } catch (error) {
             console.log(error);
@@ -68,10 +77,10 @@ const Foundations = () => {
     }, [address]);
 
     useEffect(() => {
-        if (contractAddress) {
+        if (contractAddress && addresses) {
             getContractState();
         }
-    }, [contractAddress]);
+    }, [contractAddress, addresses]);
     return (
         <>
             <div className="w-full h-full flex border bg-white border-gray-400 rounded-lg p-10 gap-10">
@@ -83,15 +92,7 @@ const Foundations = () => {
                     />
                 </div>
                 <div className="w-[50%] flex flex-col gap-10">
-                    <Withdrawal
-                        contractState={contractState}
-                        addresses={{
-                            foundationOwnerAddress:
-                                contractAddress.foundationOwnerAddress,
-                            foundationCoOwnerAddress:
-                                contractAddress.foundationCoOwnerAddress,
-                        }}
-                    />
+                    <Withdrawal contractState={contractState} />
                 </div>
             </div>
         </>
